@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "miniLLM"
+version = "0.1.0"
+description = "Text-to-SQL fine-tuning and serving kickstart"
+authors = [{ name = "miniLLM" }]
+requires-python = ">=3.10"
+dependencies = [
+    "accelerate>=1.10.1",
+    "bitsandbytes>=0.47.0",
+    "datasets>=4.0.0",
+    "peft>=0.17.1",
+    "safetensors>=0.6.2",
+    "sentencepiece>=0.2.1",
+    "transformers>=4.56.1",
+    "trl>=0.23.0",
+]
+
+[tool.setuptools]
+packages = { find = {} }
+
+
+

@@ -1,0 +1,28 @@
+# Core ML stack
+torch
+torchvision
+torchaudio
+transformers
+datasets
+accelerate
+peft
+bitsandbytes
+trl
+
+# Serving
+fastapi
+uvicorn
+python-dotenv
+
+# Utilities
+tqdm
+pydantic
+sentencepiece
+safetensors
+einops
+
+# Optional: for later optimization
+vllm
+
+
+
