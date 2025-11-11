@@ -116,8 +116,11 @@ def main() -> None:
     train_texts = prepare_dataset(cfg.dataset_name)
     train_ds = Dataset.from_dict({"text": train_texts})
 
-    # TRL API compatibility: newer versions use `processing_class` instead of `tokenizer`.
-    # Try with `tokenizer` first, fallback to `processing_class` if unsupported.
+    def formatting_func(example: Dict[str, str]) -> str:
+        return example["text"]
+
+    # TRL API compatibility: some versions use `processing_class` instead of `tokenizer`,
+    # and may not accept `dataset_text_field`. Use `formatting_func` for robustness.
     try:
         trainer = SFTTrainer(
             model=model,
@@ -125,7 +128,7 @@ def main() -> None:
             train_dataset=train_ds,
             peft_config=lora_cfg,
             args=sft_cfg,
-            dataset_text_field="text",
+            formatting_func=formatting_func,
         )
     except TypeError as exc:
         if "unexpected keyword argument 'tokenizer'" in str(exc):
@@ -135,7 +138,7 @@ def main() -> None:
                 train_dataset=train_ds,
                 peft_config=lora_cfg,
                 args=sft_cfg,
-                dataset_text_field="text",
+                formatting_func=formatting_func,
             )
         else:
             raise
