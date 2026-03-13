@@ -17,7 +17,8 @@ Hands-on steps
 
 3) Evaluate baseline vs tuned
 - Run `bash scripts/eval.sh` and observe predicted SQL vs gold SQL for 20 samples
-- Compare pre-tuned base model vs after applying LoRA adapters (update model path when ready)
+- Enable `WITH_EXECUTION=1` for optional sqlite execution match
+- Compare pre-tuned base model vs after applying LoRA adapters via `ADAPTER_PATH=...`
 
 4) Serve and iterate
 - `bash scripts/serve.sh` to start a simple API for SQL generation
@@ -33,6 +34,7 @@ Ideas for extension
 
 - Replace base model with Meta Llama 3 8B Instruct and re-run
 - Add LoRA merge/export to produce a single deployable model folder
+- Add robust SQL canonicalization (AST-based) for stricter EM scoring
 - Swap baseline inference with vLLM and benchmark latency/throughput
 
 
