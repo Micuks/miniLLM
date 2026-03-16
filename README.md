@@ -4,7 +4,8 @@ Overview
 
 This repository kickstarts a practical "Algorithm + Infra" project:
 - Fine-tune a 7B–8B instruct model for Text-to-SQL with QLoRA
-- Provide a baseline FastAPI inference service
+- Provide a baseline FastAPI inference service with model caching + adapter loading
+- Include structured evaluation (Exact Match + optional execution match)
 - Prepare for later optimization with vLLM
 
 Hardware & Software
@@ -30,18 +31,20 @@ uv sync
 bash scripts/train.sh
 ```
 
-3) Evaluate on 20 samples
+3) Evaluate on 20 samples (and save a JSON report)
 
 ```bash
 bash scripts/eval.sh
+# optional execution-based metric:
+WITH_EXECUTION=1 bash scripts/eval.sh
 ```
 
-4) Serve a baseline API (FastAPI + Transformers)
+4) Serve a baseline API (FastAPI + Transformers, with in-process model cache)
 
 ```bash
 bash scripts/serve.sh
 # POST http://localhost:8000/generate_sql with JSON:
-# {"schema": "CREATE TABLE ...", "question": "..."}
+# {"schema": "CREATE TABLE ...", "question": "...", "adapter_path": "outputs/sft-qwen2.5-7b-instruct-sql"}
 ```
 
 Dataset (recommended start)
