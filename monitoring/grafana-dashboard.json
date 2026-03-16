@@ -1,0 +1,77 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(minillm_requests_total[1m])",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "Request Latency (p50/p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(minillm_request_duration_seconds_bucket[5m]))",
+          "legendFormat": "p50 {{job}}"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(minillm_request_duration_seconds_bucket[5m]))",
+          "legendFormat": "p95 {{job}}"
+        }
+      ]
+    },
+    {
+      "title": "Tokens Generated Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(minillm_tokens_generated_total[1m])",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "Active Requests",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "minillm_active_requests",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "GPU Memory (MB)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "minillm_gpu_memory_mb",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["minillm"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "miniLLM Dashboard",
+  "uid": "minillm-dashboard"
+}

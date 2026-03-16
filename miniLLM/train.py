@@ -60,9 +60,9 @@ def parse_args() -> TrainArgs:
     )
 
 
-def prepare_dataset(dataset_name: str) -> List[str]:
+def prepare_dataset(dataset_name: str, tokenizer) -> List[str]:
     dataset = load_dataset(dataset_name, split="train")
-    prompts: List[str] = [build_supervised_chat(sample) for sample in dataset]
+    prompts: List[str] = [build_supervised_chat(sample, tokenizer) for sample in dataset]
     return prompts
 
 
@@ -113,7 +113,7 @@ def main() -> None:
         max_steps=cfg.max_steps,
     )
 
-    train_texts = prepare_dataset(cfg.dataset_name)
+    train_texts = prepare_dataset(cfg.dataset_name, tokenizer)
     train_ds = Dataset.from_dict({"text": train_texts})
 
     def formatting_func(example: Dict[str, str]) -> str:

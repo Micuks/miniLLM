@@ -1,4 +1,6 @@
-from typing import Dict
+from __future__ import annotations
+
+from typing import Dict, List
 
 
 SYSTEM_PROMPT = (
@@ -8,31 +10,34 @@ SYSTEM_PROMPT = (
 )
 
 
-def build_supervised_chat(sample: Dict[str, str]) -> str:
-    """Return a single-string prompt for supervised fine-tuning.
-
-    The returned text follows an instruct-style conversation format used by modern chat models.
-    """
-    context = sample.get("context", "").strip()
-    question = sample.get("question", "").strip()
-    answer = sample.get("answer", "").strip()
-
-    return (
-        f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
-        f"{SYSTEM_PROMPT}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n"
-        f"### Database Schema:\n{context}\n\n"
-        f"### Question:\n{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
-        f"{answer}<|eot_id|>"
-    )
-
-
-def build_inference_prompt(schema: str, question: str) -> str:
-    return (
-        f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
-        f"{SYSTEM_PROMPT}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n"
+def _build_messages(schema: str, question: str, answer: str | None = None) -> List[Dict[str, str]]:
+    """Build a chat-style message list for Text-to-SQL."""
+    user_content = (
         f"### Database Schema:\n{schema.strip()}\n\n"
-        f"### Question:\n{question.strip()}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n"
+        f"### Question:\n{question.strip()}"
     )
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_content},
+    ]
+    if answer is not None:
+        messages.append({"role": "assistant", "content": answer.strip()})
+    return messages
 
 
+def build_supervised_chat(sample: Dict[str, str], tokenizer) -> str:
+    """Return a fully-formatted SFT training string using the tokenizer's native chat template."""
+    messages = _build_messages(
+        schema=sample.get("context", ""),
+        question=sample.get("question", ""),
+        answer=sample.get("answer", ""),
+    )
+    return tokenizer.apply_chat_template(messages, tokenize=False)
 
+
+def build_inference_prompt(schema: str, question: str, tokenizer) -> str:
+    """Return an inference prompt with add_generation_prompt=True."""
+    messages = _build_messages(schema=schema, question=question)
+    return tokenizer.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=True
+    )

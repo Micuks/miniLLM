@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  hf-serve:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+
+  vllm-serve:
+    build:
+      context: .
+      dockerfile: Dockerfile.vllm
+    ports:
+      - "8001:8001"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - MODEL_NAME_OR_PATH=Qwen/Qwen2.5-7B-Instruct
+      - MAX_MODEL_LEN=2048
+      - GPU_MEMORY_UTILIZATION=0.90
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - hf-serve
+      - vllm-serve
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana-dashboard.json:/var/lib/grafana/dashboards/minillm.json:ro
+    depends_on:
+      - prometheus

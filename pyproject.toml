@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "miniLLM"
-version = "0.1.0"
-description = "Text-to-SQL fine-tuning and serving kickstart"
+version = "0.2.0"
+description = "Text-to-SQL fine-tuning, quantization, distillation, and production serving"
 authors = [{ name = "miniLLM" }]
 requires-python = ">=3.10"
 dependencies = [
@@ -21,8 +21,23 @@ dependencies = [
     "uvicorn>=0.35.0",
 ]
 
+[project.optional-dependencies]
+quant = [
+    "auto-gptq",
+    "autoawq",
+]
+vllm = [
+    "vllm",
+]
+distill = [
+    "openai",
+]
+bench = [
+    "aiohttp",
+]
+all = [
+    "miniLLM[quant,vllm,distill,bench]",
+]
+
 [tool.setuptools]
 packages = { find = {} }
-
-
-
