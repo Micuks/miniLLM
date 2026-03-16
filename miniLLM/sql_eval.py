@@ -52,6 +52,23 @@ def execution_match(schema_ddl: str, pred_sql: str, gold_sql: str) -> tuple[bool
         return None, str(exc)
 
 
+def execution_match_from_db(
+    db_path: str, pred_sql: str, gold_sql: str
+) -> tuple[bool | None, str | None]:
+    """Execution match against an existing SQLite database file.
+
+    Unlike `execution_match` which builds an in-memory DB from DDL,
+    this connects to a pre-existing database (e.g., Spider dev DBs).
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            pred_rows = _run_query(conn, pred_sql)
+            gold_rows = _run_query(conn, gold_sql)
+        return pred_rows == gold_rows, None
+    except Exception as exc:  # noqa: BLE001
+        return None, str(exc)
+
+
 def score_text2sql(schema_ddl: str, pred_sql: str, gold_sql: str, *, with_execution: bool) -> EvalResult:
     exact = normalize_sql(pred_sql) == normalize_sql(gold_sql)
     exec_match = None

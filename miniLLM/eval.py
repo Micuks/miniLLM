@@ -48,7 +48,7 @@ def main() -> None:
         schema = sample.get("context", "")
         question = sample.get("question", "")
         gold = sample.get("answer", "")
-        prompt = build_inference_prompt(schema, question)
+        prompt = build_inference_prompt(schema, question, tokenizer)
 
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
         output_ids = model.generate(

@@ -21,8 +21,15 @@ sentencepiece
 safetensors
 einops
 
-# Optional: for later optimization
+# vLLM serving
 vllm
 
+# Quantization
+auto-gptq
+autoawq
 
+# Knowledge distillation (API mode)
+openai
 
+# Benchmarking
+aiohttp
