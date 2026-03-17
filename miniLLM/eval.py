@@ -4,9 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
+import torch
 from datasets import load_dataset
 from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 from .prompts import build_inference_prompt
 from .sql_eval import score_text2sql
@@ -19,6 +20,7 @@ def parse_args():
     parser.add_argument("--dataset-name", type=str, default="b-mc2/sql-create-context")
     parser.add_argument("--num-samples", type=int, default=20)
     parser.add_argument("--with-execution", action="store_true")
+    parser.add_argument("--load-in-4bit", action="store_true", help="Load model in 4-bit quantization to save VRAM")
     parser.add_argument("--report-path", type=str, default="outputs/eval_report.json")
     return parser.parse_args()
 
@@ -30,10 +32,17 @@ def main() -> None:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
+    load_kwargs = dict(device_map="auto", trust_remote_code=True)
+    if args.load_in_4bit:
+        load_kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+        )
     base_model = AutoModelForCausalLM.from_pretrained(
         args.model_name_or_path,
-        device_map="auto",
-        trust_remote_code=True,
+        **load_kwargs,
     )
     model = PeftModel.from_pretrained(base_model, args.adapter_path) if args.adapter_path else base_model
 

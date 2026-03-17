@@ -8,7 +8,7 @@ from pathlib import Path
 
 import torch
 from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 from .data.spider import load_spider, SpiderExample
 from .prompts import build_inference_prompt
@@ -29,6 +29,7 @@ def parse_args():
         help="Inference backend"
     )
     parser.add_argument("--vllm-url", type=str, default="http://localhost:8001")
+    parser.add_argument("--load-in-4bit", action="store_true", help="Load model in 4-bit quantization to save VRAM")
     parser.add_argument("--report-path", type=str, default="outputs/spider_eval_report.json")
     return parser.parse_args()
 
@@ -77,8 +78,16 @@ def main() -> None:
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, use_fast=True)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
+        load_kwargs = dict(device_map="auto", trust_remote_code=True)
+        if args.load_in_4bit:
+            load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
+            )
         base_model = AutoModelForCausalLM.from_pretrained(
-            args.model_name_or_path, device_map="auto", trust_remote_code=True
+            args.model_name_or_path, **load_kwargs
         )
         model = PeftModel.from_pretrained(base_model, args.adapter_path) if args.adapter_path else base_model
         model.eval()

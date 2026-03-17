@@ -7,6 +7,7 @@ from typing import Any
 
 
 _WHITESPACE = re.compile(r"\s+")
+_MD_CODE_BLOCK = re.compile(r"```(?:sql)?\s*(.*?)\s*```", re.DOTALL | re.IGNORECASE)
 
 
 @dataclass
@@ -18,13 +19,22 @@ class EvalResult:
     error: str | None = None
 
 
+def extract_sql(text: str) -> str:
+    """Extract SQL from markdown code blocks if present, otherwise return as-is."""
+    m = _MD_CODE_BLOCK.search(text)
+    if m:
+        return m.group(1).strip()
+    return text.strip()
+
+
 def normalize_sql(sql: str) -> str:
     """A lightweight SQL normalizer for stable string matching.
 
     We intentionally avoid heavyweight parser dependencies so this works in minimal
     environments used for interview demos.
     """
-    s = sql.strip().rstrip(";")
+    s = extract_sql(sql)
+    s = s.rstrip(";")
     s = _WHITESPACE.sub(" ", s).strip()
     return s.lower()
 
@@ -45,8 +55,8 @@ def execution_match(schema_ddl: str, pred_sql: str, gold_sql: str) -> tuple[bool
     try:
         with sqlite3.connect(":memory:") as conn:
             conn.executescript(schema_ddl)
-            pred_rows = _run_query(conn, pred_sql)
-            gold_rows = _run_query(conn, gold_sql)
+            pred_rows = _run_query(conn, extract_sql(pred_sql))
+            gold_rows = _run_query(conn, extract_sql(gold_sql))
         return pred_rows == gold_rows, None
     except Exception as exc:  # noqa: BLE001
         return None, str(exc)
@@ -62,8 +72,8 @@ def execution_match_from_db(
     """
     try:
         with sqlite3.connect(db_path) as conn:
-            pred_rows = _run_query(conn, pred_sql)
-            gold_rows = _run_query(conn, gold_sql)
+            pred_rows = _run_query(conn, extract_sql(pred_sql))
+            gold_rows = _run_query(conn, extract_sql(gold_sql))
         return pred_rows == gold_rows, None
     except Exception as exc:  # noqa: BLE001
         return None, str(exc)

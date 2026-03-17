@@ -23,11 +23,14 @@ wheelhouse/
 
 # Project outputs
 outputs/
+!outputs/eval_*.json
+!outputs/spider_eval_*.json
 checkpoints/
 models/
 runs/
 logs/
 data/
+!miniLLM/data/
 cache/
 
 # OS/editor
