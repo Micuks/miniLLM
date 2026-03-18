@@ -39,5 +39,9 @@ all = [
     "miniLLM[quant,vllm,distill,bench]",
 ]
 
+[[tool.uv.index]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+default = true
+
 [tool.setuptools]
 packages = { find = {} }

@@ -1,0 +1,25 @@
+{
+  "summary": {
+    "model_name_or_path": "Qwen/Qwen2.5-3B-Instruct",
+    "adapter_path": null,
+    "dataset_name": "b-mc2/sql-create-context",
+    "num_samples": 200,
+    "exact_match": 0.45,
+    "execution_match": 0.52,
+    "execution_coverage": 1.0
+  },
+  "records": [
+    {
+      "index": 0,
+      "gold_sql": "SELECT COUNT(*) FROM head WHERE age > 56",
+      "exact_match": true,
+      "execution_match": true
+    },
+    {
+      "index": 1,
+      "gold_sql": "SELECT name FROM head ORDER BY age",
+      "exact_match": false,
+      "execution_match": true
+    }
+  ]
+}
