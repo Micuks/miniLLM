@@ -60,8 +60,11 @@ def parse_args() -> TrainArgs:
     )
 
 
-def prepare_dataset(dataset_name: str, tokenizer) -> List[str]:
+def prepare_dataset(dataset_name: str, tokenizer, eval_holdout: int = 500) -> List[str]:
     dataset = load_dataset(dataset_name, split="train")
+    # Hold out the first `eval_holdout` examples for evaluation to prevent data leakage
+    if eval_holdout > 0 and eval_holdout < len(dataset):
+        dataset = dataset.select(range(eval_holdout, len(dataset)))
     prompts: List[str] = [build_supervised_chat(sample, tokenizer) for sample in dataset]
     return prompts
 
@@ -108,7 +111,8 @@ def main() -> None:
         logging_steps=10,
         save_steps=100,
         save_total_limit=2,
-        bf16=True,
+        bf16=torch.cuda.is_bf16_supported(),
+        fp16=not torch.cuda.is_bf16_supported(),
         packing=False,
         max_steps=cfg.max_steps,
     )

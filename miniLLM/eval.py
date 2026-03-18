@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument("--adapter-path", type=str, default=None)
     parser.add_argument("--dataset-name", type=str, default="b-mc2/sql-create-context")
     parser.add_argument("--num-samples", type=int, default=20)
+    parser.add_argument("--eval-offset", type=int, default=0, help="Skip first N samples (for train/eval split)")
     parser.add_argument("--with-execution", action="store_true")
     parser.add_argument("--load-in-4bit", action="store_true", help="Load model in 4-bit quantization to save VRAM")
     parser.add_argument("--report-path", type=str, default="outputs/eval_report.json")
@@ -46,7 +47,9 @@ def main() -> None:
     )
     model = PeftModel.from_pretrained(base_model, args.adapter_path) if args.adapter_path else base_model
 
-    ds = load_dataset(args.dataset_name, split="train").select(range(args.num_samples))
+    full_ds = load_dataset(args.dataset_name, split="train")
+    end = min(args.eval_offset + args.num_samples, len(full_ds))
+    ds = full_ds.select(range(args.eval_offset, end))
 
     exact_hits = 0
     exec_hits = 0
