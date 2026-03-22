@@ -94,7 +94,8 @@ def main() -> None:
         logging_steps=10,
         save_steps=100,
         save_total_limit=2,
-        bf16=True,
+        bf16=torch.cuda.is_bf16_supported(),
+        fp16=not torch.cuda.is_bf16_supported(),
         max_steps=args.max_steps if args.max_steps else -1,
         remove_unused_columns=False,
     )

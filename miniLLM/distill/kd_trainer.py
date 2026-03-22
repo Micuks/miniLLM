@@ -75,6 +75,22 @@ class KDDataset(TorchDataset):
         }
 
 
+def kd_collate_fn(features: list[dict]) -> dict:
+    """Custom collate that handles teacher_top_k_logprobs (list of dicts)."""
+    import torch
+
+    batch = {}
+    for key in ("input_ids", "attention_mask", "labels", "teacher_token_ids"):
+        if key in features[0]:
+            batch[key] = torch.stack([f[key] for f in features])
+
+    # Keep teacher_top_k_logprobs as a list (not tensorizable)
+    if "teacher_top_k_logprobs" in features[0]:
+        batch["teacher_top_k_logprobs"] = [f["teacher_top_k_logprobs"] for f in features]
+
+    return batch
+
+
 class KDTrainer(Trainer):
     """Trainer with custom KD loss: alpha*SFT + beta*KD_word + gamma*KD_seq."""
 
@@ -87,6 +103,8 @@ class KDTrainer(Trainer):
         kd_temperature: float = 4.0,
         **kwargs,
     ):
+        # Force our custom collate
+        kwargs.setdefault("data_collator", kd_collate_fn)
         super().__init__(*args, **kwargs)
         self.alpha = alpha
         self.beta = beta
