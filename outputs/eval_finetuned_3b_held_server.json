@@ -1,0 +1,1813 @@
+{
+  "summary": {
+    "model_name_or_path": "Qwen/Qwen2.5-3B-Instruct",
+    "adapter_path": "outputs/sft-qwen2.5-3b-instruct-sql",
+    "dataset_name": "b-mc2/sql-create-context",
+    "num_samples": 200,
+    "exact_match": 0.83,
+    "execution_match": 1.0,
+    "execution_coverage": 1.0
+  },
+  "records": [
+    {
+      "index": 0,
+      "question": "How many strokes for arnold palmer with a to par of greater than 9?",
+      "pred_sql": "SELECT SUM(total) FROM table_name_69 WHERE to_par > 9 AND player = \"arnold palmer\"",
+      "gold_sql": "SELECT AVG(total) FROM table_name_69 WHERE to_par > 9 AND player = \"arnold palmer\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 1,
+      "question": "What was the score to par in 1960?",
+      "pred_sql": "SELECT to_par FROM table_name_74 WHERE year_s__won = \"1960\"",
+      "gold_sql": "SELECT to_par FROM table_name_74 WHERE year_s__won = \"1960\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 2,
+      "question": "What is the earliest first game for a rugby team that has 7 lost games and 0 draws?",
+      "pred_sql": "SELECT MIN(first_game) FROM table_name_78 WHERE lost = \"7\" AND drawn = \"0\"",
+      "gold_sql": "SELECT MIN(first_game) FROM table_name_78 WHERE lost = 7 AND drawn < 0",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 3,
+      "question": "How many games were played by a team that won 0.00% of their games and 0 draws?",
+      "pred_sql": "SELECT AVG(played) FROM table_name_55 WHERE percentage = \"0.00%\" AND drawn = \"0\"",
+      "gold_sql": "SELECT SUM(played) FROM table_name_55 WHERE percentage = \"0.00%\" AND drawn < 0",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 4,
+      "question": "Name the 1st match for brisbane bears",
+      "pred_sql": "SELECT 1 AS st_match FROM table_name_61 WHERE team = \"brisbane bears\"",
+      "gold_sql": "SELECT 1 AS st_match FROM table_name_61 WHERE team = \"brisbane bears\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 5,
+      "question": "Name the lost for matches of 1 928",
+      "pred_sql": "SELECT lost FROM table_name_66 WHERE matches = \"1 928\"",
+      "gold_sql": "SELECT lost FROM table_name_66 WHERE matches = \"1 928\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 6,
+      "question": "Name the lost for % won of 55.37",
+      "pred_sql": "SELECT lost FROM table_name_64 WHERE _percentage_won = \"55.37\"",
+      "gold_sql": "SELECT lost FROM table_name_64 WHERE _percentage_won = \"55.37\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 7,
+      "question": "Name the matches for gold coast",
+      "pred_sql": "SELECT matches FROM table_name_11 WHERE team = \"gold coast\"",
+      "gold_sql": "SELECT matches FROM table_name_11 WHERE team = \"gold coast\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 8,
+      "question": "Name the lost for % won of 55.37",
+      "pred_sql": "SELECT lost FROM table_name_46 WHERE _percentage_won = \"55.37\"",
+      "gold_sql": "SELECT lost FROM table_name_46 WHERE _percentage_won = \"55.37\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 9,
+      "question": "What is the year when cable was 4.6%?",
+      "pred_sql": "SELECT year FROM table_name_99 WHERE cable = \"4.6%\"",
+      "gold_sql": "SELECT year FROM table_name_99 WHERE cable = \"4.6%\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 10,
+      "question": "What is the other for 2012?",
+      "pred_sql": "SELECT other FROM table_name_54 WHERE year = \"2012\"",
+      "gold_sql": "SELECT other FROM table_name_54 WHERE year = \"2012\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 11,
+      "question": "What is the xDSL for the other of 0.6% and FTTx of 35.4%?",
+      "pred_sql": "SELECT xdsl FROM table_name_1 WHERE other = \"0.6%\" AND fttx = \"35.4%\"",
+      "gold_sql": "SELECT xdsl FROM table_name_1 WHERE other = \"0.6%\" AND fttx = \"35.4%\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 12,
+      "question": "What is the other for a 78.2% xDSL?",
+      "pred_sql": "SELECT other FROM table_name_15 WHERE xdsl = \"78.2%\"",
+      "gold_sql": "SELECT other FROM table_name_15 WHERE xdsl = \"78.2%\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 13,
+      "question": "What is the xDSL in 2010 when the other was 0.6%?",
+      "pred_sql": "SELECT xdsl FROM table_name_55 WHERE other = \"0.6%\" AND year = \"2010\"",
+      "gold_sql": "SELECT xdsl FROM table_name_55 WHERE other = \"0.6%\" AND year = \"2010\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 14,
+      "question": "Which date has a Result of won, and a Score of 1-0?",
+      "pred_sql": "SELECT date FROM table_name_23 WHERE result = \"won\" AND score = \"1-0\"",
+      "gold_sql": "SELECT date FROM table_name_23 WHERE result = \"won\" AND score = \"1-0\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 15,
+      "question": "Which result has a Date of november 2, 2007?",
+      "pred_sql": "SELECT result FROM table_name_86 WHERE date = \"november 2, 2007\"",
+      "gold_sql": "SELECT result FROM table_name_86 WHERE date = \"november 2, 2007\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 16,
+      "question": "Which Competition has a Score of 2-0?",
+      "pred_sql": "SELECT competition FROM table_name_7 WHERE score = \"2-0\"",
+      "gold_sql": "SELECT competition FROM table_name_7 WHERE score = \"2-0\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 17,
+      "question": "Which Venue has a Date of january 9, 2011?",
+      "pred_sql": "SELECT venue FROM table_name_51 WHERE date = \"january 9, 2011\"",
+      "gold_sql": "SELECT venue FROM table_name_51 WHERE date = \"january 9, 2011\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 18,
+      "question": "What is the termination of mission date of the representative with a presentation of credentials date on July 4, 1898?",
+      "pred_sql": "SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = \"july 4, 1898\"",
+      "gold_sql": "SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = \"july 4, 1898\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 19,
+      "question": "What is the presentation of credentials date of raúl h. castro, who has a title of ambassador extraordinary and plenipotentiary?",
+      "pred_sql": "SELECT presentation_of_credentials FROM table_name_7 WHERE title = \"ambassador extraordinary and plenipotentiary\" AND representative = \"raúl h. castro\"",
+      "gold_sql": "SELECT presentation_of_credentials FROM table_name_7 WHERE title = \"ambassador extraordinary and plenipotentiary\" AND representative = \"raúl h. castro\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 20,
+      "question": "Who is the representative with a presentation of credentials date on February 23, 1854?",
+      "pred_sql": "SELECT representative FROM table_name_32 WHERE presentation_of_credentials = \"february 23, 1854\"",
+      "gold_sql": "SELECT representative FROM table_name_32 WHERE presentation_of_credentials = \"february 23, 1854\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 21,
+      "question": "What is the title of the representative appointed by James K. Polk?",
+      "pred_sql": "SELECT title FROM table_name_52 WHERE appointed_by = \"james k. polk\"",
+      "gold_sql": "SELECT title FROM table_name_52 WHERE appointed_by = \"james k. polk\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 22,
+      "question": "What is the termination of mission date of the representative appointed by Franklin Pierce with a title of chargé d'affaires?",
+      "pred_sql": "SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = \"franklin pierce\" AND title = \"chargé d'affaires\"",
+      "gold_sql": "SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = \"franklin pierce\" AND title = \"chargé d'affaires\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 23,
+      "question": "What is the Stadium held on november 29?",
+      "pred_sql": "SELECT stadium FROM table_name_41 WHERE date = \"november 29\"",
+      "gold_sql": "SELECT stadium FROM table_name_41 WHERE date = \"november 29\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 24,
+      "question": "Who is the Visiting team on december 20?",
+      "pred_sql": "SELECT visiting_team FROM table_name_99 WHERE date = \"december 20\"",
+      "gold_sql": "SELECT visiting_team FROM table_name_99 WHERE date = \"december 20\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 25,
+      "question": "Which Stadium has a Visiting team of pittsburgh steelers?",
+      "pred_sql": "SELECT stadium FROM table_name_44 WHERE visiting_team = \"pittsburgh steelers\"",
+      "gold_sql": "SELECT stadium FROM table_name_44 WHERE visiting_team = \"pittsburgh steelers\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 26,
+      "question": "Who is the Host team that has a chicago bears as a visiting team?",
+      "pred_sql": "SELECT host_team FROM table_name_61 WHERE visiting_team = \"chicago bears\"",
+      "gold_sql": "SELECT host_team FROM table_name_61 WHERE visiting_team = \"chicago bears\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 27,
+      "question": "What is the Final score on november 22?",
+      "pred_sql": "SELECT final_score FROM table_name_48 WHERE date = \"november 22\"",
+      "gold_sql": "SELECT final_score FROM table_name_48 WHERE date = \"november 22\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 28,
+      "question": "What is the Host team that has indianapolis colts as a Visiting team?",
+      "pred_sql": "SELECT host_team FROM table_name_71 WHERE visiting_team = \"indianapolis colts\"",
+      "gold_sql": "SELECT host_team FROM table_name_71 WHERE visiting_team = \"indianapolis colts\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 29,
+      "question": "Who won when np cooper av cooke was runner up?",
+      "pred_sql": "SELECT winners FROM table_name_34 WHERE runners_up = \"np cooper av cooke\"",
+      "gold_sql": "SELECT winners FROM table_name_34 WHERE runners_up = \"np cooper av cooke\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 30,
+      "question": "What was the record of the match that had a time of 1:44?",
+      "pred_sql": "SELECT record FROM table_name_35 WHERE time = \"1:44\"",
+      "gold_sql": "SELECT record FROM table_name_35 WHERE time = \"1:44\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 31,
+      "question": "Who was the opponent at GCM – D.O.G. 4?",
+      "pred_sql": "SELECT opponent FROM table_name_54 WHERE event = \"gcm – d.o.g. 4\"",
+      "gold_sql": "SELECT opponent FROM table_name_54 WHERE event = \"gcm – d.o.g. 4\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 32,
+      "question": "What was the location of the match that ended before round 2, against Hikaru Sato?",
+      "pred_sql": "SELECT location FROM table_name_48 WHERE round < 2 AND opponent = \"hikaru sato\"",
+      "gold_sql": "SELECT location FROM table_name_48 WHERE round < 2 AND opponent = \"hikaru sato\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 33,
+      "question": "What was the Company or Product name where Entrepreneurs Geoff and Colette Bell requested £75,000?",
+      "pred_sql": "SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = \"75,000\" AND entrepreneur_s_ = \"geoff and colette bell\"",
+      "gold_sql": "SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = \"75,000\" AND entrepreneur_s_ = \"geoff and colette bell\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 34,
+      "question": "Which Investing Dragon(s) belong to Episode 9 with the Entrepreneur Ashley Sayed?",
+      "pred_sql": "SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = \"9\" AND entrepreneur_s_ = \"ashley sayed\"",
+      "gold_sql": "SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = \"episode 9\" AND entrepreneur_s_ = \"ashley sayed\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 35,
+      "question": "What Episode did Entrepreneur(s) Luke Booth and Christopher Eves take part?",
+      "pred_sql": "SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = \"luke booth and christopher eves\"",
+      "gold_sql": "SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = \"luke booth and christopher eves\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 36,
+      "question": "Which Company or Product name requested £70,000 on Episode 11?",
+      "pred_sql": "SELECT company_or_product_name FROM table_name_17 WHERE episode = \"11\" AND money_requested__£_ = \"70,000\"",
+      "gold_sql": "SELECT company_or_product_name FROM table_name_17 WHERE episode = \"episode 11\" AND money_requested__£_ = \"70,000\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 37,
+      "question": "What is stephen arigbabu's height?",
+      "pred_sql": "SELECT MAX(height) FROM table_name_52 WHERE player = \"stephen arigbabu\"",
+      "gold_sql": "SELECT MIN(height) FROM table_name_52 WHERE player = \"stephen arigbabu\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 38,
+      "question": "For all games with los angeles as visitor, what is the highest attendance of all?",
+      "pred_sql": "SELECT MAX(attendance) FROM table_name_12 WHERE visitor = \"los angeles\"",
+      "gold_sql": "SELECT MAX(attendance) FROM table_name_12 WHERE visitor = \"los angeles\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 39,
+      "question": "For all games with calgary as home, what is the average number of attendees?",
+      "pred_sql": "SELECT AVG(attendance) FROM table_name_1 WHERE home = \"calgary\"",
+      "gold_sql": "SELECT AVG(attendance) FROM table_name_1 WHERE home = \"calgary\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 40,
+      "question": "Who is no. 5 when Lena Claudisabel is no. 1 and Lena Sylvie is no. 2?",
+      "pred_sql": "SELECT no5 FROM table_name_29 WHERE no1 = \"lena claudisabel\" AND no2 = \"lena sylvie\"",
+      "gold_sql": "SELECT no5 FROM table_name_29 WHERE no1 = \"lena claudisabel\" AND no2 = \"lena sylvie\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 41,
+      "question": "Who is no.3 when Claudio Sylvie is no.1?",
+      "pred_sql": "SELECT no3 FROM table_name_62 WHERE no1 = \"claudio sylvie\"",
+      "gold_sql": "SELECT no3 FROM table_name_62 WHERE no1 = \"claudio sylvie\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 42,
+      "question": "What was the score of the game when the record was 18-20?",
+      "pred_sql": "SELECT score FROM table_name_77 WHERE record = \"18-20\"",
+      "gold_sql": "SELECT score FROM table_name_77 WHERE record = \"18-20\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 43,
+      "question": "Who was the Partner for Flavio Cipolla Simone Vagnozzi Opponents in the final?",
+      "pred_sql": "SELECT partner FROM table_name_7 WHERE opponents_in_the_final = \"flavio cipolla simone vagnozzi\"",
+      "gold_sql": "SELECT partner FROM table_name_7 WHERE opponents_in_the_final = \"flavio cipolla simone vagnozzi\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 44,
+      "question": "Who were the Opponents in the final that played on a carpet (i) Surface?",
+      "pred_sql": "SELECT opponents_in_the_final FROM table_name_62 WHERE surface = \"carpet (i)\"",
+      "gold_sql": "SELECT opponents_in_the_final FROM table_name_62 WHERE surface = \"carpet (i)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 45,
+      "question": "Played on Clay Surface, what was the Score of the Dortmund Tournament?",
+      "pred_sql": "SELECT score_in_the_final FROM table_name_70 WHERE surface = \"clay\" AND tournament = \"dortmund\"",
+      "gold_sql": "SELECT score_in_the_final FROM table_name_70 WHERE surface = \"clay\" AND tournament = \"dortmund\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 46,
+      "question": "Who is Partner Frederik Nielsen's Opponents in the final?",
+      "pred_sql": "SELECT opponents_in_the_final FROM table_name_38 WHERE partner = \"frederik nielsen\"",
+      "gold_sql": "SELECT opponents_in_the_final FROM table_name_38 WHERE partner = \"frederik nielsen\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 47,
+      "question": "What is Partner Tomas Behrend's Score in the final?",
+      "pred_sql": "SELECT score_in_the_final FROM table_name_48 WHERE partner = \"tomas behrend\"",
+      "gold_sql": "SELECT score_in_the_final FROM table_name_48 WHERE partner = \"tomas behrend\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 48,
+      "question": "What Country does Larry Mize play for?",
+      "pred_sql": "SELECT country FROM table_name_67 WHERE player = \"larry mize\"",
+      "gold_sql": "SELECT country FROM table_name_67 WHERE player = \"larry mize\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 49,
+      "question": "What is the winning total from 1976?",
+      "pred_sql": "SELECT SUM(total) FROM table_name_20 WHERE year_s__won = \"1976\"",
+      "gold_sql": "SELECT MAX(total) FROM table_name_20 WHERE year_s__won = \"1976\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 50,
+      "question": "What year was owner Michael E. Pegram's last win?",
+      "pred_sql": "SELECT MAX(year) FROM table_name_42 WHERE owner = \"michael e. pegram\"",
+      "gold_sql": "SELECT MAX(year) FROM table_name_42 WHERE owner = \"michael e. pegram\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 51,
+      "question": "Who is the trainer for Cherry Valley Farm?",
+      "pred_sql": "SELECT trainer FROM table_name_94 WHERE owner = \"cherry valley farm\"",
+      "gold_sql": "SELECT trainer FROM table_name_94 WHERE owner = \"cherry valley farm\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 52,
+      "question": "Who owned winner Blueeyesintherein after 2009?",
+      "pred_sql": "SELECT owner FROM table_name_75 WHERE year > 2009 AND winner = \"blueeyesintherein\"",
+      "gold_sql": "SELECT owner FROM table_name_75 WHERE year > 2009 AND winner = \"blueeyesintherein\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 53,
+      "question": "Who was the Blue Jays' opponent when their record was 33-15?",
+      "pred_sql": "SELECT opponent FROM table_name_8 WHERE record = \"33-15\"",
+      "gold_sql": "SELECT opponent FROM table_name_8 WHERE record = \"33-15\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 54,
+      "question": "Who did the Blue Jays lose to when their record was 36-20?",
+      "pred_sql": "SELECT loss FROM table_name_3 WHERE record = \"36-20\"",
+      "gold_sql": "SELECT loss FROM table_name_3 WHERE record = \"36-20\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 55,
+      "question": "What is the rank of the qual 141.471?",
+      "pred_sql": "SELECT rank FROM table_name_3 WHERE qual = \"141.471\"",
+      "gold_sql": "SELECT rank FROM table_name_3 WHERE qual = \"141.471\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 56,
+      "question": "What is the start of lap 55?",
+      "pred_sql": "SELECT start FROM table_name_18 WHERE laps = \"55\"",
+      "gold_sql": "SELECT start FROM table_name_18 WHERE laps = 55",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 57,
+      "question": "What is rank of the year 1956?",
+      "pred_sql": "SELECT rank FROM table_name_63 WHERE year = \"1956\"",
+      "gold_sql": "SELECT rank FROM table_name_63 WHERE year = \"1956\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 58,
+      "question": "What is the lap number for the rank of 13?",
+      "pred_sql": "SELECT laps FROM table_name_78 WHERE rank = \"13\"",
+      "gold_sql": "SELECT laps FROM table_name_78 WHERE rank = \"13\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 59,
+      "question": "What is the rank for 1961?",
+      "pred_sql": "SELECT rank FROM table_name_33 WHERE year = \"1961\"",
+      "gold_sql": "SELECT rank FROM table_name_33 WHERE year = \"1961\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 60,
+      "question": "What is the sum of the lap with a finish of 24?",
+      "pred_sql": "SELECT SUM(laps) FROM table_name_60 WHERE finish = \"24\"",
+      "gold_sql": "SELECT SUM(laps) FROM table_name_60 WHERE finish = \"24\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 61,
+      "question": "Which band plays Self Versus Self - Immersion?",
+      "pred_sql": "SELECT band FROM table_name_17 WHERE album_or_song = \"self versus self - immersion\"",
+      "gold_sql": "SELECT band FROM table_name_17 WHERE album_or_song = \"self versus self - immersion\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 62,
+      "question": "What Event used submission (rear naked choke) with 9-4?",
+      "pred_sql": "SELECT event FROM table_name_11 WHERE method = \"submission (rear naked choke)\" AND record = \"9-4\"",
+      "gold_sql": "SELECT event FROM table_name_11 WHERE method = \"submission (rear naked choke)\" AND record = \"9-4\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 63,
+      "question": "What event was Donald Ouimet involved?",
+      "pred_sql": "SELECT event FROM table_name_41 WHERE opponent = \"donald ouimet\"",
+      "gold_sql": "SELECT event FROM table_name_41 WHERE opponent = \"donald ouimet\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 64,
+      "question": "What event did she finish 3rd in 2010?",
+      "pred_sql": "SELECT event FROM table_name_37 WHERE position = \"3rd\" AND year = 2010",
+      "gold_sql": "SELECT event FROM table_name_37 WHERE position = \"3rd\" AND year = 2010",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 65,
+      "question": "What year did she compete in tampere, finland?",
+      "pred_sql": "SELECT MIN(year) FROM table_name_95 WHERE venue = \"tampere, finland\"",
+      "gold_sql": "SELECT AVG(year) FROM table_name_95 WHERE venue = \"tampere, finland\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 66,
+      "question": "Ben Hogan with a score larger than 66 had a place listed of what?",
+      "pred_sql": "SELECT place FROM table_name_77 WHERE score > 66 AND player = \"ben hogan\"",
+      "gold_sql": "SELECT place FROM table_name_77 WHERE score > 66 AND player = \"ben hogan\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 67,
+      "question": "With a score of 70, this player's name is listed as what?",
+      "pred_sql": "SELECT player FROM table_name_27 WHERE score = \"70\"",
+      "gold_sql": "SELECT player FROM table_name_27 WHERE score = 70",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 68,
+      "question": "With a score smaller than 71 along with a place of t6, what is the To par score?",
+      "pred_sql": "SELECT to_par FROM table_name_69 WHERE score < 71 AND place = \"t6\"",
+      "gold_sql": "SELECT to_par FROM table_name_69 WHERE score < 71 AND place = \"t6\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 69,
+      "question": "Which Hanyu Pinyin has a GDP in 2011 larger than 688.02 billion yuan and a regional population of 8,700,400 in 2010?",
+      "pred_sql": "SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > 688.02 AND regional_population_2010_ = \"8,700,400\"",
+      "gold_sql": "SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > 688.02 AND regional_population_2010_ = \"8,700,400\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 70,
+      "question": "Which Hanzi has a Regional Population of 4,591,972 in 2010?",
+      "pred_sql": "SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = \"4,591,972\"",
+      "gold_sql": "SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = \"4,591,972\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 71,
+      "question": "What is the Name of the person from the Netherlands in a Lane lower than 5, with a Rank better than 5, and a time of less than 55.62?",
+      "pred_sql": "SELECT name FROM table_name_19 WHERE nationality = \"netherlands\" AND lane < 5 AND rank > 5 AND time < 55.62",
+      "gold_sql": "SELECT name FROM table_name_19 WHERE rank < 5 AND time < 55.62 AND lane < 5 AND nationality = \"netherlands\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 72,
+      "question": "What is the highest Rank of Karen Pickering when she had a time of less than 55.71?",
+      "pred_sql": "SELECT MAX(rank) FROM table_name_59 WHERE name = \"karen pickering\" AND time < 55.71",
+      "gold_sql": "SELECT MAX(rank) FROM table_name_59 WHERE name = \"karen pickering\" AND time < 55.71",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 73,
+      "question": "What is the highest Lane number of a person with a time of 55.94 with a Rank that's bigger than 8?",
+      "pred_sql": "SELECT MAX(lane) FROM table_name_68 WHERE time = \"55.94\" AND rank > 8",
+      "gold_sql": "SELECT MAX(lane) FROM table_name_68 WHERE time > 55.94 AND rank > 8",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 74,
+      "question": "What was the date of the game that had a loss of Burns (0-1)?",
+      "pred_sql": "SELECT date FROM table_name_85 WHERE loss = \"burns (0-1)\"",
+      "gold_sql": "SELECT date FROM table_name_85 WHERE loss = \"burns (0-1)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 75,
+      "question": "What was the loss of the game when the record was 20-16?",
+      "pred_sql": "SELECT loss FROM table_name_77 WHERE record = \"20-16\"",
+      "gold_sql": "SELECT loss FROM table_name_77 WHERE record = \"20-16\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 76,
+      "question": "What was the loss of the game that had an attendance of 18,769?",
+      "pred_sql": "SELECT loss FROM table_name_22 WHERE attendance = \"18,769\"",
+      "gold_sql": "SELECT loss FROM table_name_22 WHERE attendance = \"18,769\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 77,
+      "question": "What was the date of the game that had a loss of Geisel (0-1)?",
+      "pred_sql": "SELECT date FROM table_name_5 WHERE loss = \"geisel (0-1)\"",
+      "gold_sql": "SELECT date FROM table_name_5 WHERE loss = \"geisel (0-1)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 78,
+      "question": "What is the date of the game against the Royals that had an attendance of 12,699?",
+      "pred_sql": "SELECT date FROM table_name_12 WHERE opponent = \"royals\" AND attendance = \"12,699\"",
+      "gold_sql": "SELECT date FROM table_name_12 WHERE opponent = \"royals\" AND attendance = \"12,699\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 79,
+      "question": "When Regions center has a rank less than 11, what is the greatest number o floors?",
+      "pred_sql": "SELECT MAX(floors) FROM table_name_62 WHERE name = \"regions center\" AND rank < 11",
+      "gold_sql": "SELECT MAX(floors) FROM table_name_62 WHERE name = \"regions center\" AND rank < 11",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 80,
+      "question": "What is the average rank for a building with 24 floors?",
+      "pred_sql": "SELECT AVG(rank) FROM table_name_84 WHERE floors = \"24\"",
+      "gold_sql": "SELECT AVG(rank) FROM table_name_84 WHERE floors = 24",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 81,
+      "question": "What is the rank for Omni nashville hotel?",
+      "pred_sql": "SELECT SUM(rank) FROM table_name_89 WHERE name = \"omni nashville hotel\"",
+      "gold_sql": "SELECT SUM(rank) FROM table_name_89 WHERE name = \"omni nashville hotel\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 82,
+      "question": "What is the greatest rank for Fifth third center?",
+      "pred_sql": "SELECT MAX(rank) FROM table_name_27 WHERE name = \"fifth third center\"",
+      "gold_sql": "SELECT MAX(rank) FROM table_name_27 WHERE name = \"fifth third center\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 83,
+      "question": "When a building is 292 (89) ft (m) tall, has less than 23 floors, and ranks less than 14, what is the average year?",
+      "pred_sql": "SELECT AVG(year) FROM table_name_77 WHERE floors < 23 AND height_ft__m_ > 89 AND rank < 14",
+      "gold_sql": "SELECT AVG(year) FROM table_name_77 WHERE floors < 23 AND height_ft__m_ = \"292 (89)\" AND rank < 14",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 84,
+      "question": "What type of regular season/preseason game was played on August 25, 2007?",
+      "pred_sql": "SELECT regular_season___preseason FROM table_name_70 WHERE date = \"august 25, 2007\"",
+      "gold_sql": "SELECT regular_season___preseason FROM table_name_70 WHERE date = \"august 25, 2007\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 85,
+      "question": "In what stadium was the game on August 22, 2008 played?",
+      "pred_sql": "SELECT stadium FROM table_name_36 WHERE date = \"august 22, 2008\"",
+      "gold_sql": "SELECT stadium FROM table_name_36 WHERE date = \"august 22, 2008\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 86,
+      "question": "In what stadium was the home team Dallas Cowboys 21?",
+      "pred_sql": "SELECT stadium FROM table_name_89 WHERE home_team = \"dallas cowboys 21\"",
+      "gold_sql": "SELECT stadium FROM table_name_89 WHERE home_team = \"dallas cowboys 21\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 87,
+      "question": "On what date was the home team the Dallas Cowboys 34?",
+      "pred_sql": "SELECT date FROM table_name_28 WHERE home_team = \"dallas cowboys 34\"",
+      "gold_sql": "SELECT date FROM table_name_28 WHERE home_team = \"dallas cowboys 34\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 88,
+      "question": "Who was the visiting team on October 15, 2006?",
+      "pred_sql": "SELECT visiting_team FROM table_name_59 WHERE date = \"october 15, 2006\"",
+      "gold_sql": "SELECT visiting_team FROM table_name_59 WHERE date = \"october 15, 2006\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 89,
+      "question": "What's the smallest amount of Laps that had a finish of 7 with a start of 6?",
+      "pred_sql": "SELECT MIN(laps) FROM table_name_49 WHERE finish = \"7\" AND start = \"6\"",
+      "gold_sql": "SELECT MIN(laps) FROM table_name_49 WHERE finish = \"7\" AND start = \"6\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 90,
+      "question": "What is the smallest bronze with a Gold smaller than 3, and a Silver larger than 1, and a Rank of 6, and a Nation of hungary?",
+      "pred_sql": "SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = \"6\" AND nation = \"hungary\"",
+      "gold_sql": "SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = 6 AND nation = \"hungary\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 91,
+      "question": "What is the average bronze with a rank of 4 and less than 1 silver?",
+      "pred_sql": "SELECT AVG(bronze) FROM table_name_73 WHERE rank = \"4\" AND silver < 1",
+      "gold_sql": "SELECT AVG(bronze) FROM table_name_73 WHERE rank = 4 AND silver < 1",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 92,
+      "question": "Which silver has a Gold larger than 4, and a Rank of 1?",
+      "pred_sql": "SELECT silver FROM table_name_74 WHERE gold > 4 AND rank = \"1\"",
+      "gold_sql": "SELECT silver FROM table_name_74 WHERE gold > 4 AND rank = 1",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 93,
+      "question": "What lowest bronze has a total of 3, a Nation of hungary, and a Gold smaller than 0?",
+      "pred_sql": "SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = \"hungary\" AND gold < 0",
+      "gold_sql": "SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = \"hungary\" AND gold < 0",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 94,
+      "question": "How many gold have a Rank of 7, and a Bronze of 1, and a Silver smaller than 0?",
+      "pred_sql": "SELECT AVG(gold) FROM table_name_29 WHERE rank = \"7\" AND bronze = 1 AND silver < 0",
+      "gold_sql": "SELECT SUM(gold) FROM table_name_29 WHERE rank = 7 AND bronze = 1 AND silver < 0",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 95,
+      "question": "How many Totals have a Silver smaller than 2, and a Nation of ukraine, and a Gold smaller than 3?",
+      "pred_sql": "SELECT COUNT(total) FROM table_name_71 WHERE silver < 2 AND nation = \"ukraine\" AND gold < 3",
+      "gold_sql": "SELECT COUNT(total) FROM table_name_71 WHERE silver < 2 AND nation = \"ukraine\" AND gold < 3",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 96,
+      "question": "Which player played in 2007?",
+      "pred_sql": "SELECT player FROM table_name_17 WHERE season = \"2007\"",
+      "gold_sql": "SELECT player FROM table_name_17 WHERE season = \"2007\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 97,
+      "question": "What was Min Patel's bowling?",
+      "pred_sql": "SELECT bowling FROM table_name_7 WHERE player = \"min patel\"",
+      "gold_sql": "SELECT bowling FROM table_name_7 WHERE player = \"min patel\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 98,
+      "question": "Who was the week 1 nomination when the week 2 nomination was Piia Jarkko?",
+      "pred_sql": "SELECT week_1 FROM table_name_35 WHERE week_2 = \"piia jarkko\"",
+      "gold_sql": "SELECT week_1 FROM table_name_35 WHERE week_2 = \"piia jarkko\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 99,
+      "question": "Who was the week 12 nomination when the week 9 nomination walked (day 11)?",
+      "pred_sql": "SELECT week_12 FROM table_name_10 WHERE week_9 = \"walked (day 11)\"",
+      "gold_sql": "SELECT week_12 FROM table_name_10 WHERE week_9 = \"walked (day 11)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 100,
+      "question": "What is the week 12 nomination that had a week 1 nomination of Maria Maxine and a week 2 nomination of Henri Satu?",
+      "pred_sql": "SELECT week_12 FROM table_name_1 WHERE week_1 = \"maria maxine\" AND week_2 = \"henri satu\"",
+      "gold_sql": "SELECT week_12 FROM table_name_1 WHERE week_1 = \"maria maxine\" AND week_2 = \"henri satu\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 101,
+      "question": "Name the heightfor city of license of malone, ny",
+      "pred_sql": "SELECT height_m___ft__ FROM table_name_44 WHERE city_of_license = \"malone, ny\"",
+      "gold_sql": "SELECT height_m___ft__ FROM table_name_44 WHERE city_of_license = \"malone, ny\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 102,
+      "question": "Name the class with call sign of wmhn",
+      "pred_sql": "SELECT class FROM table_name_74 WHERE call_sign = \"wmhn\"",
+      "gold_sql": "SELECT class FROM table_name_74 WHERE call_sign = \"wmhn\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 103,
+      "question": "Name the frequency with class of b",
+      "pred_sql": "SELECT frequency FROM table_name_78 WHERE class = \"b\"",
+      "gold_sql": "SELECT frequency FROM table_name_78 WHERE class = \"b\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 104,
+      "question": "Name the city of license with frequency of 90.1 fm",
+      "pred_sql": "SELECT city_of_license FROM table_name_37 WHERE frequency = \"90.1 fm\"",
+      "gold_sql": "SELECT city_of_license FROM table_name_37 WHERE frequency = \"90.1 fm\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 105,
+      "question": "Name the total number of ERP/Power W for frequency of 89.3 fm and facility ID less than 40430",
+      "pred_sql": "SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = \"89.3 fm\" AND facility_id < 40430",
+      "gold_sql": "SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = \"89.3 fm\" AND facility_id < 40430",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 106,
+      "question": "What is the Engine(s) that has  f Tyres in 1971?",
+      "pred_sql": "SELECT engine_s_ FROM table_name_68 WHERE tyres = \"f\" AND year = \"1971\"",
+      "gold_sql": "SELECT engine_s_ FROM table_name_68 WHERE tyres = \"f\" AND year = 1971",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 107,
+      "question": "What was the attendance on June 27?",
+      "pred_sql": "SELECT MAX(att) FROM table_name_6 WHERE date = \"june 27\"",
+      "gold_sql": "SELECT MIN(att) FROM table_name_6 WHERE date = \"june 27\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 108,
+      "question": "Name the surface for 12 september 2006",
+      "pred_sql": "SELECT surface FROM table_name_3 WHERE date = \"12 september 2006\"",
+      "gold_sql": "SELECT surface FROM table_name_3 WHERE date = \"12 september 2006\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 109,
+      "question": "Name the score for opponent in the final being paul baccanello",
+      "pred_sql": "SELECT score FROM table_name_46 WHERE opponent_in_the_final = \"paul baccanello\"",
+      "gold_sql": "SELECT score FROM table_name_46 WHERE opponent_in_the_final = \"paul baccanello\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 110,
+      "question": "Name the surface for 20 march 2007",
+      "pred_sql": "SELECT surface FROM table_name_5 WHERE date = \"20 march 2007\"",
+      "gold_sql": "SELECT surface FROM table_name_5 WHERE date = \"20 march 2007\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 111,
+      "question": "Name the date for opponent in the final being ignasi villacampa",
+      "pred_sql": "SELECT date FROM table_name_5 WHERE opponent_in_the_final = \"ignasi villacampa\"",
+      "gold_sql": "SELECT date FROM table_name_5 WHERE opponent_in_the_final = \"ignasi villacampa\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 112,
+      "question": "Name the tournament for grass surface and opponent in the final being paul baccanello",
+      "pred_sql": "SELECT tournament FROM table_name_11 WHERE surface = \"grass\" AND opponent_in_the_final = \"paul baccanello\"",
+      "gold_sql": "SELECT tournament FROM table_name_11 WHERE surface = \"grass\" AND opponent_in_the_final = \"paul baccanello\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 113,
+      "question": "When is the earliest year in milan that guillermo vilas was champion?",
+      "pred_sql": "SELECT MIN(year) FROM table_name_43 WHERE location = \"milan\" AND champion = \"guillermo vilas\"",
+      "gold_sql": "SELECT MIN(year) FROM table_name_43 WHERE location = \"milan\" AND champion = \"guillermo vilas\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 114,
+      "question": "Where in 1985 was tim mayotte runner up?",
+      "pred_sql": "SELECT location FROM table_name_13 WHERE year = \"1985\" AND runner_up = \"tim mayotte\"",
+      "gold_sql": "SELECT location FROM table_name_13 WHERE year > 1985 AND runner_up = \"tim mayotte\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 115,
+      "question": "What was the score when stefan edberg won after 1978?",
+      "pred_sql": "SELECT score FROM table_name_68 WHERE year > 1978 AND champion = \"stefan edberg\"",
+      "gold_sql": "SELECT score FROM table_name_68 WHERE year > 1978 AND champion = \"stefan edberg\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 116,
+      "question": "What is the Facility ID that has a City of license of wheeling, and a ERP kW less than 4.5?",
+      "pred_sql": "SELECT MAX(facility_id) FROM table_name_52 WHERE city_of_license = \"wheeling\" AND erp_kw < 4.5",
+      "gold_sql": "SELECT MAX(facility_id) FROM table_name_52 WHERE city_of_license = \"wheeling\" AND erp_kw < 4.5",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 117,
+      "question": "What is the City of license that has a ERP kW more than 4.5 and w23dr-d?",
+      "pred_sql": "SELECT city_of_license FROM table_name_45 WHERE erp_kw > 4.5 AND station = \"w23dr-d\"",
+      "gold_sql": "SELECT city_of_license FROM table_name_45 WHERE erp_kw > 4.5 AND station = \"w23dr-d\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 118,
+      "question": "What is the location that has a date of demolition of 1940 and has a church named Christ Church Greyfriars?",
+      "pred_sql": "SELECT location FROM table_name_46 WHERE date_of_demolition = \"1940\" AND church_name = \"christ church greyfriars\"",
+      "gold_sql": "SELECT location FROM table_name_46 WHERE date_of_demolition = 1940 AND church_name = \"christ church greyfriars\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 119,
+      "question": "How many dates of demolition are located on Wood Street?",
+      "pred_sql": "SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = \"wood street\"",
+      "gold_sql": "SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = \"wood street\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 120,
+      "question": "What was Olga Govortsova's score when she played on a clay surface on 19 May 2008?",
+      "pred_sql": "SELECT score FROM table_name_11 WHERE surface = \"clay\" AND date = \"19 may 2008\"",
+      "gold_sql": "SELECT score FROM table_name_11 WHERE surface = \"clay\" AND date = \"19 may 2008\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 121,
+      "question": "What was Olga Govortsova's outcome when she played on a grass surface?",
+      "pred_sql": "SELECT outcome FROM table_name_59 WHERE surface = \"grass\"",
+      "gold_sql": "SELECT outcome FROM table_name_59 WHERE surface = \"grass\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 122,
+      "question": "What was Olga Govortsova's goal when she played on a clay surface on 26 May 2012?",
+      "pred_sql": "SELECT score FROM table_name_84 WHERE surface = \"clay\" AND date = \"26 may 2012\"",
+      "gold_sql": "SELECT score FROM table_name_84 WHERE surface = \"clay\" AND date = \"26 may 2012\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 123,
+      "question": "Which mountain range has a rank of 19?",
+      "pred_sql": "SELECT mountain_range FROM table_name_35 WHERE rank = \"19\"",
+      "gold_sql": "SELECT mountain_range FROM table_name_35 WHERE rank = 19",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 124,
+      "question": "Which location includes Coast Mountains with a rank less than 18 at Skihist Mountain?",
+      "pred_sql": "SELECT location FROM table_name_41 WHERE mountain_peak = \"coast mountains\" AND mountain_range = \"skihist mountain\" AND rank < 18",
+      "gold_sql": "SELECT location FROM table_name_41 WHERE mountain_range = \"coast mountains\" AND rank < 18 AND mountain_peak = \"skihist mountain\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 125,
+      "question": "Which mountain range includes Mount Hubbard?",
+      "pred_sql": "SELECT mountain_range FROM table_name_64 WHERE mountain_peak = \"hubbard\"",
+      "gold_sql": "SELECT mountain_range FROM table_name_64 WHERE mountain_peak = \"mount hubbard\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 126,
+      "question": "Which province includes Axel Heiberg Island?",
+      "pred_sql": "SELECT province FROM table_name_25 WHERE mountain_range = \"axel heiberg island\"",
+      "gold_sql": "SELECT province FROM table_name_25 WHERE mountain_range = \"axel heiberg island\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 127,
+      "question": "What are the notes of events that finished in 12th position?",
+      "pred_sql": "SELECT notes FROM table_name_94 WHERE position = \"12th\"",
+      "gold_sql": "SELECT notes FROM table_name_94 WHERE position = \"12th\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 128,
+      "question": "Which venue was finished in 2nd position in 1985?",
+      "pred_sql": "SELECT venue FROM table_name_40 WHERE position = \"2nd\" AND year = 1985",
+      "gold_sql": "SELECT venue FROM table_name_40 WHERE position = \"2nd\" AND year = 1985",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 129,
+      "question": "What is the average year of events that took place in Antwerp, Belgium?",
+      "pred_sql": "SELECT AVG(year) FROM table_name_97 WHERE venue = \"antwerp, belgium\"",
+      "gold_sql": "SELECT AVG(year) FROM table_name_97 WHERE venue = \"antwerp, belgium\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 130,
+      "question": "What's the year of the event that took place most recently in Antwerp, Belgium with team competition notes?",
+      "pred_sql": "SELECT MAX(year) FROM table_name_42 WHERE notes = \"team competition\" AND venue = \"antwerp, belgium\"",
+      "gold_sql": "SELECT MAX(year) FROM table_name_42 WHERE notes = \"team competition\" AND venue = \"antwerp, belgium\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 131,
+      "question": "What was the label's format LP and catalog of CH-9192?",
+      "pred_sql": "SELECT label FROM table_name_76 WHERE format = \"lp\" AND catalog = \"ch-9192\"",
+      "gold_sql": "SELECT label FROM table_name_76 WHERE format = \"lp\" AND catalog = \"ch-9192\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 132,
+      "question": "When was Catalog CHD-9192 published?",
+      "pred_sql": "SELECT date FROM table_name_66 WHERE catalog = \"chd-9192\"",
+      "gold_sql": "SELECT date FROM table_name_66 WHERE catalog = \"chd-9192\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 133,
+      "question": "I need the FCC info on the radio Frequency MHz 107.5?",
+      "pred_sql": "SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = \"107.5\"",
+      "gold_sql": "SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = 107.5",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 134,
+      "question": "Give me the MHz Frequency of Allapattah, Florida.",
+      "pred_sql": "SELECT frequency_mhz FROM table_name_28 WHERE city_of_license = \"allapattah, florida\"",
+      "gold_sql": "SELECT frequency_mhz FROM table_name_28 WHERE city_of_license = \"allapattah, florida\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 135,
+      "question": "What class does the w298ak sign belong to?",
+      "pred_sql": "SELECT class FROM table_name_10 WHERE call_sign = \"w298ak\"",
+      "gold_sql": "SELECT class FROM table_name_10 WHERE call_sign = \"w298ak\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 136,
+      "question": "What class is ERP W of 800?",
+      "pred_sql": "SELECT class FROM table_name_9 WHERE erp_w = \"800\"",
+      "gold_sql": "SELECT class FROM table_name_9 WHERE erp_w = 800",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 137,
+      "question": "What is the total of Goals Conceded that has Points smaller than 21 and a Lost thats smaller than 8?",
+      "pred_sql": "SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8",
+      "gold_sql": "SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 138,
+      "question": "What's the total of Lost that's got Points larger than 28, Draw of 5, and Place that's smaller than 1?",
+      "pred_sql": "SELECT SUM(lost) FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1",
+      "gold_sql": "SELECT SUM(lost) FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 139,
+      "question": "What's the total of Goals Scored with Points that's smaller than 27, and a Team of C.D. Atlético Balboa?",
+      "pred_sql": "SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = \"c.d. atlético balboa\"",
+      "gold_sql": "SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = \"c.d. atlético balboa\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 140,
+      "question": "What is listed as the Highest Played and that has a Place that is larger than 10?",
+      "pred_sql": "SELECT MAX(played) FROM table_name_9 WHERE place > 10",
+      "gold_sql": "SELECT MAX(played) FROM table_name_9 WHERE place > 10",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 141,
+      "question": "What is listed as the Highest Played, has Points of 17, and Draw that is smaller than 5?",
+      "pred_sql": "SELECT MAX(played) FROM table_name_19 WHERE points = \"17\" AND draw < 5",
+      "gold_sql": "SELECT MAX(played) FROM table_name_19 WHERE points = 17 AND draw < 5",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 142,
+      "question": "When was the game that ended with a score of 6-4?",
+      "pred_sql": "SELECT date FROM table_name_38 WHERE score = \"6-4\"",
+      "gold_sql": "SELECT date FROM table_name_38 WHERE score = \"6-4\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 143,
+      "question": "What was the score on April 8?",
+      "pred_sql": "SELECT score FROM table_name_39 WHERE date = \"april 8\"",
+      "gold_sql": "SELECT score FROM table_name_39 WHERE date = \"april 8\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 144,
+      "question": "What was the decision in Minnesota?",
+      "pred_sql": "SELECT decision FROM table_name_12 WHERE home = \"minnesota\"",
+      "gold_sql": "SELECT decision FROM table_name_12 WHERE home = \"minnesota\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 145,
+      "question": "Which score has a record of 58–15–8?",
+      "pred_sql": "SELECT score FROM table_name_80 WHERE record = \"58–15–8\"",
+      "gold_sql": "SELECT score FROM table_name_80 WHERE record = \"58–15–8\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 146,
+      "question": "Which section has a level of Tier 3, is in the 6th position, and is in the 1937-38 season?",
+      "pred_sql": "SELECT section FROM table_name_74 WHERE level = \"tier 3\" AND position = \"6\" AND season = \"1937-38\"",
+      "gold_sql": "SELECT section FROM table_name_74 WHERE level = \"tier 3\" AND position = \"6th\" AND season = \"1937-38\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 147,
+      "question": "Which section is in the 6th position?",
+      "pred_sql": "SELECT section FROM table_name_8 WHERE position = \"6th\"",
+      "gold_sql": "SELECT section FROM table_name_8 WHERE position = \"6th\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 148,
+      "question": "Name the attendance with date of june 11",
+      "pred_sql": "SELECT attendance FROM table_name_92 WHERE date = \"june 11\"",
+      "gold_sql": "SELECT attendance FROM table_name_92 WHERE date = \"june 11\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 149,
+      "question": "Which partnership has a run number of 27?",
+      "pred_sql": "SELECT partnerships FROM table_name_70 WHERE runs = \"27\"",
+      "gold_sql": "SELECT partnerships FROM table_name_70 WHERE runs = \"27\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 150,
+      "question": "What venue did the parntership of shoaib malik / misbah-ul-haq occur?",
+      "pred_sql": "SELECT venue FROM table_name_79 WHERE partnerships = \"shoaib malik / misbah-ul-haq\"",
+      "gold_sql": "SELECT venue FROM table_name_79 WHERE partnerships = \"shoaib malik / misbah-ul-haq\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 151,
+      "question": "What venue did the partnership of herschelle gibbs / justin kemp happen?",
+      "pred_sql": "SELECT venue FROM table_name_74 WHERE partnerships = \"herschelle gibbs / justin kemp\"",
+      "gold_sql": "SELECT venue FROM table_name_74 WHERE partnerships = \"herschelle gibbs / justin kemp\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 152,
+      "question": "What is the number Played that has 310 Points for?",
+      "pred_sql": "SELECT played FROM table_name_77 WHERE points_for = \"310\"",
+      "gold_sql": "SELECT played FROM table_name_77 WHERE points_for = \"310\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 153,
+      "question": "What Losing bonus has a Points against of 588?",
+      "pred_sql": "SELECT losing_bonus FROM table_name_62 WHERE points_against = \"588\"",
+      "gold_sql": "SELECT losing_bonus FROM table_name_62 WHERE points_against = \"588\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 154,
+      "question": "What Tries against has a Losing bonus of 7?",
+      "pred_sql": "SELECT tries_against FROM table_name_43 WHERE losing_bonus = \"7\"",
+      "gold_sql": "SELECT tries_against FROM table_name_43 WHERE losing_bonus = \"7\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 155,
+      "question": "What Try bonus has a Points against of 488?",
+      "pred_sql": "SELECT try_bonus FROM table_name_61 WHERE points_against = \"488\"",
+      "gold_sql": "SELECT try_bonus FROM table_name_61 WHERE points_against = \"488\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 156,
+      "question": "What Points for has a Try bonus of 140?",
+      "pred_sql": "SELECT points_for FROM table_name_26 WHERE try_bonus = \"140\"",
+      "gold_sql": "SELECT points_for FROM table_name_26 WHERE try_bonus = \"140\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 157,
+      "question": "What Drawn has a Tries against of 0?",
+      "pred_sql": "SELECT drawn FROM table_name_90 WHERE tries_against = \"0\"",
+      "gold_sql": "SELECT drawn FROM table_name_90 WHERE tries_against = \"0\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 158,
+      "question": "What is the days held the champion with a reign larger than 3 and 1 defense has?",
+      "pred_sql": "SELECT days_held FROM table_name_48 WHERE reign > 3 AND defenses = 1",
+      "gold_sql": "SELECT days_held FROM table_name_48 WHERE reign > 3 AND defenses = 1",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 159,
+      "question": "What is the days held the champion with a reign larger than 3 and less than 1 defense has?",
+      "pred_sql": "SELECT days_held FROM table_name_1 WHERE reign > 3 AND defenses < 1",
+      "gold_sql": "SELECT days_held FROM table_name_1 WHERE reign > 3 AND defenses < 1",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 160,
+      "question": "What is the average defenses a champion with 404 days held and a reign larger than 1 has?",
+      "pred_sql": "SELECT AVG(defenses) FROM table_name_57 WHERE days_held = \"404\" AND reign > 1",
+      "gold_sql": "SELECT AVG(defenses) FROM table_name_57 WHERE days_held = \"404\" AND reign > 1",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 161,
+      "question": "What is the lowest defense a champion with 345 days held has?",
+      "pred_sql": "SELECT MIN(defenses) FROM table_name_46 WHERE days_held = \"345\"",
+      "gold_sql": "SELECT MIN(defenses) FROM table_name_46 WHERE days_held = \"345\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 162,
+      "question": "On what date was there a record of 76-72?",
+      "pred_sql": "SELECT date FROM table_name_6 WHERE record = \"76-72\"",
+      "gold_sql": "SELECT date FROM table_name_6 WHERE record = \"76-72\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 163,
+      "question": "What was the attendance that had a loss of Ponson (1-5)?",
+      "pred_sql": "SELECT attendance FROM table_name_58 WHERE loss = \"ponson (1-5)\"",
+      "gold_sql": "SELECT attendance FROM table_name_58 WHERE loss = \"ponson (1-5)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 164,
+      "question": "On which day was there a record of 36-39?",
+      "pred_sql": "SELECT date FROM table_name_70 WHERE record = \"36-39\"",
+      "gold_sql": "SELECT date FROM table_name_70 WHERE record = \"36-39\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 165,
+      "question": "On what day was the record 30-31?",
+      "pred_sql": "SELECT date FROM table_name_88 WHERE record = \"30-31\"",
+      "gold_sql": "SELECT date FROM table_name_88 WHERE record = \"30-31\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 166,
+      "question": "Who was the opponent at the game that had a loss of Leonard (7–8)?",
+      "pred_sql": "SELECT opponent FROM table_name_82 WHERE loss = \"leonard (7–8)\"",
+      "gold_sql": "SELECT opponent FROM table_name_82 WHERE loss = \"leonard (7–8)\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 167,
+      "question": "What was the score of the game when the record was 18–43?",
+      "pred_sql": "SELECT score FROM table_name_3 WHERE record = \"18–43\"",
+      "gold_sql": "SELECT score FROM table_name_3 WHERE record = \"18–43\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 168,
+      "question": "What was the score of the game against the Royals when the record was 24–52?",
+      "pred_sql": "SELECT score FROM table_name_75 WHERE opponent = \"royals\" AND record = \"24–52\"",
+      "gold_sql": "SELECT score FROM table_name_75 WHERE opponent = \"royals\" AND record = \"24–52\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 169,
+      "question": "What was the score of the game when the record was 22–46?",
+      "pred_sql": "SELECT score FROM table_name_36 WHERE record = \"22–46\"",
+      "gold_sql": "SELECT score FROM table_name_36 WHERE record = \"22–46\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 170,
+      "question": "What is the real name of the person whose primary military specialty is shock paratrooper?",
+      "pred_sql": "SELECT real_name FROM table_name_51 WHERE primary_military_speciality = \"shock paratrooper\"",
+      "gold_sql": "SELECT real_name FROM table_name_51 WHERE primary_military_speciality = \"shock paratrooper\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 171,
+      "question": "What is the birthplace of Pete Sanderson?",
+      "pred_sql": "SELECT birthplace FROM table_name_71 WHERE real_name = \"pete sanderson\"",
+      "gold_sql": "SELECT birthplace FROM table_name_71 WHERE real_name = \"pete sanderson\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 172,
+      "question": "What role did Jean-Luc Bouvier serve?",
+      "pred_sql": "SELECT function__figure_ FROM table_name_30 WHERE real_name = \"jean-luc bouvier\"",
+      "gold_sql": "SELECT function__figure_ FROM table_name_30 WHERE real_name = \"jean-luc bouvier\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 173,
+      "question": "What is the real name of the person who is a pilot of the silent attack kayak?",
+      "pred_sql": "SELECT real_name FROM table_name_28 WHERE function__figure_ = \"pilot of the silent attack kayak\"",
+      "gold_sql": "SELECT real_name FROM table_name_28 WHERE function__figure_ = \"pilot of the silent attack kayak\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 174,
+      "question": "What is the code name of the person born in Liverpool?",
+      "pred_sql": "SELECT code_name FROM table_name_94 WHERE birthplace = \"liverpool\"",
+      "gold_sql": "SELECT code_name FROM table_name_94 WHERE birthplace = \"liverpool\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 175,
+      "question": "What is the names for the medalist in the sport of canoeing?",
+      "pred_sql": "SELECT name FROM table_name_25 WHERE sport = \"canoeing\"",
+      "gold_sql": "SELECT name FROM table_name_25 WHERE sport = \"canoeing\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 176,
+      "question": "What games had the women's half middleweight event?",
+      "pred_sql": "SELECT games FROM table_name_90 WHERE event = \"women's half middleweight\"",
+      "gold_sql": "SELECT games FROM table_name_90 WHERE event = \"women's half middleweight\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 177,
+      "question": "Who received the bronze medal in the 2000 Sydney games?",
+      "pred_sql": "SELECT name FROM table_name_95 WHERE medal = \"bronze\" AND games = \"2000 sydney\"",
+      "gold_sql": "SELECT name FROM table_name_95 WHERE medal = \"bronze\" AND games = \"2000 sydney\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 178,
+      "question": "How many people attended when opponent was twins?",
+      "pred_sql": "SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = \"twins\"",
+      "gold_sql": "SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = \"twins\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 179,
+      "question": "Which date has a Record of 41-46?",
+      "pred_sql": "SELECT date FROM table_name_55 WHERE record = \"41-46\"",
+      "gold_sql": "SELECT date FROM table_name_55 WHERE record = \"41-46\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 180,
+      "question": "Which score has a Record of 48-55?",
+      "pred_sql": "SELECT score FROM table_name_66 WHERE record = \"48-55\"",
+      "gold_sql": "SELECT score FROM table_name_66 WHERE record = \"48-55\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 181,
+      "question": "Which score has a Record of 44-49?",
+      "pred_sql": "SELECT score FROM table_name_96 WHERE record = \"44-49\"",
+      "gold_sql": "SELECT score FROM table_name_96 WHERE record = \"44-49\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 182,
+      "question": "Which score has an Opponent of white sox, and a Record of 2-0?",
+      "pred_sql": "SELECT score FROM table_name_92 WHERE opponent = \"white sox\" AND record = \"2-0\"",
+      "gold_sql": "SELECT score FROM table_name_92 WHERE opponent = \"white sox\" AND record = \"2-0\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 183,
+      "question": "How many votes did candice sjostrom receive?",
+      "pred_sql": "SELECT SUM(popular_votes) FROM table_name_94 WHERE candidate = \"candice sjostrom\"",
+      "gold_sql": "SELECT AVG(popular_votes) FROM table_name_94 WHERE candidate = \"candice sjostrom\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 184,
+      "question": "What percentage did chris wright receive?",
+      "pred_sql": "SELECT percentage FROM table_name_23 WHERE candidate = \"chris wright\"",
+      "gold_sql": "SELECT percentage FROM table_name_23 WHERE candidate = \"chris wright\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 185,
+      "question": "How many votes for the candidate after 1992, 1.59% of the vote, and the office of us representative 4?",
+      "pred_sql": "SELECT SUM(popular_votes) FROM table_name_2 WHERE year > 1992 AND percentage = \"1.59%\" AND office = \"us representative 4\"",
+      "gold_sql": "SELECT AVG(popular_votes) FROM table_name_2 WHERE office = \"us representative 4\" AND percentage = \"1.59%\" AND year > 1992",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 186,
+      "question": "What years did J. Smith Young serve as a Representative?",
+      "pred_sql": "SELECT years FROM table_name_36 WHERE representative = \"j. smith young\"",
+      "gold_sql": "SELECT years FROM table_name_36 WHERE representative = \"j. smith young\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 187,
+      "question": "Which party did Thomas L. Young belong to?",
+      "pred_sql": "SELECT party FROM table_name_58 WHERE representative = \"thomas l. young\"",
+      "gold_sql": "SELECT party FROM table_name_58 WHERE representative = \"thomas l. young\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 188,
+      "question": "What is the lowest total amount of medals from countries with 0 gold medals, more than 2 bronze medals, and more than 1 silver medal?",
+      "pred_sql": "SELECT MIN(total) FROM table_name_57 WHERE gold < 0 AND bronze > 2 AND silver > 1",
+      "gold_sql": "SELECT MIN(total) FROM table_name_57 WHERE gold = 0 AND bronze > 2 AND silver > 1",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 189,
+      "question": "What is the total number of silver medals for countries of rank 14, with less than 1 total medals?",
+      "pred_sql": "SELECT SUM(silver) FROM table_name_66 WHERE rank = \"14\" AND total < 1",
+      "gold_sql": "SELECT SUM(silver) FROM table_name_66 WHERE rank = \"14\" AND total < 1",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 190,
+      "question": "How many tackles for the player with over 0 fumble recovries and 0 forced fumbles?",
+      "pred_sql": "SELECT COUNT(total) FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0",
+      "gold_sql": "SELECT COUNT(total) FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 191,
+      "question": "How many forced fumbles for jim laney with under 2 solo tackles?",
+      "pred_sql": "SELECT COUNT(fumble_force) FROM table_name_20 WHERE solo < 2 AND player = \"jim laney\"",
+      "gold_sql": "SELECT COUNT(fumble_force) FROM table_name_20 WHERE solo < 2 AND player = \"jim laney\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 192,
+      "question": "What is the high total for players with over 15 solo tackles?",
+      "pred_sql": "SELECT MAX(total) FROM table_name_31 WHERE solo > 15",
+      "gold_sql": "SELECT MAX(total) FROM table_name_31 WHERE solo > 15",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 193,
+      "question": "How many fumble recoveries for scott gajos with 0 forced fubmles, 0 sacks, and under 2 solo tackles?",
+      "pred_sql": "SELECT SUM(fumble_rec) FROM table_name_65 WHERE player = \"scott gajos\" AND fumble_force < 2 AND sacks = 0",
+      "gold_sql": "SELECT SUM(fumble_rec) FROM table_name_65 WHERE sacks = \"0\" AND fumble_force = \"0\" AND player = \"scott gajos\" AND solo < 2",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 194,
+      "question": "Who is the Opponent playing at 20:00 GMT at Camp Nou?",
+      "pred_sql": "SELECT opponent FROM table_name_64 WHERE time = \"20:00 gmt\" AND ground = \"camp nou\"",
+      "gold_sql": "SELECT opponent FROM table_name_64 WHERE time = \"20:00 gmt\" AND ground = \"camp nou\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 195,
+      "question": "What time was the match played with a score of 3-2?",
+      "pred_sql": "SELECT time FROM table_name_35 WHERE score = \"3-2\"",
+      "gold_sql": "SELECT time FROM table_name_35 WHERE score = \"3-2\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 196,
+      "question": "On which ground did the team play Aston Villa?",
+      "pred_sql": "SELECT ground FROM table_name_83 WHERE opponent = \"aston villa\"",
+      "gold_sql": "SELECT ground FROM table_name_83 WHERE opponent = \"aston villa\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 197,
+      "question": "What kind of competition was it at San Siro at 18:30 GMT?",
+      "pred_sql": "SELECT competition FROM table_name_60 WHERE ground = \"san siro\" AND time = \"18:30 gmt\"",
+      "gold_sql": "SELECT competition FROM table_name_60 WHERE ground = \"san siro\" AND time = \"18:30 gmt\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 198,
+      "question": "What is the total number of decile for the redwood school locality?",
+      "pred_sql": "SELECT COUNT(decile) FROM table_name_34 WHERE name = \"redwood school locality\"",
+      "gold_sql": "SELECT COUNT(decile) FROM table_name_34 WHERE name = \"redwood school\"",
+      "exact_match": false,
+      "execution_match": true,
+      "error": null
+    },
+    {
+      "index": 199,
+      "question": "Which report includes a Circuit of Tripoli?",
+      "pred_sql": "SELECT report FROM table_name_71 WHERE circuit = \"tripoli\"",
+      "gold_sql": "SELECT report FROM table_name_71 WHERE circuit = \"tripoli\"",
+      "exact_match": true,
+      "execution_match": true,
+      "error": null
+    }
+  ]
+}

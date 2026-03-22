@@ -1,0 +1,15 @@
+{
+  "hf": {
+    "backend": "HuggingFace (sync)",
+    "n": 50,
+    "mean_ms": 3650.3,
+    "p50_ms": 2720.8,
+    "p95_ms": 6944.7,
+    "rps": 0.274,
+    "gpu_gb": 2.3
+  },
+  "vllm": {
+    "backend": "vLLM",
+    "error": "Engine core initialization failed. See root cause above. Failed core proc(s): {}"
+  }
+}

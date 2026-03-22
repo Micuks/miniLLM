@@ -1,0 +1,3768 @@
+2026-03-22 18:36:34 Watchdog started. Waiting for 6000MiB free for 3 consecutive checks.
+2026-03-22 18:36:34 Check passed: 15068MiB free (1/3)
+2026-03-22 18:37:34 Check passed: 15068MiB free (2/3)
+2026-03-22 18:38:35 Check passed: 15068MiB free (3/3)
+2026-03-22 18:38:35 === GPU stable at 15068MiB. Starting experiments ===
+2026-03-22 18:38:35 === Running vLLM benchmark ===
+Loaded 50 samples
+
+=== HF Backend ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.72s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.79s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+GPU mem: 2.30 GB
+  [10/50] 5871ms
+  [20/50] 1403ms
+  [30/50] 1949ms
+  [40/50] 2243ms
+  [50/50] 7350ms
+HF: mean=3650.3ms p50=2720.8ms p95=6944.7ms rps=0.274
+HF model freed
+
+=== vLLM Backend ===
+Free: 12.4GB, using gpu_memory_utilization=0.48
+INFO 03-22 18:42:14 [utils.py:233] non-default args: {'trust_remote_code': True, 'load_format': 'bitsandbytes', 'max_model_len': 2048, 'gpu_memory_utilization': 0.4837998673434856, 'disable_log_stats': True, 'quantization': 'bitsandbytes', 'enforce_eager': True, 'model': 'Qwen/Qwen2.5-3B-Instruct'}
+WARNING 03-22 18:42:14 [envs.py:1717] Unknown vLLM environment variable detected: VLLM_ROOT
+INFO 03-22 18:42:28 [model.py:533] Resolved architecture: Qwen2ForCausalLM
+WARNING 03-22 18:42:28 [model.py:1867] Your device 'Quadro RTX 6000' (with compute capability 7.5) doesn't support torch.bfloat16. Falling back to torch.float16 for compatibility.
+WARNING 03-22 18:42:28 [model.py:1920] Casting torch.bfloat16 to torch.float16.
+INFO 03-22 18:42:28 [model.py:1582] Using max model len 2048
+INFO 03-22 18:42:28 [scheduler.py:231] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 03-22 18:42:28 [vllm.py:754] Asynchronous scheduling is enabled.
+WARNING 03-22 18:42:28 [vllm.py:788] Enforce eager set, disabling torch.compile and CUDAGraphs. This is equivalent to setting -cc.mode=none -cc.cudagraph_mode=none
+WARNING 03-22 18:42:28 [vllm.py:799] Inductor compilation was disabled by user settings, optimizations settings that are only active during inductor compilation will be ignored.
+INFO 03-22 18:42:28 [vllm.py:964] Cudagraph is disabled under eager mode
+INFO 03-22 18:42:28 [compilation.py:289] Enabled custom fusions: norm_quant, act_quant
+WARNING 03-22 18:42:32 [system_utils.py:152] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reasons: CUDA is initialized
+(EngineCore pid=4100799) INFO 03-22 18:42:39 [core.py:103] Initializing a V1 LLM engine (v0.18.0) with config: model='Qwen/Qwen2.5-3B-Instruct', speculative_config=None, tokenizer='Qwen/Qwen2.5-3B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.float16, max_seq_len=2048, download_dir=None, load_format=bitsandbytes, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=bitsandbytes, enforce_eager=True, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=0, served_model_name=Qwen/Qwen2.5-3B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.NONE: 0>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['all'], 'splitting_ops': [], 'compile_mm_encoder': False, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.NONE: 0>, 'cudagraph_num_of_warmups': 0, 'cudagraph_capture_sizes': [], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': True, 'fuse_act_quant': True, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 0, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': True, 'static_all_moe_layers': []}
+(EngineCore pid=4100799) INFO 03-22 18:42:39 [parallel_state.py:1395] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://10.101.160.224:58053 backend=nccl
+(EngineCore pid=4100799) INFO 03-22 18:42:39 [parallel_state.py:1717] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099] EngineCore failed to start.
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099] Traceback (most recent call last):
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1073, in run_engine_core
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     return func(*args, **kwargs)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 839, in __init__
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     super().__init__(
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ~~~~~~~~~~~~~~~~^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]         vllm_config,
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]         ^^^^^^^^^^^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ...<3 lines>...
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]         internal_dp_balancing,
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]         ^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     )
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 112, in __init__
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     return func(*args, **kwargs)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     self._init_executor()
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/executor/uniproc_executor.py", line 49, in _init_executor
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     self.driver_worker.init_device()
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     self.worker.init_device()  # type: ignore
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     return func(*args, **kwargs)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/gpu_worker.py", line 283, in init_device
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     self.requested_memory = request_memory(init_snapshot, self.cache_config)
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]                             ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/utils.py", line 413, in request_memory
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     raise ValueError(
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     ...<7 lines>...
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099]     )
+(EngineCore pid=4100799) ERROR 03-22 18:42:40 [core.py:1099] ValueError: Free memory on device cuda:0 (11.42/23.64 GiB) on startup is less than desired GPU memory utilization (0.4837998673434856, 11.44 GiB). Decrease GPU memory utilization or reduce GPU memory used by other processes.
+(EngineCore pid=4100799) Process EngineCore:
+(EngineCore pid=4100799) Traceback (most recent call last):
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/multiprocessing/process.py", line 313, in _bootstrap
+(EngineCore pid=4100799)     self.run()
+(EngineCore pid=4100799)     ~~~~~~~~^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/multiprocessing/process.py", line 108, in run
+(EngineCore pid=4100799)     self._target(*self._args, **self._kwargs)
+(EngineCore pid=4100799)     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1103, in run_engine_core
+(EngineCore pid=4100799)     raise e
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1073, in run_engine_core
+(EngineCore pid=4100799)     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799)     return func(*args, **kwargs)
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 839, in __init__
+(EngineCore pid=4100799)     super().__init__(
+(EngineCore pid=4100799)     ~~~~~~~~~~~~~~~~^
+(EngineCore pid=4100799)         vllm_config,
+(EngineCore pid=4100799)         ^^^^^^^^^^^^
+(EngineCore pid=4100799)     ...<3 lines>...
+(EngineCore pid=4100799)         internal_dp_balancing,
+(EngineCore pid=4100799)         ^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=4100799)     )
+(EngineCore pid=4100799)     ^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 112, in __init__
+(EngineCore pid=4100799)     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=4100799)                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799)     return func(*args, **kwargs)
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=4100799)     self._init_executor()
+(EngineCore pid=4100799)     ~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/executor/uniproc_executor.py", line 49, in _init_executor
+(EngineCore pid=4100799)     self.driver_worker.init_device()
+(EngineCore pid=4100799)     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(EngineCore pid=4100799)     self.worker.init_device()  # type: ignore
+(EngineCore pid=4100799)     ~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=4100799)     return func(*args, **kwargs)
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/gpu_worker.py", line 283, in init_device
+(EngineCore pid=4100799)     self.requested_memory = request_memory(init_snapshot, self.cache_config)
+(EngineCore pid=4100799)                             ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=4100799)   File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/vllm/v1/worker/utils.py", line 413, in request_memory
+(EngineCore pid=4100799)     raise ValueError(
+(EngineCore pid=4100799)     ...<7 lines>...
+(EngineCore pid=4100799)     )
+(EngineCore pid=4100799) ValueError: Free memory on device cuda:0 (11.42/23.64 GiB) on startup is less than desired GPU memory utilization (0.4837998673434856, 11.44 GiB). Decrease GPU memory utilization or reduce GPU memory used by other processes.
+[rank0]:[W322 18:42:41.082339156 ProcessGroupNCCL.cpp:1553] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+vLLM failed: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+
+Report saved to outputs/bench_hf_vs_vllm.json
+2026-03-22 18:42:44 === Benchmark complete ===
+2026-03-22 18:42:44 === Running held-out baseline eval ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.09s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  3.90s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  4.08s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+=== Question ===
+How many strokes for arnold palmer with a to par of greater than 9?
+=== Pred SQL ===
+SELECT total FROM table_name_69 WHERE player = 'arnold palmer' AND to_par > '9'
+=== Gold SQL ===
+SELECT AVG(total) FROM table_name_69 WHERE to_par > 9 AND player = "arnold palmer"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+What was the score to par in 1960?
+=== Pred SQL ===
+SELECT to_par FROM table_name_74 WHERE year_s__won = '1960'
+=== Gold SQL ===
+SELECT to_par FROM table_name_74 WHERE year_s__won = "1960"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the earliest first game for a rugby team that has 7 lost games and 0 draws?
+=== Pred SQL ===
+SELECT MIN(first_game) FROM table_name_78 WHERE lost = '7' AND drawn = '0'
+=== Gold SQL ===
+SELECT MIN(first_game) FROM table_name_78 WHERE lost = 7 AND drawn < 0
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many games were played by a team that won 0.00% of their games and 0 draws?
+=== Pred SQL ===
+SELECT played FROM table_name_55 WHERE percentage = '0.00%' AND drawn = '0'
+=== Gold SQL ===
+SELECT SUM(played) FROM table_name_55 WHERE percentage = "0.00%" AND drawn < 0
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Name the 1st match for brisbane bears
+=== Pred SQL ===
+SELECT team FROM table_name_61 WHERE team = 'brisbane bears' LIMIT 1
+=== Gold SQL ===
+SELECT 1 AS st_match FROM table_name_61 WHERE team = "brisbane bears"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the lost for matches of 1 928
+=== Pred SQL ===
+SELECT lost FROM table_name_66 WHERE matches = '1 928'
+=== Gold SQL ===
+SELECT lost FROM table_name_66 WHERE matches = "1 928"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the lost for % won of 55.37
+=== Pred SQL ===
+SELECT lost FROM table_name_64 WHERE _percentage_won = '55.37'
+=== Gold SQL ===
+SELECT lost FROM table_name_64 WHERE _percentage_won = "55.37"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the matches for gold coast
+=== Pred SQL ===
+SELECT matches FROM table_name_11 WHERE team = 'gold coast'
+=== Gold SQL ===
+SELECT matches FROM table_name_11 WHERE team = "gold coast"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the lost for % won of 55.37
+=== Pred SQL ===
+SELECT lost FROM table_name_46 WHERE _percentage_won = '55.37'
+=== Gold SQL ===
+SELECT lost FROM table_name_46 WHERE _percentage_won = "55.37"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the year when cable was 4.6%?
+=== Pred SQL ===
+SELECT year FROM table_name_99 WHERE cable = '4.6%'
+=== Gold SQL ===
+SELECT year FROM table_name_99 WHERE cable = "4.6%"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the other for 2012?
+=== Pred SQL ===
+SELECT other FROM table_name_54 WHERE year = '2012'
+=== Gold SQL ===
+SELECT other FROM table_name_54 WHERE year = "2012"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the xDSL for the other of 0.6% and FTTx of 35.4%?
+=== Pred SQL ===
+SELECT xdsl FROM table_name_1 WHERE other = '0.6%' AND fttx = '35.4%'
+=== Gold SQL ===
+SELECT xdsl FROM table_name_1 WHERE other = "0.6%" AND fttx = "35.4%"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the other for a 78.2% xDSL?
+=== Pred SQL ===
+SELECT other FROM table_name_15 WHERE xdsl = '78.2%'
+=== Gold SQL ===
+SELECT other FROM table_name_15 WHERE xdsl = "78.2%"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the xDSL in 2010 when the other was 0.6%?
+=== Pred SQL ===
+SELECT xdsl FROM table_name_55 WHERE other = '0.6%' AND year = '2010'
+=== Gold SQL ===
+SELECT xdsl FROM table_name_55 WHERE other = "0.6%" AND year = "2010"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which date has a Result of won, and a Score of 1-0?
+=== Pred SQL ===
+SELECT date FROM table_name_23 WHERE result = 'won' AND score = '1-0'
+=== Gold SQL ===
+SELECT date FROM table_name_23 WHERE result = "won" AND score = "1-0"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which result has a Date of november 2, 2007?
+=== Pred SQL ===
+SELECT result FROM table_name_86 WHERE date = 'november 2, 2007'
+=== Gold SQL ===
+SELECT result FROM table_name_86 WHERE date = "november 2, 2007"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Competition has a Score of 2-0?
+=== Pred SQL ===
+SELECT competition FROM table_name_7 WHERE score = '2-0'
+=== Gold SQL ===
+SELECT competition FROM table_name_7 WHERE score = "2-0"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Venue has a Date of january 9, 2011?
+=== Pred SQL ===
+SELECT venue FROM table_name_51 WHERE date = 'january 9, 2011'
+=== Gold SQL ===
+SELECT venue FROM table_name_51 WHERE date = "january 9, 2011"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the termination of mission date of the representative with a presentation of credentials date on July 4, 1898?
+=== Pred SQL ===
+SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = 'July 4, 1898'
+=== Gold SQL ===
+SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = "july 4, 1898"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the presentation of credentials date of raúl h. castro, who has a title of ambassador extraordinary and plenipotentiary?
+=== Pred SQL ===
+SELECT presentation_of_credentials FROM table_name_7 WHERE representative = 'raúl h. castro' AND title = 'ambassador extraordinary and plenipotentiary'
+=== Gold SQL ===
+SELECT presentation_of_credentials FROM table_name_7 WHERE title = "ambassador extraordinary and plenipotentiary" AND representative = "raúl h. castro"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is the representative with a presentation of credentials date on February 23, 1854?
+=== Pred SQL ===
+SELECT representative FROM table_name_32 WHERE presentation_of_credentials = 'February 23, 1854'
+=== Gold SQL ===
+SELECT representative FROM table_name_32 WHERE presentation_of_credentials = "february 23, 1854"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the title of the representative appointed by James K. Polk?
+=== Pred SQL ===
+SELECT title FROM table_name_52 WHERE appointed_by = 'James K. Polk'
+=== Gold SQL ===
+SELECT title FROM table_name_52 WHERE appointed_by = "james k. polk"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the termination of mission date of the representative appointed by Franklin Pierce with a title of chargé d'affaires?
+=== Pred SQL ===
+SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = 'Franklin Pierce' AND title = 'chargé d'affaires'
+=== Gold SQL ===
+SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = "franklin pierce" AND title = "chargé d'affaires"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === near "affaires": syntax error
+
+=== Question ===
+What is the Stadium held on november 29?
+=== Pred SQL ===
+SELECT stadium FROM table_name_41 WHERE date = 'november 29'
+=== Gold SQL ===
+SELECT stadium FROM table_name_41 WHERE date = "november 29"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is the Visiting team on december 20?
+=== Pred SQL ===
+SELECT visiting_team FROM table_name_99 WHERE date = 'december 20'
+=== Gold SQL ===
+SELECT visiting_team FROM table_name_99 WHERE date = "december 20"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Stadium has a Visiting team of pittsburgh steelers?
+=== Pred SQL ===
+SELECT stadium FROM table_name_44 WHERE visiting_team = 'pittsburgh steelers'
+=== Gold SQL ===
+SELECT stadium FROM table_name_44 WHERE visiting_team = "pittsburgh steelers"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is the Host team that has a chicago bears as a visiting team?
+=== Pred SQL ===
+SELECT host_team FROM table_name_61 WHERE visiting_team = 'chicago bears'
+=== Gold SQL ===
+SELECT host_team FROM table_name_61 WHERE visiting_team = "chicago bears"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the Final score on november 22?
+=== Pred SQL ===
+SELECT final_score FROM table_name_48 WHERE date = 'november 22'
+=== Gold SQL ===
+SELECT final_score FROM table_name_48 WHERE date = "november 22"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the Host team that has indianapolis colts as a Visiting team?
+=== Pred SQL ===
+SELECT host_team FROM table_name_71 WHERE visiting_team = 'indianapolis colts'
+=== Gold SQL ===
+SELECT host_team FROM table_name_71 WHERE visiting_team = "indianapolis colts"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who won when np cooper av cooke was runner up?
+=== Pred SQL ===
+SELECT winners FROM table_name_34 WHERE runners_up = 'np cooper av cooke'
+=== Gold SQL ===
+SELECT winners FROM table_name_34 WHERE runners_up = "np cooper av cooke"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the record of the match that had a time of 1:44?
+=== Pred SQL ===
+SELECT record FROM table_name_35 WHERE time = '1:44'
+=== Gold SQL ===
+SELECT record FROM table_name_35 WHERE time = "1:44"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the opponent at GCM – D.O.G. 4?
+=== Pred SQL ===
+SELECT opponent FROM table_name_54 WHERE event = 'GCM – D.O.G. 4'
+=== Gold SQL ===
+SELECT opponent FROM table_name_54 WHERE event = "gcm – d.o.g. 4"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the location of the match that ended before round 2, against Hikaru Sato?
+=== Pred SQL ===
+SELECT location FROM table_name_48 WHERE round < '2' AND opponent = 'Hikaru Sato'
+=== Gold SQL ===
+SELECT location FROM table_name_48 WHERE round < 2 AND opponent = "hikaru sato"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the Company or Product name where Entrepreneurs Geoff and Colette Bell requested £75,000?
+=== Pred SQL ===
+SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = '75000' AND entrepreneur_s_ = 'Geoff and Colette Bell'
+=== Gold SQL ===
+SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = "75,000" AND entrepreneur_s_ = "geoff and colette bell"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Investing Dragon(s) belong to Episode 9 with the Entrepreneur Ashley Sayed?
+=== Pred SQL ===
+SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = '9' AND entrepreneur_s_ = 'Ashley Sayed'
+=== Gold SQL ===
+SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = "episode 9" AND entrepreneur_s_ = "ashley sayed"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Episode did Entrepreneur(s) Luke Booth and Christopher Eves take part?
+=== Pred SQL ===
+SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = 'Luke Booth' AND entrepreneur_s_ = 'Christopher Eves'
+=== Gold SQL ===
+SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = "luke booth and christopher eves"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Company or Product name requested £70,000 on Episode 11?
+=== Pred SQL ===
+SELECT company_or_product_name FROM table_name_17 WHERE money_requested__£_ = '70000' AND episode = '11'
+=== Gold SQL ===
+SELECT company_or_product_name FROM table_name_17 WHERE episode = "episode 11" AND money_requested__£_ = "70,000"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is stephen arigbabu's height?
+=== Pred SQL ===
+SELECT height FROM table_name_52 WHERE player = 'stephen arigbabu'
+=== Gold SQL ===
+SELECT MIN(height) FROM table_name_52 WHERE player = "stephen arigbabu"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+For all games with los angeles as visitor, what is the highest attendance of all?
+=== Pred SQL ===
+SELECT MAX attendance FROM table_name_12 WHERE visitor = 'Los Angeles'
+=== Gold SQL ===
+SELECT MAX(attendance) FROM table_name_12 WHERE visitor = "los angeles"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === no such column: MAX
+
+=== Question ===
+For all games with calgary as home, what is the average number of attendees?
+=== Pred SQL ===
+SELECT AVG attendance FROM table_name_1 WHERE home = 'calgary'
+=== Gold SQL ===
+SELECT AVG(attendance) FROM table_name_1 WHERE home = "calgary"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === no such column: AVG
+
+=== Question ===
+Who is no. 5 when Lena Claudisabel is no. 1 and Lena Sylvie is no. 2?
+=== Pred SQL ===
+SELECT no5 FROM table_name_29 WHERE no1 = 'Lena Claudisabel' AND no2 = 'Lena Sylvie'
+=== Gold SQL ===
+SELECT no5 FROM table_name_29 WHERE no1 = "lena claudisabel" AND no2 = "lena sylvie"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is no.3 when Claudio Sylvie is no.1?
+=== Pred SQL ===
+SELECT T2.no3 FROM table_name_62 AS T1 JOIN table_name_62 AS T2 ON T1.no1 = T2.no1 WHERE T1.no1 = 'Claudio Sylvie'
+=== Gold SQL ===
+SELECT no3 FROM table_name_62 WHERE no1 = "claudio sylvie"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 18-20?
+=== Pred SQL ===
+SELECT score FROM table_name_77 WHERE record = '18-20'
+=== Gold SQL ===
+SELECT score FROM table_name_77 WHERE record = "18-20"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the Partner for Flavio Cipolla Simone Vagnozzi Opponents in the final?
+=== Pred SQL ===
+SELECT partner FROM table_name_7 WHERE opponents_in_the_final = 'Flavio Cipolla Simone Vagnozzi'
+=== Gold SQL ===
+SELECT partner FROM table_name_7 WHERE opponents_in_the_final = "flavio cipolla simone vagnozzi"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who were the Opponents in the final that played on a carpet (i) Surface?
+=== Pred SQL ===
+SELECT opponents_in_the_final FROM table_name_62 WHERE surface = 'carpet'
+=== Gold SQL ===
+SELECT opponents_in_the_final FROM table_name_62 WHERE surface = "carpet (i)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Played on Clay Surface, what was the Score of the Dortmund Tournament?
+=== Pred SQL ===
+SELECT score_in_the_final FROM table_name_70 WHERE surface = 'Clay' AND tournament = 'Dortmund'
+=== Gold SQL ===
+SELECT score_in_the_final FROM table_name_70 WHERE surface = "clay" AND tournament = "dortmund"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is Partner Frederik Nielsen's Opponents in the final?
+=== Pred SQL ===
+SELECT T2.opponents_in_the_final FROM table_name_38 AS T1 JOIN table_name_38 AS T2 ON T1.partner = T2.partner WHERE T1.partner = 'Frederik Nielsen'
+=== Gold SQL ===
+SELECT opponents_in_the_final FROM table_name_38 WHERE partner = "frederik nielsen"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is Partner Tomas Behrend's Score in the final?
+=== Pred SQL ===
+SELECT T1.score_in_the_final FROM table_name_48 AS T1 WHERE T1.partner = 'Tomas Behrend'
+=== Gold SQL ===
+SELECT score_in_the_final FROM table_name_48 WHERE partner = "tomas behrend"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Country does Larry Mize play for?
+=== Pred SQL ===
+SELECT country FROM table_name_67 WHERE player = 'Larry Mize'
+=== Gold SQL ===
+SELECT country FROM table_name_67 WHERE player = "larry mize"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the winning total from 1976?
+=== Pred SQL ===
+SELECT total FROM table_name_20 WHERE year_s__won = '1976'
+=== Gold SQL ===
+SELECT MAX(total) FROM table_name_20 WHERE year_s__won = "1976"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+What year was owner Michael E. Pegram's last win?
+=== Pred SQL ===
+SELECT DISTINCT year FROM table_name_42 WHERE owner = 'Michael E. Pegram' ORDER BY year DESC LIMIT 1
+=== Gold SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE owner = "michael e. pegram"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Who is the trainer for Cherry Valley Farm?
+=== Pred SQL ===
+SELECT trainer FROM table_name_94 WHERE owner = 'Cherry Valley Farm'
+=== Gold SQL ===
+SELECT trainer FROM table_name_94 WHERE owner = "cherry valley farm"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who owned winner Blueeyesintherein after 2009?
+=== Pred SQL ===
+SELECT owner FROM table_name_75 WHERE winner = 'Blueeyesintherein' AND year > '2009'
+=== Gold SQL ===
+SELECT owner FROM table_name_75 WHERE year > 2009 AND winner = "blueeyesintherein"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the Blue Jays' opponent when their record was 33-15?
+=== Pred SQL ===
+SELECT opponent FROM table_name_8 WHERE record = '33-15'
+=== Gold SQL ===
+SELECT opponent FROM table_name_8 WHERE record = "33-15"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who did the Blue Jays lose to when their record was 36-20?
+=== Pred SQL ===
+SELECT loss FROM table_name_3 WHERE record = '36-20'
+=== Gold SQL ===
+SELECT loss FROM table_name_3 WHERE record = "36-20"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the rank of the qual 141.471?
+=== Pred SQL ===
+SELECT rank FROM table_name_3 WHERE qual = '141.471'
+=== Gold SQL ===
+SELECT rank FROM table_name_3 WHERE qual = "141.471"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the start of lap 55?
+=== Pred SQL ===
+SELECT start FROM table_name_18 WHERE laps = '55'
+=== Gold SQL ===
+SELECT start FROM table_name_18 WHERE laps = 55
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is rank of the year 1956?
+=== Pred SQL ===
+SELECT rank FROM table_name_63 WHERE year = '1956'
+=== Gold SQL ===
+SELECT rank FROM table_name_63 WHERE year = "1956"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the lap number for the rank of 13?
+=== Pred SQL ===
+SELECT laps FROM table_name_78 WHERE rank = '13'
+=== Gold SQL ===
+SELECT laps FROM table_name_78 WHERE rank = "13"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the rank for 1961?
+=== Pred SQL ===
+SELECT rank FROM table_name_33 WHERE year = '1961'
+=== Gold SQL ===
+SELECT rank FROM table_name_33 WHERE year = "1961"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the sum of the lap with a finish of 24?
+=== Pred SQL ===
+SELECT SUM(laps) FROM table_name_60 WHERE finish = 24
+=== Gold SQL ===
+SELECT SUM(laps) FROM table_name_60 WHERE finish = "24"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which band plays Self Versus Self - Immersion?
+=== Pred SQL ===
+SELECT band FROM table_name_17 WHERE album_or_song = 'Self Versus Self - Immersion'
+=== Gold SQL ===
+SELECT band FROM table_name_17 WHERE album_or_song = "self versus self - immersion"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Event used submission (rear naked choke) with 9-4?
+=== Pred SQL ===
+SELECT event FROM table_name_11 WHERE method = 'submission (rear naked choke)' AND record = '9-4'
+=== Gold SQL ===
+SELECT event FROM table_name_11 WHERE method = "submission (rear naked choke)" AND record = "9-4"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What event was Donald Ouimet involved?
+=== Pred SQL ===
+SELECT event FROM table_name_41 WHERE opponent = 'Donald Ouimet'
+=== Gold SQL ===
+SELECT event FROM table_name_41 WHERE opponent = "donald ouimet"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What event did she finish 3rd in 2010?
+=== Pred SQL ===
+SELECT event FROM table_name_37 WHERE position = '3' AND year = '2010'
+=== Gold SQL ===
+SELECT event FROM table_name_37 WHERE position = "3rd" AND year = 2010
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What year did she compete in tampere, finland?
+=== Pred SQL ===
+SELECT year FROM table_name_95 WHERE venue = 'tampere, finland'
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_95 WHERE venue = "tampere, finland"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Ben Hogan with a score larger than 66 had a place listed of what?
+=== Pred SQL ===
+SELECT T1.place FROM table_name_77 AS T1 WHERE T1.player = 'Ben Hogan' AND T1.score > '66' LIMIT 1;
+=== Gold SQL ===
+SELECT place FROM table_name_77 WHERE score > 66 AND player = "ben hogan"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+With a score of 70, this player's name is listed as what?
+=== Pred SQL ===
+SELECT player FROM table_name_27 WHERE score = '70'
+=== Gold SQL ===
+SELECT player FROM table_name_27 WHERE score = 70
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+With a score smaller than 71 along with a place of t6, what is the To par score?
+=== Pred SQL ===
+SELECT to_par FROM table_name_69 WHERE score < 71 AND place = 't6' LIMIT 1
+=== Gold SQL ===
+SELECT to_par FROM table_name_69 WHERE score < 71 AND place = "t6"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Hanyu Pinyin has a GDP in 2011 larger than 688.02 billion yuan and a regional population of 8,700,400 in 2010?
+=== Pred SQL ===
+SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > '688.02' AND regional_population_2010_ = '8,700,400'
+=== Gold SQL ===
+SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > 688.02 AND regional_population_2010_ = "8,700,400"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which Hanzi has a Regional Population of 4,591,972 in 2010?
+=== Pred SQL ===
+SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = '4,591,972'
+=== Gold SQL ===
+SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = "4,591,972"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the Name of the person from the Netherlands in a Lane lower than 5, with a Rank better than 5, and a time of less than 55.62?
+=== Pred SQL ===
+SELECT name FROM table_name_19 WHERE nationality = 'Netherlands' AND lane < 5 AND rank > 5 AND time < '55.62'
+=== Gold SQL ===
+SELECT name FROM table_name_19 WHERE rank < 5 AND time < 55.62 AND lane < 5 AND nationality = "netherlands"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the highest Rank of Karen Pickering when she had a time of less than 55.71?
+=== Pred SQL ===
+SELECT MAX(rank) FROM table_name_59 WHERE name = 'Karen Pickering' AND time < 55.71
+=== Gold SQL ===
+SELECT MAX(rank) FROM table_name_59 WHERE name = "karen pickering" AND time < 55.71
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the highest Lane number of a person with a time of 55.94 with a Rank that's bigger than 8?
+=== Pred SQL ===
+SELECT MAX(lane) FROM table_name_68 WHERE time = '55.94' AND rank > 8
+=== Gold SQL ===
+SELECT MAX(lane) FROM table_name_68 WHERE time > 55.94 AND rank > 8
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the date of the game that had a loss of Burns (0-1)?
+=== Pred SQL ===
+SELECT date FROM table_name_85 WHERE loss = 'Burns (0-1)'
+=== Gold SQL ===
+SELECT date FROM table_name_85 WHERE loss = "burns (0-1)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the loss of the game when the record was 20-16?
+=== Pred SQL ===
+SELECT loss FROM table_name_77 WHERE record = '20-16'
+=== Gold SQL ===
+SELECT loss FROM table_name_77 WHERE record = "20-16"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the loss of the game that had an attendance of 18,769?
+=== Pred SQL ===
+SELECT T1.loss FROM table_name_22 AS T1 WHERE T1.attendance = '18,769'
+=== Gold SQL ===
+SELECT loss FROM table_name_22 WHERE attendance = "18,769"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the date of the game that had a loss of Geisel (0-1)?
+=== Pred SQL ===
+SELECT date FROM table_name_5 WHERE loss = 'Geisel (0-1)'
+=== Gold SQL ===
+SELECT date FROM table_name_5 WHERE loss = "geisel (0-1)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the date of the game against the Royals that had an attendance of 12,699?
+=== Pred SQL ===
+SELECT date FROM table_name_12 WHERE opponent = 'Royals' AND attendance = '12,69邋遢' ORDER BY date LIMIT 1
+=== Gold SQL ===
+SELECT date FROM table_name_12 WHERE opponent = "royals" AND attendance = "12,699"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+When Regions center has a rank less than 11, what is the greatest number o floors?
+=== Pred SQL ===
+SELECT MAX(floors) FROM table_name_62 WHERE rank < 11 AND name = 'Regions'
+=== Gold SQL ===
+SELECT MAX(floors) FROM table_name_62 WHERE name = "regions center" AND rank < 11
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the average rank for a building with 24 floors?
+=== Pred SQL ===
+SELECT AVG(rank) FROM table_name_84 WHERE floors = '24'
+=== Gold SQL ===
+SELECT AVG(rank) FROM table_name_84 WHERE floors = 24
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the rank for Omni nashville hotel?
+=== Pred SQL ===
+SELECT rank FROM table_name_89 WHERE name = 'Omni Nashville Hotel'
+=== Gold SQL ===
+SELECT SUM(rank) FROM table_name_89 WHERE name = "omni nashville hotel"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+What is the greatest rank for Fifth third center?
+=== Pred SQL ===
+SELECT MAX(rank) FROM table_name_27 WHERE name = 'Fifth third center'
+=== Gold SQL ===
+SELECT MAX(rank) FROM table_name_27 WHERE name = "fifth third center"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+When a building is 292 (89) ft (m) tall, has less than 23 floors, and ranks less than 14, what is the average year?
+=== Pred SQL ===
+SELECT AVG(year) FROM table_name_77 WHERE height_ft__m_ = '292 (89)' AND floors < '23' AND rank < '14'
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_77 WHERE floors < 23 AND height_ft__m_ = "292 (89)" AND rank < 14
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What type of regular season/preseason game was played on August 25, 2007?
+=== Pred SQL ===
+SELECT regular_season___preseason FROM table_name_70 WHERE date = 'August 25, 2007'
+=== Gold SQL ===
+SELECT regular_season___preseason FROM table_name_70 WHERE date = "august 25, 2007"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+In what stadium was the game on August 22, 2008 played?
+=== Pred SQL ===
+SELECT stadium FROM table_name_36 WHERE date = 'August 22, 2008'
+=== Gold SQL ===
+SELECT stadium FROM table_name_36 WHERE date = "august 22, 2008"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+In what stadium was the home team Dallas Cowboys 21?
+=== Pred SQL ===
+SELECT stadium FROM table_name_89 WHERE home_team = 'Dallas Cowboys' LIMIT 1
+=== Gold SQL ===
+SELECT stadium FROM table_name_89 WHERE home_team = "dallas cowboys 21"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+On what date was the home team the Dallas Cowboys 34?
+=== Pred SQL ===
+SELECT date FROM table_name_28 WHERE home_team = 'Dallas Cowboys' AND CAST(date AS INTEGER) = 34
+=== Gold SQL ===
+SELECT date FROM table_name_28 WHERE home_team = "dallas cowboys 34"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the visiting team on October 15, 2006?
+=== Pred SQL ===
+SELECT visiting_team FROM table_name_59 WHERE date = 'October 15, 2006'
+=== Gold SQL ===
+SELECT visiting_team FROM table_name_59 WHERE date = "october 15, 2006"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What's the smallest amount of Laps that had a finish of 7 with a start of 6?
+=== Pred SQL ===
+SELECT MIN(laps) FROM table_name_49 WHERE finish = 7 AND start = 6
+=== Gold SQL ===
+SELECT MIN(laps) FROM table_name_49 WHERE finish = "7" AND start = "6"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the smallest bronze with a Gold smaller than 3, and a Silver larger than 1, and a Rank of 6, and a Nation of hungary?
+=== Pred SQL ===
+SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = 6 AND nation = 'hungary'
+=== Gold SQL ===
+SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = 6 AND nation = "hungary"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the average bronze with a rank of 4 and less than 1 silver?
+=== Pred SQL ===
+SELECT AVG(bronze) FROM table_name_73 WHERE rank = 4 AND silver < 1
+=== Gold SQL ===
+SELECT AVG(bronze) FROM table_name_73 WHERE rank = 4 AND silver < 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which silver has a Gold larger than 4, and a Rank of 1?
+=== Pred SQL ===
+SELECT silver FROM table_name_74 WHERE gold > '4' AND rank = '1'
+=== Gold SQL ===
+SELECT silver FROM table_name_74 WHERE gold > 4 AND rank = 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What lowest bronze has a total of 3, a Nation of hungary, and a Gold smaller than 0?
+=== Pred SQL ===
+SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = 'Hungary' AND gold < 0
+=== Gold SQL ===
+SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = "hungary" AND gold < 0
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many gold have a Rank of 7, and a Bronze of 1, and a Silver smaller than 0?
+=== Pred SQL ===
+SELECT COUNT(gold) FROM table_name_29 WHERE rank = '7' AND bronze = '1' AND silver < 0
+=== Gold SQL ===
+SELECT SUM(gold) FROM table_name_29 WHERE rank = 7 AND bronze = 1 AND silver < 0
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+How many Totals have a Silver smaller than 2, and a Nation of ukraine, and a Gold smaller than 3?
+=== Pred SQL ===
+SELECT total FROM table_name_71 WHERE silver < 2 AND nation = 'ukraine' AND gold < 3 GROUP BY total
+=== Gold SQL ===
+SELECT COUNT(total) FROM table_name_71 WHERE silver < 2 AND nation = "ukraine" AND gold < 3
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Which player played in 2007?
+=== Pred SQL ===
+SELECT player FROM table_name_17 WHERE season = '2007'
+=== Gold SQL ===
+SELECT player FROM table_name_17 WHERE season = "2007"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was Min Patel's bowling?
+=== Pred SQL ===
+SELECT bowling FROM table_name_7 WHERE player = 'Min Patel'
+=== Gold SQL ===
+SELECT bowling FROM table_name_7 WHERE player = "min patel"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the week 1 nomination when the week 2 nomination was Piia Jarkko?
+=== Pred SQL ===
+SELECT week_1 FROM table_name_35 WHERE week_2 = 'Piia Jarkko'
+=== Gold SQL ===
+SELECT week_1 FROM table_name_35 WHERE week_2 = "piia jarkko"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the week 12 nomination when the week 9 nomination walked (day 11)?
+=== Pred SQL ===
+SELECT T1.week_12 FROM table_name_10 AS T1 WHERE T1.week_9 = 'day 11'
+=== Gold SQL ===
+SELECT week_12 FROM table_name_10 WHERE week_9 = "walked (day 11)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the week 12 nomination that had a week 1 nomination of Maria Maxine and a week 2 nomination of Henri Satu?
+=== Pred SQL ===
+SELECT week_12 FROM table_name_1 WHERE week_1 = 'Maria Maxine' AND week_2 = 'Henri Satu'
+=== Gold SQL ===
+SELECT week_12 FROM table_name_1 WHERE week_1 = "maria maxine" AND week_2 = "henri satu"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the heightfor city of license of malone, ny
+=== Pred SQL ===
+SELECT T1.height_m___ft__ FROM table_name_44 AS T1 WHERE T1.city_of_license = 'malone, ny'
+=== Gold SQL ===
+SELECT height_m___ft__ FROM table_name_44 WHERE city_of_license = "malone, ny"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the class with call sign of wmhn
+=== Pred SQL ===
+SELECT class FROM table_name_74 WHERE call_sign = 'wmhn'
+=== Gold SQL ===
+SELECT class FROM table_name_74 WHERE call_sign = "wmhn"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the frequency with class of b
+=== Pred SQL ===
+SELECT T1.frequency FROM table_name_78 AS T1 WHERE T1.class = 'b'
+=== Gold SQL ===
+SELECT frequency FROM table_name_78 WHERE class = "b"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the city of license with frequency of 90.1 fm
+=== Pred SQL ===
+SELECT city_of_license FROM table_name_37 WHERE frequency = '90.1 fm'
+=== Gold SQL ===
+SELECT city_of_license FROM table_name_37 WHERE frequency = "90.1 fm"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the total number of ERP/Power W for frequency of 89.3 fm and facility ID less than 40430
+=== Pred SQL ===
+SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = '89.3 fm' AND facility_id < 40430
+=== Gold SQL ===
+SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = "89.3 fm" AND facility_id < 40430
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the Engine(s) that has  f Tyres in 1971?
+=== Pred SQL ===
+SELECT engine_s_ FROM table_name_68 WHERE tyres = 'f' AND year = '1971'
+=== Gold SQL ===
+SELECT engine_s_ FROM table_name_68 WHERE tyres = "f" AND year = 1971
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the attendance on June 27?
+=== Pred SQL ===
+SELECT att FROM table_name_6 WHERE date = 'June 27'
+=== Gold SQL ===
+SELECT MIN(att) FROM table_name_6 WHERE date = "june 27"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Name the surface for 12 september 2006
+=== Pred SQL ===
+SELECT surface FROM table_name_3 WHERE date = '12 september 2006'
+=== Gold SQL ===
+SELECT surface FROM table_name_3 WHERE date = "12 september 2006"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the score for opponent in the final being paul baccanello
+=== Pred SQL ===
+SELECT score FROM table_name_46 WHERE opponent_in_the_final = 'paul baccanello'
+=== Gold SQL ===
+SELECT score FROM table_name_46 WHERE opponent_in_the_final = "paul baccanello"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the surface for 20 march 2007
+=== Pred SQL ===
+SELECT surface FROM table_name_5 WHERE date = '20 march 2007'
+=== Gold SQL ===
+SELECT surface FROM table_name_5 WHERE date = "20 march 2007"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the date for opponent in the final being ignasi villacampa
+=== Pred SQL ===
+SELECT date FROM table_name_5 WHERE opponent_in_the_final = 'ignasi villacampa'
+=== Gold SQL ===
+SELECT date FROM table_name_5 WHERE opponent_in_the_final = "ignasi villacampa"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the tournament for grass surface and opponent in the final being paul baccanello
+=== Pred SQL ===
+SELECT tournament FROM table_name_11 WHERE surface = 'grass' AND opponent_in_the_final = 'paul baccanello'
+=== Gold SQL ===
+SELECT tournament FROM table_name_11 WHERE surface = "grass" AND opponent_in_the_final = "paul baccanello"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+When is the earliest year in milan that guillermo vilas was champion?
+=== Pred SQL ===
+SELECT MIN(year) FROM table_name_43 WHERE location = 'milan' AND champion = 'guillermo vilas'
+=== Gold SQL ===
+SELECT MIN(year) FROM table_name_43 WHERE location = "milan" AND champion = "guillermo vilas"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Where in 1985 was tim mayotte runner up?
+=== Pred SQL ===
+SELECT location FROM table_name_13 WHERE year = '1985' AND runner_up = 'tim mayotte'
+=== Gold SQL ===
+SELECT location FROM table_name_13 WHERE year > 1985 AND runner_up = "tim mayotte"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score when stefan edberg won after 1978?
+=== Pred SQL ===
+SELECT score FROM table_name_68 WHERE champion = 'stefan edberg' AND year > '1978' LIMIT 1
+=== Gold SQL ===
+SELECT score FROM table_name_68 WHERE year > 1978 AND champion = "stefan edberg"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the Facility ID that has a City of license of wheeling, and a ERP kW less than 4.5?
+=== Pred SQL ===
+SELECT facility_id FROM table_name_52 WHERE city_of_license = 'Wheeling' AND erp_kw < 4.5
+=== Gold SQL ===
+SELECT MAX(facility_id) FROM table_name_52 WHERE city_of_license = "wheeling" AND erp_kw < 4.5
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+What is the City of license that has a ERP kW more than 4.5 and w23dr-d?
+=== Pred SQL ===
+SELECT city_of_license FROM table_name_45 WHERE erp_kw > '4.5' AND station = 'w23dr-d'
+=== Gold SQL ===
+SELECT city_of_license FROM table_name_45 WHERE erp_kw > 4.5 AND station = "w23dr-d"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the location that has a date of demolition of 1940 and has a church named Christ Church Greyfriars?
+=== Pred SQL ===
+SELECT location FROM table_name_46 WHERE date_of_demolition = '1940' AND church_name = 'Christ Church Greyfriars'
+=== Gold SQL ===
+SELECT location FROM table_name_46 WHERE date_of_demolition = 1940 AND church_name = "christ church greyfriars"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many dates of demolition are located on Wood Street?
+=== Pred SQL ===
+SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = 'Wood Street'
+=== Gold SQL ===
+SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = "wood street"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was Olga Govortsova's score when she played on a clay surface on 19 May 2008?
+=== Pred SQL ===
+SELECT score FROM table_name_11 WHERE surface = 'clay' AND date = '19 May 2008' AND player = 'Olga Govortsova'
+=== Gold SQL ===
+SELECT score FROM table_name_11 WHERE surface = "clay" AND date = "19 may 2008"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === no such column: player
+
+=== Question ===
+What was Olga Govortsova's outcome when she played on a grass surface?
+=== Pred SQL ===
+SELECT outcome FROM table_name_59 WHERE surface = 'grass'
+=== Gold SQL ===
+SELECT outcome FROM table_name_59 WHERE surface = "grass"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was Olga Govortsova's goal when she played on a clay surface on 26 May 2012?
+=== Pred SQL ===
+SELECT score FROM table_name_84 WHERE surface = 'clay' AND date = '26 May 2012' AND player = 'Olga Govortsova'
+=== Gold SQL ===
+SELECT score FROM table_name_84 WHERE surface = "clay" AND date = "26 may 2012"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === no such column: player
+
+=== Question ===
+Which mountain range has a rank of 19?
+=== Pred SQL ===
+SELECT mountain_range FROM table_name_35 WHERE rank = '19'
+=== Gold SQL ===
+SELECT mountain_range FROM table_name_35 WHERE rank = 19
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which location includes Coast Mountains with a rank less than 18 at Skihist Mountain?
+=== Pred SQL ===
+SELECT location FROM table_name_41 WHERE mountain_peak = 'Coast Mountains' AND mountain_range = 'Skihist Mountain' AND rank < 18
+=== Gold SQL ===
+SELECT location FROM table_name_41 WHERE mountain_range = "coast mountains" AND rank < 18 AND mountain_peak = "skihist mountain"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which mountain range includes Mount Hubbard?
+=== Pred SQL ===
+SELECT mountain_range FROM table_name_64 WHERE mountain_peak = 'Mount Hubbard'
+=== Gold SQL ===
+SELECT mountain_range FROM table_name_64 WHERE mountain_peak = "mount hubbard"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which province includes Axel Heiberg Island?
+=== Pred SQL ===
+SELECT province FROM table_name_25 WHERE mountain_range = 'Axel Heiberg Island'
+=== Gold SQL ===
+SELECT province FROM table_name_25 WHERE mountain_range = "axel heiberg island"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What are the notes of events that finished in 12th position?
+=== Pred SQL ===
+SELECT notes FROM table_name_94 WHERE position = '12th'
+=== Gold SQL ===
+SELECT notes FROM table_name_94 WHERE position = "12th"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which venue was finished in 2nd position in 1985?
+=== Pred SQL ===
+SELECT venue FROM table_name_40 WHERE year = '1985' AND position = '2nd'
+=== Gold SQL ===
+SELECT venue FROM table_name_40 WHERE position = "2nd" AND year = 1985
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the average year of events that took place in Antwerp, Belgium?
+=== Pred SQL ===
+SELECT AVG(year) FROM table_name_97 WHERE venue = 'Antwerp'
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_97 WHERE venue = "antwerp, belgium"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What's the year of the event that took place most recently in Antwerp, Belgium with team competition notes?
+=== Pred SQL ===
+SELECT DISTINCT year FROM table_name_42 WHERE venue = 'Antwerp, Belgium' ORDER BY year DESC LIMIT 1
+=== Gold SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE notes = "team competition" AND venue = "antwerp, belgium"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+What was the label's format LP and catalog of CH-9192?
+=== Pred SQL ===
+SELECT label, format, catalog FROM table_name_76 WHERE catalog = 'CH-9192' AND format = 'LP'
+=== Gold SQL ===
+SELECT label FROM table_name_76 WHERE format = "lp" AND catalog = "ch-9192"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+When was Catalog CHD-9192 published?
+=== Pred SQL ===
+SELECT date FROM table_name_66 WHERE catalog = 'CHD-9192'
+=== Gold SQL ===
+SELECT date FROM table_name_66 WHERE catalog = "chd-9192"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+I need the FCC info on the radio Frequency MHz 107.5?
+=== Pred SQL ===
+SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = '107.5'
+=== Gold SQL ===
+SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = 107.5
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Give me the MHz Frequency of Allapattah, Florida.
+=== Pred SQL ===
+SELECT T1.frequency_mhz FROM table_name_28 AS T1 WHERE T1.city_of_license = 'Allapattah, Florida'
+=== Gold SQL ===
+SELECT frequency_mhz FROM table_name_28 WHERE city_of_license = "allapattah, florida"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What class does the w298ak sign belong to?
+=== Pred SQL ===
+SELECT class FROM table_name_10 WHERE call_sign = 'w298ak'
+=== Gold SQL ===
+SELECT class FROM table_name_10 WHERE call_sign = "w298ak"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What class is ERP W of 800?
+=== Pred SQL ===
+SELECT class FROM table_name_9 WHERE erp_w = '800'
+=== Gold SQL ===
+SELECT class FROM table_name_9 WHERE erp_w = 800
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the total of Goals Conceded that has Points smaller than 21 and a Lost thats smaller than 8?
+=== Pred SQL ===
+SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8
+=== Gold SQL ===
+SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What's the total of Lost that's got Points larger than 28, Draw of 5, and Place that's smaller than 1?
+=== Pred SQL ===
+SELECT SUM(lost) AS total_lost FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1
+=== Gold SQL ===
+SELECT SUM(lost) FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What's the total of Goals Scored with Points that's smaller than 27, and a Team of C.D. Atlético Balboa?
+=== Pred SQL ===
+SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = 'C.D. Atlético Balboa'
+=== Gold SQL ===
+SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = "c.d. atlético balboa"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is listed as the Highest Played and that has a Place that is larger than 10?
+=== Pred SQL ===
+SELECT MAX(played) FROM table_name_9 WHERE place > 10
+=== Gold SQL ===
+SELECT MAX(played) FROM table_name_9 WHERE place > 10
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is listed as the Highest Played, has Points of 17, and Draw that is smaller than 5?
+=== Pred SQL ===
+SELECT played FROM table_name_19 WHERE points = '17' AND draw < 5 ORDER BY played DESC LIMIT 1
+=== Gold SQL ===
+SELECT MAX(played) FROM table_name_19 WHERE points = 17 AND draw < 5
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+When was the game that ended with a score of 6-4?
+=== Pred SQL ===
+SELECT date FROM table_name_38 WHERE score = '6-4'
+=== Gold SQL ===
+SELECT date FROM table_name_38 WHERE score = "6-4"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score on April 8?
+=== Pred SQL ===
+SELECT score FROM table_name_39 WHERE date = 'April 8'
+=== Gold SQL ===
+SELECT score FROM table_name_39 WHERE date = "april 8"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the decision in Minnesota?
+=== Pred SQL ===
+SELECT decision FROM table_name_12 WHERE home = 'Minnesota'
+=== Gold SQL ===
+SELECT decision FROM table_name_12 WHERE home = "minnesota"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which score has a record of 58–15–8?
+=== Pred SQL ===
+SELECT score FROM table_name_80 WHERE record = '58–15–8'
+=== Gold SQL ===
+SELECT score FROM table_name_80 WHERE record = "58–15–8"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which section has a level of Tier 3, is in the 6th position, and is in the 1937-38 season?
+=== Pred SQL ===
+SELECT section FROM table_name_74 WHERE season = '1937-38' AND level = 'Tier 3' AND position = '6'
+=== Gold SQL ===
+SELECT section FROM table_name_74 WHERE level = "tier 3" AND position = "6th" AND season = "1937-38"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which section is in the 6th position?
+=== Pred SQL ===
+SELECT section FROM table_name_8 WHERE position = '6'
+=== Gold SQL ===
+SELECT section FROM table_name_8 WHERE position = "6th"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the attendance with date of june 11
+=== Pred SQL ===
+SELECT attendance FROM table_name_92 WHERE date = 'june 11'
+=== Gold SQL ===
+SELECT attendance FROM table_name_92 WHERE date = "june 11"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which partnership has a run number of 27?
+=== Pred SQL ===
+SELECT partnerships FROM table_name_70 WHERE runs = '27'
+=== Gold SQL ===
+SELECT partnerships FROM table_name_70 WHERE runs = "27"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What venue did the parntership of shoaib malik / misbah-ul-haq occur?
+=== Pred SQL ===
+SELECT venue FROM table_name_79 WHERE partnerships = 'shoaib malik / misbah-ul-haq'
+=== Gold SQL ===
+SELECT venue FROM table_name_79 WHERE partnerships = "shoaib malik / misbah-ul-haq"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What venue did the partnership of herschelle gibbs / justin kemp happen?
+=== Pred SQL ===
+SELECT venue FROM table_name_74 WHERE partnerships = 'herschelle gibbs / justin kemp'
+=== Gold SQL ===
+SELECT venue FROM table_name_74 WHERE partnerships = "herschelle gibbs / justin kemp"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the number Played that has 310 Points for?
+=== Pred SQL ===
+SELECT T1.played FROM table_name_77 AS T1 WHERE T1.points_for = '310'
+=== Gold SQL ===
+SELECT played FROM table_name_77 WHERE points_for = "310"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Losing bonus has a Points against of 588?
+=== Pred SQL ===
+SELECT losing_bonus FROM table_name_62 WHERE points_against = '588'
+=== Gold SQL ===
+SELECT losing_bonus FROM table_name_62 WHERE points_against = "588"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Tries against has a Losing bonus of 7?
+=== Pred SQL ===
+SELECT tries_against FROM table_name_43 WHERE losing_bonus = '7'
+=== Gold SQL ===
+SELECT tries_against FROM table_name_43 WHERE losing_bonus = "7"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Try bonus has a Points against of 488?
+=== Pred SQL ===
+SELECT try_bonus FROM table_name_61 WHERE points_against = '488'
+=== Gold SQL ===
+SELECT try_bonus FROM table_name_61 WHERE points_against = "488"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Points for has a Try bonus of 140?
+=== Pred SQL ===
+SELECT points_for FROM table_name_26 WHERE try_bonus = '140'
+=== Gold SQL ===
+SELECT points_for FROM table_name_26 WHERE try_bonus = "140"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Drawn has a Tries against of 0?
+=== Pred SQL ===
+SELECT drawn FROM table_name_90 WHERE tries_against = '0'
+=== Gold SQL ===
+SELECT drawn FROM table_name_90 WHERE tries_against = "0"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the days held the champion with a reign larger than 3 and 1 defense has?
+=== Pred SQL ===
+SELECT days_held FROM table_name_48 WHERE reign > '3' AND defenses = '1'
+=== Gold SQL ===
+SELECT days_held FROM table_name_48 WHERE reign > 3 AND defenses = 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the days held the champion with a reign larger than 3 and less than 1 defense has?
+=== Pred SQL ===
+SELECT days_held FROM table_name_1 WHERE reign > '3' AND defenses < 1
+=== Gold SQL ===
+SELECT days_held FROM table_name_1 WHERE reign > 3 AND defenses < 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the average defenses a champion with 404 days held and a reign larger than 1 has?
+=== Pred SQL ===
+SELECT AVG(defenses) FROM table_name_57 WHERE days_held = '404' AND reign > 1
+=== Gold SQL ===
+SELECT AVG(defenses) FROM table_name_57 WHERE days_held = "404" AND reign > 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the lowest defense a champion with 345 days held has?
+=== Pred SQL ===
+SELECT MIN(defenses) FROM table_name_46 WHERE days_held = '345'
+=== Gold SQL ===
+SELECT MIN(defenses) FROM table_name_46 WHERE days_held = "345"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+On what date was there a record of 76-72?
+=== Pred SQL ===
+SELECT date FROM table_name_6 WHERE record = '76-72'
+=== Gold SQL ===
+SELECT date FROM table_name_6 WHERE record = "76-72"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the attendance that had a loss of Ponson (1-5)?
+=== Pred SQL ===
+SELECT attendance FROM table_name_58 WHERE loss = 'Ponson (1-5)'
+=== Gold SQL ===
+SELECT attendance FROM table_name_58 WHERE loss = "ponson (1-5)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+On which day was there a record of 36-39?
+=== Pred SQL ===
+SELECT date FROM table_name_70 WHERE record = '36-39'
+=== Gold SQL ===
+SELECT date FROM table_name_70 WHERE record = "36-39"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+On what day was the record 30-31?
+=== Pred SQL ===
+SELECT date FROM table_name_88 WHERE record = '30-31'
+=== Gold SQL ===
+SELECT date FROM table_name_88 WHERE record = "30-31"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who was the opponent at the game that had a loss of Leonard (7–8)?
+=== Pred SQL ===
+SELECT opponent FROM table_name_82 WHERE loss = 'Leonard (7–8)'
+=== Gold SQL ===
+SELECT opponent FROM table_name_82 WHERE loss = "leonard (7–8)"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 18–43?
+=== Pred SQL ===
+SELECT score FROM table_name_3 WHERE record = '18–43'
+=== Gold SQL ===
+SELECT score FROM table_name_3 WHERE record = "18–43"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game against the Royals when the record was 24–52?
+=== Pred SQL ===
+SELECT score FROM table_name_75 WHERE opponent = 'Royals' AND record = '24–52'
+=== Gold SQL ===
+SELECT score FROM table_name_75 WHERE opponent = "royals" AND record = "24–52"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 22–46?
+=== Pred SQL ===
+SELECT score FROM table_name_36 WHERE record = '22–46'
+=== Gold SQL ===
+SELECT score FROM table_name_36 WHERE record = "22–46"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the real name of the person whose primary military specialty is shock paratrooper?
+=== Pred SQL ===
+SELECT real_name FROM table_name_51 WHERE primary_military_speciality = 'shock paratrooper'
+=== Gold SQL ===
+SELECT real_name FROM table_name_51 WHERE primary_military_speciality = "shock paratrooper"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the birthplace of Pete Sanderson?
+=== Pred SQL ===
+SELECT birthplace FROM table_name_71 WHERE real_name = 'Pete Sanderson'
+=== Gold SQL ===
+SELECT birthplace FROM table_name_71 WHERE real_name = "pete sanderson"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What role did Jean-Luc Bouvier serve?
+=== Pred SQL ===
+SELECT function__figure_ FROM table_name_30 WHERE real_name = 'Jean-Luc Bouvier'
+=== Gold SQL ===
+SELECT function__figure_ FROM table_name_30 WHERE real_name = "jean-luc bouvier"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the real name of the person who is a pilot of the silent attack kayak?
+=== Pred SQL ===
+SELECT real_name FROM table_name_28 WHERE function__figure_ = 'pilot of the silent attack kayak'
+=== Gold SQL ===
+SELECT real_name FROM table_name_28 WHERE function__figure_ = "pilot of the silent attack kayak"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the code name of the person born in Liverpool?
+=== Pred SQL ===
+SELECT code_name FROM table_name_94 WHERE birthplace = 'Liverpool'
+=== Gold SQL ===
+SELECT code_name FROM table_name_94 WHERE birthplace = "liverpool"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the names for the medalist in the sport of canoeing?
+=== Pred SQL ===
+SELECT name FROM table_name_25 WHERE sport = 'canoeing'
+=== Gold SQL ===
+SELECT name FROM table_name_25 WHERE sport = "canoeing"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What games had the women's half middleweight event?
+=== Pred SQL ===
+SELECT games FROM table_name_90 WHERE event = 'women\'s half middleweight'
+=== Gold SQL ===
+SELECT games FROM table_name_90 WHERE event = "women's half middleweight"
+=== Exact Match === False
+=== Execution Match === None
+=== Execution Error === near "s": syntax error
+
+=== Question ===
+Who received the bronze medal in the 2000 Sydney games?
+=== Pred SQL ===
+SELECT name FROM table_name_95 WHERE medal = 'bronze' AND games = '2000 Sydney'
+=== Gold SQL ===
+SELECT name FROM table_name_95 WHERE medal = "bronze" AND games = "2000 sydney"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many people attended when opponent was twins?
+=== Pred SQL ===
+SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = 'twins'
+=== Gold SQL ===
+SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = "twins"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which date has a Record of 41-46?
+=== Pred SQL ===
+SELECT date FROM table_name_55 WHERE record = '41-46'
+=== Gold SQL ===
+SELECT date FROM table_name_55 WHERE record = "41-46"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which score has a Record of 48-55?
+=== Pred SQL ===
+SELECT score FROM table_name_66 WHERE record = '48-55'
+=== Gold SQL ===
+SELECT score FROM table_name_66 WHERE record = "48-55"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which score has a Record of 44-49?
+=== Pred SQL ===
+SELECT score FROM table_name_96 WHERE record = '44-49'
+=== Gold SQL ===
+SELECT score FROM table_name_96 WHERE record = "44-49"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which score has an Opponent of white sox, and a Record of 2-0?
+=== Pred SQL ===
+SELECT score FROM table_name_92 WHERE opponent = 'white sox' AND record = '2-0'
+=== Gold SQL ===
+SELECT score FROM table_name_92 WHERE opponent = "white sox" AND record = "2-0"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many votes did candice sjostrom receive?
+=== Pred SQL ===
+SELECT SUM(popular_votes) AS total_votes FROM table_name_94 WHERE candidate = 'candice sjostrom'
+=== Gold SQL ===
+SELECT AVG(popular_votes) FROM table_name_94 WHERE candidate = "candice sjostrom"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What percentage did chris wright receive?
+=== Pred SQL ===
+SELECT percentage FROM table_name_23 WHERE candidate = 'chris wright'
+=== Gold SQL ===
+SELECT percentage FROM table_name_23 WHERE candidate = "chris wright"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many votes for the candidate after 1992, 1.59% of the vote, and the office of us representative 4?
+=== Pred SQL ===
+SELECT SUM(popular_votes) FROM table_name_2 WHERE percentage = '1.59%' AND year > '1992' AND office = 'us representative 4'
+=== Gold SQL ===
+SELECT AVG(popular_votes) FROM table_name_2 WHERE office = "us representative 4" AND percentage = "1.59%" AND year > 1992
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What years did J. Smith Young serve as a Representative?
+=== Pred SQL ===
+SELECT years FROM table_name_36 WHERE representative = 'J. Smith Young'
+=== Gold SQL ===
+SELECT years FROM table_name_36 WHERE representative = "j. smith young"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which party did Thomas L. Young belong to?
+=== Pred SQL ===
+SELECT party FROM table_name_58 WHERE representative = 'Thomas L. Young'
+=== Gold SQL ===
+SELECT party FROM table_name_58 WHERE representative = "thomas l. young"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the lowest total amount of medals from countries with 0 gold medals, more than 2 bronze medals, and more than 1 silver medal?
+=== Pred SQL ===
+SELECT MIN(total) FROM table_name_57 WHERE gold = '0' AND bronze > 2 AND silver > 1
+=== Gold SQL ===
+SELECT MIN(total) FROM table_name_57 WHERE gold = 0 AND bronze > 2 AND silver > 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the total number of silver medals for countries of rank 14, with less than 1 total medals?
+=== Pred SQL ===
+SELECT total FROM table_name_66 WHERE rank = '14' AND total < 1 GROUP BY total
+=== Gold SQL ===
+SELECT SUM(silver) FROM table_name_66 WHERE rank = "14" AND total < 1
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+How many tackles for the player with over 0 fumble recovries and 0 forced fumbles?
+=== Pred SQL ===
+SELECT total FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0
+=== Gold SQL ===
+SELECT COUNT(total) FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+How many forced fumbles for jim laney with under 2 solo tackles?
+=== Pred SQL ===
+SELECT COUNT(fumble_force) FROM table_name_20 WHERE player = 'JIM LANEY' AND solo < 2
+=== Gold SQL ===
+SELECT COUNT(fumble_force) FROM table_name_20 WHERE solo < 2 AND player = "jim laney"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the high total for players with over 15 solo tackles?
+=== Pred SQL ===
+SELECT MAX(total) FROM table_name_31 WHERE solo > 15
+=== Gold SQL ===
+SELECT MAX(total) FROM table_name_31 WHERE solo > 15
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many fumble recoveries for scott gajos with 0 forced fubmles, 0 sacks, and under 2 solo tackles?
+=== Pred SQL ===
+SELECT fumble_rec FROM table_name_65 WHERE player = 'Scott Gajos' AND fumble_force = 0 AND sacks = 0 AND fumble_rec < 2
+=== Gold SQL ===
+SELECT SUM(fumble_rec) FROM table_name_65 WHERE sacks = "0" AND fumble_force = "0" AND player = "scott gajos" AND solo < 2
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Who is the Opponent playing at 20:00 GMT at Camp Nou?
+=== Pred SQL ===
+SELECT opponent FROM table_name_64 WHERE time = '20:00 GMT' AND ground = 'Camp Nou'
+=== Gold SQL ===
+SELECT opponent FROM table_name_64 WHERE time = "20:00 gmt" AND ground = "camp nou"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What time was the match played with a score of 3-2?
+=== Pred SQL ===
+SELECT time FROM table_name_35 WHERE score = '3-2'
+=== Gold SQL ===
+SELECT time FROM table_name_35 WHERE score = "3-2"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+On which ground did the team play Aston Villa?
+=== Pred SQL ===
+SELECT ground FROM table_name_83 WHERE opponent = 'Aston Villa'
+=== Gold SQL ===
+SELECT ground FROM table_name_83 WHERE opponent = "aston villa"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What kind of competition was it at San Siro at 18:30 GMT?
+=== Pred SQL ===
+SELECT competition FROM table_name_60 WHERE ground = 'San Siro' AND time = '18:30 GMT'
+=== Gold SQL ===
+SELECT competition FROM table_name_60 WHERE ground = "san siro" AND time = "18:30 gmt"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the total number of decile for the redwood school locality?
+=== Pred SQL ===
+SELECT decile FROM table_name_34 WHERE name = 'redwood school locality' GROUP BY decile
+=== Gold SQL ===
+SELECT COUNT(decile) FROM table_name_34 WHERE name = "redwood school"
+=== Exact Match === False
+=== Execution Match === False
+
+=== Question ===
+Which report includes a Circuit of Tripoli?
+=== Pred SQL ===
+SELECT report FROM table_name_71 WHERE circuit = 'Tripoli'
+=== Gold SQL ===
+SELECT report FROM table_name_71 WHERE circuit = "tripoli"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Summary ===
+{
+  "model_name_or_path": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter_path": null,
+  "dataset_name": "b-mc2/sql-create-context",
+  "num_samples": 200,
+  "exact_match": 0.02,
+  "execution_match": 0.9123711340206185,
+  "execution_coverage": 0.97
+}
+Saved report to: outputs/eval_baseline_3b_held_server.json
+2026-03-22 18:51:44 Baseline eval done
+2026-03-22 18:51:44 === Running held-out fine-tuned eval ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.94s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.79s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.96s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+=== Question ===
+How many strokes for arnold palmer with a to par of greater than 9?
+=== Pred SQL ===
+SELECT SUM(total) FROM table_name_69 WHERE to_par > 9 AND player = "arnold palmer"
+=== Gold SQL ===
+SELECT AVG(total) FROM table_name_69 WHERE to_par > 9 AND player = "arnold palmer"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score to par in 1960?
+=== Pred SQL ===
+SELECT to_par FROM table_name_74 WHERE year_s__won = "1960"
+=== Gold SQL ===
+SELECT to_par FROM table_name_74 WHERE year_s__won = "1960"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the earliest first game for a rugby team that has 7 lost games and 0 draws?
+=== Pred SQL ===
+SELECT MIN(first_game) FROM table_name_78 WHERE lost = "7" AND drawn = "0"
+=== Gold SQL ===
+SELECT MIN(first_game) FROM table_name_78 WHERE lost = 7 AND drawn < 0
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many games were played by a team that won 0.00% of their games and 0 draws?
+=== Pred SQL ===
+SELECT AVG(played) FROM table_name_55 WHERE percentage = "0.00%" AND drawn = "0"
+=== Gold SQL ===
+SELECT SUM(played) FROM table_name_55 WHERE percentage = "0.00%" AND drawn < 0
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the 1st match for brisbane bears
+=== Pred SQL ===
+SELECT 1 AS st_match FROM table_name_61 WHERE team = "brisbane bears"
+=== Gold SQL ===
+SELECT 1 AS st_match FROM table_name_61 WHERE team = "brisbane bears"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the lost for matches of 1 928
+=== Pred SQL ===
+SELECT lost FROM table_name_66 WHERE matches = "1 928"
+=== Gold SQL ===
+SELECT lost FROM table_name_66 WHERE matches = "1 928"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the lost for % won of 55.37
+=== Pred SQL ===
+SELECT lost FROM table_name_64 WHERE _percentage_won = "55.37"
+=== Gold SQL ===
+SELECT lost FROM table_name_64 WHERE _percentage_won = "55.37"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the matches for gold coast
+=== Pred SQL ===
+SELECT matches FROM table_name_11 WHERE team = "gold coast"
+=== Gold SQL ===
+SELECT matches FROM table_name_11 WHERE team = "gold coast"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the lost for % won of 55.37
+=== Pred SQL ===
+SELECT lost FROM table_name_46 WHERE _percentage_won = "55.37"
+=== Gold SQL ===
+SELECT lost FROM table_name_46 WHERE _percentage_won = "55.37"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the year when cable was 4.6%?
+=== Pred SQL ===
+SELECT year FROM table_name_99 WHERE cable = "4.6%"
+=== Gold SQL ===
+SELECT year FROM table_name_99 WHERE cable = "4.6%"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the other for 2012?
+=== Pred SQL ===
+SELECT other FROM table_name_54 WHERE year = "2012"
+=== Gold SQL ===
+SELECT other FROM table_name_54 WHERE year = "2012"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the xDSL for the other of 0.6% and FTTx of 35.4%?
+=== Pred SQL ===
+SELECT xdsl FROM table_name_1 WHERE other = "0.6%" AND fttx = "35.4%"
+=== Gold SQL ===
+SELECT xdsl FROM table_name_1 WHERE other = "0.6%" AND fttx = "35.4%"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the other for a 78.2% xDSL?
+=== Pred SQL ===
+SELECT other FROM table_name_15 WHERE xdsl = "78.2%"
+=== Gold SQL ===
+SELECT other FROM table_name_15 WHERE xdsl = "78.2%"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the xDSL in 2010 when the other was 0.6%?
+=== Pred SQL ===
+SELECT xdsl FROM table_name_55 WHERE other = "0.6%" AND year = "2010"
+=== Gold SQL ===
+SELECT xdsl FROM table_name_55 WHERE other = "0.6%" AND year = "2010"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which date has a Result of won, and a Score of 1-0?
+=== Pred SQL ===
+SELECT date FROM table_name_23 WHERE result = "won" AND score = "1-0"
+=== Gold SQL ===
+SELECT date FROM table_name_23 WHERE result = "won" AND score = "1-0"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which result has a Date of november 2, 2007?
+=== Pred SQL ===
+SELECT result FROM table_name_86 WHERE date = "november 2, 2007"
+=== Gold SQL ===
+SELECT result FROM table_name_86 WHERE date = "november 2, 2007"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Competition has a Score of 2-0?
+=== Pred SQL ===
+SELECT competition FROM table_name_7 WHERE score = "2-0"
+=== Gold SQL ===
+SELECT competition FROM table_name_7 WHERE score = "2-0"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Venue has a Date of january 9, 2011?
+=== Pred SQL ===
+SELECT venue FROM table_name_51 WHERE date = "january 9, 2011"
+=== Gold SQL ===
+SELECT venue FROM table_name_51 WHERE date = "january 9, 2011"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the termination of mission date of the representative with a presentation of credentials date on July 4, 1898?
+=== Pred SQL ===
+SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = "july 4, 1898"
+=== Gold SQL ===
+SELECT termination_of_mission FROM table_name_58 WHERE presentation_of_credentials = "july 4, 1898"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the presentation of credentials date of raúl h. castro, who has a title of ambassador extraordinary and plenipotentiary?
+=== Pred SQL ===
+SELECT presentation_of_credentials FROM table_name_7 WHERE title = "ambassador extraordinary and plenipotentiary" AND representative = "raúl h. castro"
+=== Gold SQL ===
+SELECT presentation_of_credentials FROM table_name_7 WHERE title = "ambassador extraordinary and plenipotentiary" AND representative = "raúl h. castro"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is the representative with a presentation of credentials date on February 23, 1854?
+=== Pred SQL ===
+SELECT representative FROM table_name_32 WHERE presentation_of_credentials = "february 23, 1854"
+=== Gold SQL ===
+SELECT representative FROM table_name_32 WHERE presentation_of_credentials = "february 23, 1854"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the title of the representative appointed by James K. Polk?
+=== Pred SQL ===
+SELECT title FROM table_name_52 WHERE appointed_by = "james k. polk"
+=== Gold SQL ===
+SELECT title FROM table_name_52 WHERE appointed_by = "james k. polk"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the termination of mission date of the representative appointed by Franklin Pierce with a title of chargé d'affaires?
+=== Pred SQL ===
+SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = "franklin pierce" AND title = "chargé d'affaires"
+=== Gold SQL ===
+SELECT termination_of_mission FROM table_name_37 WHERE appointed_by = "franklin pierce" AND title = "chargé d'affaires"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Stadium held on november 29?
+=== Pred SQL ===
+SELECT stadium FROM table_name_41 WHERE date = "november 29"
+=== Gold SQL ===
+SELECT stadium FROM table_name_41 WHERE date = "november 29"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is the Visiting team on december 20?
+=== Pred SQL ===
+SELECT visiting_team FROM table_name_99 WHERE date = "december 20"
+=== Gold SQL ===
+SELECT visiting_team FROM table_name_99 WHERE date = "december 20"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Stadium has a Visiting team of pittsburgh steelers?
+=== Pred SQL ===
+SELECT stadium FROM table_name_44 WHERE visiting_team = "pittsburgh steelers"
+=== Gold SQL ===
+SELECT stadium FROM table_name_44 WHERE visiting_team = "pittsburgh steelers"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is the Host team that has a chicago bears as a visiting team?
+=== Pred SQL ===
+SELECT host_team FROM table_name_61 WHERE visiting_team = "chicago bears"
+=== Gold SQL ===
+SELECT host_team FROM table_name_61 WHERE visiting_team = "chicago bears"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Final score on november 22?
+=== Pred SQL ===
+SELECT final_score FROM table_name_48 WHERE date = "november 22"
+=== Gold SQL ===
+SELECT final_score FROM table_name_48 WHERE date = "november 22"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Host team that has indianapolis colts as a Visiting team?
+=== Pred SQL ===
+SELECT host_team FROM table_name_71 WHERE visiting_team = "indianapolis colts"
+=== Gold SQL ===
+SELECT host_team FROM table_name_71 WHERE visiting_team = "indianapolis colts"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who won when np cooper av cooke was runner up?
+=== Pred SQL ===
+SELECT winners FROM table_name_34 WHERE runners_up = "np cooper av cooke"
+=== Gold SQL ===
+SELECT winners FROM table_name_34 WHERE runners_up = "np cooper av cooke"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the record of the match that had a time of 1:44?
+=== Pred SQL ===
+SELECT record FROM table_name_35 WHERE time = "1:44"
+=== Gold SQL ===
+SELECT record FROM table_name_35 WHERE time = "1:44"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the opponent at GCM – D.O.G. 4?
+=== Pred SQL ===
+SELECT opponent FROM table_name_54 WHERE event = "gcm – d.o.g. 4"
+=== Gold SQL ===
+SELECT opponent FROM table_name_54 WHERE event = "gcm – d.o.g. 4"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the location of the match that ended before round 2, against Hikaru Sato?
+=== Pred SQL ===
+SELECT location FROM table_name_48 WHERE round < 2 AND opponent = "hikaru sato"
+=== Gold SQL ===
+SELECT location FROM table_name_48 WHERE round < 2 AND opponent = "hikaru sato"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the Company or Product name where Entrepreneurs Geoff and Colette Bell requested £75,000?
+=== Pred SQL ===
+SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = "75,000" AND entrepreneur_s_ = "geoff and colette bell"
+=== Gold SQL ===
+SELECT company_or_product_name FROM table_name_25 WHERE money_requested__£_ = "75,000" AND entrepreneur_s_ = "geoff and colette bell"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Investing Dragon(s) belong to Episode 9 with the Entrepreneur Ashley Sayed?
+=== Pred SQL ===
+SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = "9" AND entrepreneur_s_ = "ashley sayed"
+=== Gold SQL ===
+SELECT investing_dragon_s_ FROM table_name_82 WHERE episode = "episode 9" AND entrepreneur_s_ = "ashley sayed"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What Episode did Entrepreneur(s) Luke Booth and Christopher Eves take part?
+=== Pred SQL ===
+SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = "luke booth and christopher eves"
+=== Gold SQL ===
+SELECT episode FROM table_name_99 WHERE entrepreneur_s_ = "luke booth and christopher eves"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Company or Product name requested £70,000 on Episode 11?
+=== Pred SQL ===
+SELECT company_or_product_name FROM table_name_17 WHERE episode = "11" AND money_requested__£_ = "70,000"
+=== Gold SQL ===
+SELECT company_or_product_name FROM table_name_17 WHERE episode = "episode 11" AND money_requested__£_ = "70,000"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is stephen arigbabu's height?
+=== Pred SQL ===
+SELECT MAX(height) FROM table_name_52 WHERE player = "stephen arigbabu"
+=== Gold SQL ===
+SELECT MIN(height) FROM table_name_52 WHERE player = "stephen arigbabu"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+For all games with los angeles as visitor, what is the highest attendance of all?
+=== Pred SQL ===
+SELECT MAX(attendance) FROM table_name_12 WHERE visitor = "los angeles"
+=== Gold SQL ===
+SELECT MAX(attendance) FROM table_name_12 WHERE visitor = "los angeles"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+For all games with calgary as home, what is the average number of attendees?
+=== Pred SQL ===
+SELECT AVG(attendance) FROM table_name_1 WHERE home = "calgary"
+=== Gold SQL ===
+SELECT AVG(attendance) FROM table_name_1 WHERE home = "calgary"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is no. 5 when Lena Claudisabel is no. 1 and Lena Sylvie is no. 2?
+=== Pred SQL ===
+SELECT no5 FROM table_name_29 WHERE no1 = "lena claudisabel" AND no2 = "lena sylvie"
+=== Gold SQL ===
+SELECT no5 FROM table_name_29 WHERE no1 = "lena claudisabel" AND no2 = "lena sylvie"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is no.3 when Claudio Sylvie is no.1?
+=== Pred SQL ===
+SELECT no3 FROM table_name_62 WHERE no1 = "claudio sylvie"
+=== Gold SQL ===
+SELECT no3 FROM table_name_62 WHERE no1 = "claudio sylvie"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 18-20?
+=== Pred SQL ===
+SELECT score FROM table_name_77 WHERE record = "18-20"
+=== Gold SQL ===
+SELECT score FROM table_name_77 WHERE record = "18-20"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the Partner for Flavio Cipolla Simone Vagnozzi Opponents in the final?
+=== Pred SQL ===
+SELECT partner FROM table_name_7 WHERE opponents_in_the_final = "flavio cipolla simone vagnozzi"
+=== Gold SQL ===
+SELECT partner FROM table_name_7 WHERE opponents_in_the_final = "flavio cipolla simone vagnozzi"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who were the Opponents in the final that played on a carpet (i) Surface?
+=== Pred SQL ===
+SELECT opponents_in_the_final FROM table_name_62 WHERE surface = "carpet (i)"
+=== Gold SQL ===
+SELECT opponents_in_the_final FROM table_name_62 WHERE surface = "carpet (i)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Played on Clay Surface, what was the Score of the Dortmund Tournament?
+=== Pred SQL ===
+SELECT score_in_the_final FROM table_name_70 WHERE surface = "clay" AND tournament = "dortmund"
+=== Gold SQL ===
+SELECT score_in_the_final FROM table_name_70 WHERE surface = "clay" AND tournament = "dortmund"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is Partner Frederik Nielsen's Opponents in the final?
+=== Pred SQL ===
+SELECT opponents_in_the_final FROM table_name_38 WHERE partner = "frederik nielsen"
+=== Gold SQL ===
+SELECT opponents_in_the_final FROM table_name_38 WHERE partner = "frederik nielsen"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is Partner Tomas Behrend's Score in the final?
+=== Pred SQL ===
+SELECT score_in_the_final FROM table_name_48 WHERE partner = "tomas behrend"
+=== Gold SQL ===
+SELECT score_in_the_final FROM table_name_48 WHERE partner = "tomas behrend"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Country does Larry Mize play for?
+=== Pred SQL ===
+SELECT country FROM table_name_67 WHERE player = "larry mize"
+=== Gold SQL ===
+SELECT country FROM table_name_67 WHERE player = "larry mize"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the winning total from 1976?
+=== Pred SQL ===
+SELECT SUM(total) FROM table_name_20 WHERE year_s__won = "1976"
+=== Gold SQL ===
+SELECT MAX(total) FROM table_name_20 WHERE year_s__won = "1976"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What year was owner Michael E. Pegram's last win?
+=== Pred SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE owner = "michael e. pegram"
+=== Gold SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE owner = "michael e. pegram"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who is the trainer for Cherry Valley Farm?
+=== Pred SQL ===
+SELECT trainer FROM table_name_94 WHERE owner = "cherry valley farm"
+=== Gold SQL ===
+SELECT trainer FROM table_name_94 WHERE owner = "cherry valley farm"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who owned winner Blueeyesintherein after 2009?
+=== Pred SQL ===
+SELECT owner FROM table_name_75 WHERE year > 2009 AND winner = "blueeyesintherein"
+=== Gold SQL ===
+SELECT owner FROM table_name_75 WHERE year > 2009 AND winner = "blueeyesintherein"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the Blue Jays' opponent when their record was 33-15?
+=== Pred SQL ===
+SELECT opponent FROM table_name_8 WHERE record = "33-15"
+=== Gold SQL ===
+SELECT opponent FROM table_name_8 WHERE record = "33-15"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who did the Blue Jays lose to when their record was 36-20?
+=== Pred SQL ===
+SELECT loss FROM table_name_3 WHERE record = "36-20"
+=== Gold SQL ===
+SELECT loss FROM table_name_3 WHERE record = "36-20"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the rank of the qual 141.471?
+=== Pred SQL ===
+SELECT rank FROM table_name_3 WHERE qual = "141.471"
+=== Gold SQL ===
+SELECT rank FROM table_name_3 WHERE qual = "141.471"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the start of lap 55?
+=== Pred SQL ===
+SELECT start FROM table_name_18 WHERE laps = "55"
+=== Gold SQL ===
+SELECT start FROM table_name_18 WHERE laps = 55
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is rank of the year 1956?
+=== Pred SQL ===
+SELECT rank FROM table_name_63 WHERE year = "1956"
+=== Gold SQL ===
+SELECT rank FROM table_name_63 WHERE year = "1956"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the lap number for the rank of 13?
+=== Pred SQL ===
+SELECT laps FROM table_name_78 WHERE rank = "13"
+=== Gold SQL ===
+SELECT laps FROM table_name_78 WHERE rank = "13"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the rank for 1961?
+=== Pred SQL ===
+SELECT rank FROM table_name_33 WHERE year = "1961"
+=== Gold SQL ===
+SELECT rank FROM table_name_33 WHERE year = "1961"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the sum of the lap with a finish of 24?
+=== Pred SQL ===
+SELECT SUM(laps) FROM table_name_60 WHERE finish = "24"
+=== Gold SQL ===
+SELECT SUM(laps) FROM table_name_60 WHERE finish = "24"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which band plays Self Versus Self - Immersion?
+=== Pred SQL ===
+SELECT band FROM table_name_17 WHERE album_or_song = "self versus self - immersion"
+=== Gold SQL ===
+SELECT band FROM table_name_17 WHERE album_or_song = "self versus self - immersion"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Event used submission (rear naked choke) with 9-4?
+=== Pred SQL ===
+SELECT event FROM table_name_11 WHERE method = "submission (rear naked choke)" AND record = "9-4"
+=== Gold SQL ===
+SELECT event FROM table_name_11 WHERE method = "submission (rear naked choke)" AND record = "9-4"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What event was Donald Ouimet involved?
+=== Pred SQL ===
+SELECT event FROM table_name_41 WHERE opponent = "donald ouimet"
+=== Gold SQL ===
+SELECT event FROM table_name_41 WHERE opponent = "donald ouimet"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What event did she finish 3rd in 2010?
+=== Pred SQL ===
+SELECT event FROM table_name_37 WHERE position = "3rd" AND year = 2010
+=== Gold SQL ===
+SELECT event FROM table_name_37 WHERE position = "3rd" AND year = 2010
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What year did she compete in tampere, finland?
+=== Pred SQL ===
+SELECT MIN(year) FROM table_name_95 WHERE venue = "tampere, finland"
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_95 WHERE venue = "tampere, finland"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Ben Hogan with a score larger than 66 had a place listed of what?
+=== Pred SQL ===
+SELECT place FROM table_name_77 WHERE score > 66 AND player = "ben hogan"
+=== Gold SQL ===
+SELECT place FROM table_name_77 WHERE score > 66 AND player = "ben hogan"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+With a score of 70, this player's name is listed as what?
+=== Pred SQL ===
+SELECT player FROM table_name_27 WHERE score = "70"
+=== Gold SQL ===
+SELECT player FROM table_name_27 WHERE score = 70
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+With a score smaller than 71 along with a place of t6, what is the To par score?
+=== Pred SQL ===
+SELECT to_par FROM table_name_69 WHERE score < 71 AND place = "t6"
+=== Gold SQL ===
+SELECT to_par FROM table_name_69 WHERE score < 71 AND place = "t6"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Hanyu Pinyin has a GDP in 2011 larger than 688.02 billion yuan and a regional population of 8,700,400 in 2010?
+=== Pred SQL ===
+SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > 688.02 AND regional_population_2010_ = "8,700,400"
+=== Gold SQL ===
+SELECT hanyu_pinyin FROM table_name_98 WHERE gdp_2011__billion_yuan_ > 688.02 AND regional_population_2010_ = "8,700,400"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which Hanzi has a Regional Population of 4,591,972 in 2010?
+=== Pred SQL ===
+SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = "4,591,972"
+=== Gold SQL ===
+SELECT hanzi FROM table_name_92 WHERE regional_population_2010_ = "4,591,972"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Name of the person from the Netherlands in a Lane lower than 5, with a Rank better than 5, and a time of less than 55.62?
+=== Pred SQL ===
+SELECT name FROM table_name_19 WHERE nationality = "netherlands" AND lane < 5 AND rank > 5 AND time < 55.62
+=== Gold SQL ===
+SELECT name FROM table_name_19 WHERE rank < 5 AND time < 55.62 AND lane < 5 AND nationality = "netherlands"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the highest Rank of Karen Pickering when she had a time of less than 55.71?
+=== Pred SQL ===
+SELECT MAX(rank) FROM table_name_59 WHERE name = "karen pickering" AND time < 55.71
+=== Gold SQL ===
+SELECT MAX(rank) FROM table_name_59 WHERE name = "karen pickering" AND time < 55.71
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the highest Lane number of a person with a time of 55.94 with a Rank that's bigger than 8?
+=== Pred SQL ===
+SELECT MAX(lane) FROM table_name_68 WHERE time = "55.94" AND rank > 8
+=== Gold SQL ===
+SELECT MAX(lane) FROM table_name_68 WHERE time > 55.94 AND rank > 8
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the date of the game that had a loss of Burns (0-1)?
+=== Pred SQL ===
+SELECT date FROM table_name_85 WHERE loss = "burns (0-1)"
+=== Gold SQL ===
+SELECT date FROM table_name_85 WHERE loss = "burns (0-1)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the loss of the game when the record was 20-16?
+=== Pred SQL ===
+SELECT loss FROM table_name_77 WHERE record = "20-16"
+=== Gold SQL ===
+SELECT loss FROM table_name_77 WHERE record = "20-16"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the loss of the game that had an attendance of 18,769?
+=== Pred SQL ===
+SELECT loss FROM table_name_22 WHERE attendance = "18,769"
+=== Gold SQL ===
+SELECT loss FROM table_name_22 WHERE attendance = "18,769"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the date of the game that had a loss of Geisel (0-1)?
+=== Pred SQL ===
+SELECT date FROM table_name_5 WHERE loss = "geisel (0-1)"
+=== Gold SQL ===
+SELECT date FROM table_name_5 WHERE loss = "geisel (0-1)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the date of the game against the Royals that had an attendance of 12,699?
+=== Pred SQL ===
+SELECT date FROM table_name_12 WHERE opponent = "royals" AND attendance = "12,699"
+=== Gold SQL ===
+SELECT date FROM table_name_12 WHERE opponent = "royals" AND attendance = "12,699"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+When Regions center has a rank less than 11, what is the greatest number o floors?
+=== Pred SQL ===
+SELECT MAX(floors) FROM table_name_62 WHERE name = "regions center" AND rank < 11
+=== Gold SQL ===
+SELECT MAX(floors) FROM table_name_62 WHERE name = "regions center" AND rank < 11
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the average rank for a building with 24 floors?
+=== Pred SQL ===
+SELECT AVG(rank) FROM table_name_84 WHERE floors = "24"
+=== Gold SQL ===
+SELECT AVG(rank) FROM table_name_84 WHERE floors = 24
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the rank for Omni nashville hotel?
+=== Pred SQL ===
+SELECT SUM(rank) FROM table_name_89 WHERE name = "omni nashville hotel"
+=== Gold SQL ===
+SELECT SUM(rank) FROM table_name_89 WHERE name = "omni nashville hotel"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the greatest rank for Fifth third center?
+=== Pred SQL ===
+SELECT MAX(rank) FROM table_name_27 WHERE name = "fifth third center"
+=== Gold SQL ===
+SELECT MAX(rank) FROM table_name_27 WHERE name = "fifth third center"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+When a building is 292 (89) ft (m) tall, has less than 23 floors, and ranks less than 14, what is the average year?
+=== Pred SQL ===
+SELECT AVG(year) FROM table_name_77 WHERE floors < 23 AND height_ft__m_ > 89 AND rank < 14
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_77 WHERE floors < 23 AND height_ft__m_ = "292 (89)" AND rank < 14
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What type of regular season/preseason game was played on August 25, 2007?
+=== Pred SQL ===
+SELECT regular_season___preseason FROM table_name_70 WHERE date = "august 25, 2007"
+=== Gold SQL ===
+SELECT regular_season___preseason FROM table_name_70 WHERE date = "august 25, 2007"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+In what stadium was the game on August 22, 2008 played?
+=== Pred SQL ===
+SELECT stadium FROM table_name_36 WHERE date = "august 22, 2008"
+=== Gold SQL ===
+SELECT stadium FROM table_name_36 WHERE date = "august 22, 2008"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+In what stadium was the home team Dallas Cowboys 21?
+=== Pred SQL ===
+SELECT stadium FROM table_name_89 WHERE home_team = "dallas cowboys 21"
+=== Gold SQL ===
+SELECT stadium FROM table_name_89 WHERE home_team = "dallas cowboys 21"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+On what date was the home team the Dallas Cowboys 34?
+=== Pred SQL ===
+SELECT date FROM table_name_28 WHERE home_team = "dallas cowboys 34"
+=== Gold SQL ===
+SELECT date FROM table_name_28 WHERE home_team = "dallas cowboys 34"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the visiting team on October 15, 2006?
+=== Pred SQL ===
+SELECT visiting_team FROM table_name_59 WHERE date = "october 15, 2006"
+=== Gold SQL ===
+SELECT visiting_team FROM table_name_59 WHERE date = "october 15, 2006"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What's the smallest amount of Laps that had a finish of 7 with a start of 6?
+=== Pred SQL ===
+SELECT MIN(laps) FROM table_name_49 WHERE finish = "7" AND start = "6"
+=== Gold SQL ===
+SELECT MIN(laps) FROM table_name_49 WHERE finish = "7" AND start = "6"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the smallest bronze with a Gold smaller than 3, and a Silver larger than 1, and a Rank of 6, and a Nation of hungary?
+=== Pred SQL ===
+SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = "6" AND nation = "hungary"
+=== Gold SQL ===
+SELECT MIN(bronze) FROM table_name_36 WHERE gold < 3 AND silver > 1 AND rank = 6 AND nation = "hungary"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the average bronze with a rank of 4 and less than 1 silver?
+=== Pred SQL ===
+SELECT AVG(bronze) FROM table_name_73 WHERE rank = "4" AND silver < 1
+=== Gold SQL ===
+SELECT AVG(bronze) FROM table_name_73 WHERE rank = 4 AND silver < 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which silver has a Gold larger than 4, and a Rank of 1?
+=== Pred SQL ===
+SELECT silver FROM table_name_74 WHERE gold > 4 AND rank = "1"
+=== Gold SQL ===
+SELECT silver FROM table_name_74 WHERE gold > 4 AND rank = 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What lowest bronze has a total of 3, a Nation of hungary, and a Gold smaller than 0?
+=== Pred SQL ===
+SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = "hungary" AND gold < 0
+=== Gold SQL ===
+SELECT MIN(bronze) FROM table_name_52 WHERE total = 3 AND nation = "hungary" AND gold < 0
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many gold have a Rank of 7, and a Bronze of 1, and a Silver smaller than 0?
+=== Pred SQL ===
+SELECT AVG(gold) FROM table_name_29 WHERE rank = "7" AND bronze = 1 AND silver < 0
+=== Gold SQL ===
+SELECT SUM(gold) FROM table_name_29 WHERE rank = 7 AND bronze = 1 AND silver < 0
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many Totals have a Silver smaller than 2, and a Nation of ukraine, and a Gold smaller than 3?
+=== Pred SQL ===
+SELECT COUNT(total) FROM table_name_71 WHERE silver < 2 AND nation = "ukraine" AND gold < 3
+=== Gold SQL ===
+SELECT COUNT(total) FROM table_name_71 WHERE silver < 2 AND nation = "ukraine" AND gold < 3
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which player played in 2007?
+=== Pred SQL ===
+SELECT player FROM table_name_17 WHERE season = "2007"
+=== Gold SQL ===
+SELECT player FROM table_name_17 WHERE season = "2007"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was Min Patel's bowling?
+=== Pred SQL ===
+SELECT bowling FROM table_name_7 WHERE player = "min patel"
+=== Gold SQL ===
+SELECT bowling FROM table_name_7 WHERE player = "min patel"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the week 1 nomination when the week 2 nomination was Piia Jarkko?
+=== Pred SQL ===
+SELECT week_1 FROM table_name_35 WHERE week_2 = "piia jarkko"
+=== Gold SQL ===
+SELECT week_1 FROM table_name_35 WHERE week_2 = "piia jarkko"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the week 12 nomination when the week 9 nomination walked (day 11)?
+=== Pred SQL ===
+SELECT week_12 FROM table_name_10 WHERE week_9 = "walked (day 11)"
+=== Gold SQL ===
+SELECT week_12 FROM table_name_10 WHERE week_9 = "walked (day 11)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the week 12 nomination that had a week 1 nomination of Maria Maxine and a week 2 nomination of Henri Satu?
+=== Pred SQL ===
+SELECT week_12 FROM table_name_1 WHERE week_1 = "maria maxine" AND week_2 = "henri satu"
+=== Gold SQL ===
+SELECT week_12 FROM table_name_1 WHERE week_1 = "maria maxine" AND week_2 = "henri satu"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the heightfor city of license of malone, ny
+=== Pred SQL ===
+SELECT height_m___ft__ FROM table_name_44 WHERE city_of_license = "malone, ny"
+=== Gold SQL ===
+SELECT height_m___ft__ FROM table_name_44 WHERE city_of_license = "malone, ny"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the class with call sign of wmhn
+=== Pred SQL ===
+SELECT class FROM table_name_74 WHERE call_sign = "wmhn"
+=== Gold SQL ===
+SELECT class FROM table_name_74 WHERE call_sign = "wmhn"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the frequency with class of b
+=== Pred SQL ===
+SELECT frequency FROM table_name_78 WHERE class = "b"
+=== Gold SQL ===
+SELECT frequency FROM table_name_78 WHERE class = "b"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the city of license with frequency of 90.1 fm
+=== Pred SQL ===
+SELECT city_of_license FROM table_name_37 WHERE frequency = "90.1 fm"
+=== Gold SQL ===
+SELECT city_of_license FROM table_name_37 WHERE frequency = "90.1 fm"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the total number of ERP/Power W for frequency of 89.3 fm and facility ID less than 40430
+=== Pred SQL ===
+SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = "89.3 fm" AND facility_id < 40430
+=== Gold SQL ===
+SELECT COUNT(erp___power_w) FROM table_name_34 WHERE frequency = "89.3 fm" AND facility_id < 40430
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Engine(s) that has  f Tyres in 1971?
+=== Pred SQL ===
+SELECT engine_s_ FROM table_name_68 WHERE tyres = "f" AND year = "1971"
+=== Gold SQL ===
+SELECT engine_s_ FROM table_name_68 WHERE tyres = "f" AND year = 1971
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the attendance on June 27?
+=== Pred SQL ===
+SELECT MAX(att) FROM table_name_6 WHERE date = "june 27"
+=== Gold SQL ===
+SELECT MIN(att) FROM table_name_6 WHERE date = "june 27"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Name the surface for 12 september 2006
+=== Pred SQL ===
+SELECT surface FROM table_name_3 WHERE date = "12 september 2006"
+=== Gold SQL ===
+SELECT surface FROM table_name_3 WHERE date = "12 september 2006"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the score for opponent in the final being paul baccanello
+=== Pred SQL ===
+SELECT score FROM table_name_46 WHERE opponent_in_the_final = "paul baccanello"
+=== Gold SQL ===
+SELECT score FROM table_name_46 WHERE opponent_in_the_final = "paul baccanello"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the surface for 20 march 2007
+=== Pred SQL ===
+SELECT surface FROM table_name_5 WHERE date = "20 march 2007"
+=== Gold SQL ===
+SELECT surface FROM table_name_5 WHERE date = "20 march 2007"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the date for opponent in the final being ignasi villacampa
+=== Pred SQL ===
+SELECT date FROM table_name_5 WHERE opponent_in_the_final = "ignasi villacampa"
+=== Gold SQL ===
+SELECT date FROM table_name_5 WHERE opponent_in_the_final = "ignasi villacampa"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the tournament for grass surface and opponent in the final being paul baccanello
+=== Pred SQL ===
+SELECT tournament FROM table_name_11 WHERE surface = "grass" AND opponent_in_the_final = "paul baccanello"
+=== Gold SQL ===
+SELECT tournament FROM table_name_11 WHERE surface = "grass" AND opponent_in_the_final = "paul baccanello"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+When is the earliest year in milan that guillermo vilas was champion?
+=== Pred SQL ===
+SELECT MIN(year) FROM table_name_43 WHERE location = "milan" AND champion = "guillermo vilas"
+=== Gold SQL ===
+SELECT MIN(year) FROM table_name_43 WHERE location = "milan" AND champion = "guillermo vilas"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Where in 1985 was tim mayotte runner up?
+=== Pred SQL ===
+SELECT location FROM table_name_13 WHERE year = "1985" AND runner_up = "tim mayotte"
+=== Gold SQL ===
+SELECT location FROM table_name_13 WHERE year > 1985 AND runner_up = "tim mayotte"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What was the score when stefan edberg won after 1978?
+=== Pred SQL ===
+SELECT score FROM table_name_68 WHERE year > 1978 AND champion = "stefan edberg"
+=== Gold SQL ===
+SELECT score FROM table_name_68 WHERE year > 1978 AND champion = "stefan edberg"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the Facility ID that has a City of license of wheeling, and a ERP kW less than 4.5?
+=== Pred SQL ===
+SELECT MAX(facility_id) FROM table_name_52 WHERE city_of_license = "wheeling" AND erp_kw < 4.5
+=== Gold SQL ===
+SELECT MAX(facility_id) FROM table_name_52 WHERE city_of_license = "wheeling" AND erp_kw < 4.5
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the City of license that has a ERP kW more than 4.5 and w23dr-d?
+=== Pred SQL ===
+SELECT city_of_license FROM table_name_45 WHERE erp_kw > 4.5 AND station = "w23dr-d"
+=== Gold SQL ===
+SELECT city_of_license FROM table_name_45 WHERE erp_kw > 4.5 AND station = "w23dr-d"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the location that has a date of demolition of 1940 and has a church named Christ Church Greyfriars?
+=== Pred SQL ===
+SELECT location FROM table_name_46 WHERE date_of_demolition = "1940" AND church_name = "christ church greyfriars"
+=== Gold SQL ===
+SELECT location FROM table_name_46 WHERE date_of_demolition = 1940 AND church_name = "christ church greyfriars"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+How many dates of demolition are located on Wood Street?
+=== Pred SQL ===
+SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = "wood street"
+=== Gold SQL ===
+SELECT COUNT(date_of_demolition) FROM table_name_7 WHERE location = "wood street"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was Olga Govortsova's score when she played on a clay surface on 19 May 2008?
+=== Pred SQL ===
+SELECT score FROM table_name_11 WHERE surface = "clay" AND date = "19 may 2008"
+=== Gold SQL ===
+SELECT score FROM table_name_11 WHERE surface = "clay" AND date = "19 may 2008"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was Olga Govortsova's outcome when she played on a grass surface?
+=== Pred SQL ===
+SELECT outcome FROM table_name_59 WHERE surface = "grass"
+=== Gold SQL ===
+SELECT outcome FROM table_name_59 WHERE surface = "grass"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was Olga Govortsova's goal when she played on a clay surface on 26 May 2012?
+=== Pred SQL ===
+SELECT score FROM table_name_84 WHERE surface = "clay" AND date = "26 may 2012"
+=== Gold SQL ===
+SELECT score FROM table_name_84 WHERE surface = "clay" AND date = "26 may 2012"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which mountain range has a rank of 19?
+=== Pred SQL ===
+SELECT mountain_range FROM table_name_35 WHERE rank = "19"
+=== Gold SQL ===
+SELECT mountain_range FROM table_name_35 WHERE rank = 19
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which location includes Coast Mountains with a rank less than 18 at Skihist Mountain?
+=== Pred SQL ===
+SELECT location FROM table_name_41 WHERE mountain_peak = "coast mountains" AND mountain_range = "skihist mountain" AND rank < 18
+=== Gold SQL ===
+SELECT location FROM table_name_41 WHERE mountain_range = "coast mountains" AND rank < 18 AND mountain_peak = "skihist mountain"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which mountain range includes Mount Hubbard?
+=== Pred SQL ===
+SELECT mountain_range FROM table_name_64 WHERE mountain_peak = "hubbard"
+=== Gold SQL ===
+SELECT mountain_range FROM table_name_64 WHERE mountain_peak = "mount hubbard"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which province includes Axel Heiberg Island?
+=== Pred SQL ===
+SELECT province FROM table_name_25 WHERE mountain_range = "axel heiberg island"
+=== Gold SQL ===
+SELECT province FROM table_name_25 WHERE mountain_range = "axel heiberg island"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What are the notes of events that finished in 12th position?
+=== Pred SQL ===
+SELECT notes FROM table_name_94 WHERE position = "12th"
+=== Gold SQL ===
+SELECT notes FROM table_name_94 WHERE position = "12th"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which venue was finished in 2nd position in 1985?
+=== Pred SQL ===
+SELECT venue FROM table_name_40 WHERE position = "2nd" AND year = 1985
+=== Gold SQL ===
+SELECT venue FROM table_name_40 WHERE position = "2nd" AND year = 1985
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the average year of events that took place in Antwerp, Belgium?
+=== Pred SQL ===
+SELECT AVG(year) FROM table_name_97 WHERE venue = "antwerp, belgium"
+=== Gold SQL ===
+SELECT AVG(year) FROM table_name_97 WHERE venue = "antwerp, belgium"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What's the year of the event that took place most recently in Antwerp, Belgium with team competition notes?
+=== Pred SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE notes = "team competition" AND venue = "antwerp, belgium"
+=== Gold SQL ===
+SELECT MAX(year) FROM table_name_42 WHERE notes = "team competition" AND venue = "antwerp, belgium"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the label's format LP and catalog of CH-9192?
+=== Pred SQL ===
+SELECT label FROM table_name_76 WHERE format = "lp" AND catalog = "ch-9192"
+=== Gold SQL ===
+SELECT label FROM table_name_76 WHERE format = "lp" AND catalog = "ch-9192"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+When was Catalog CHD-9192 published?
+=== Pred SQL ===
+SELECT date FROM table_name_66 WHERE catalog = "chd-9192"
+=== Gold SQL ===
+SELECT date FROM table_name_66 WHERE catalog = "chd-9192"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+I need the FCC info on the radio Frequency MHz 107.5?
+=== Pred SQL ===
+SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = "107.5"
+=== Gold SQL ===
+SELECT fcc_info FROM table_name_64 WHERE frequency_mhz = 107.5
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Give me the MHz Frequency of Allapattah, Florida.
+=== Pred SQL ===
+SELECT frequency_mhz FROM table_name_28 WHERE city_of_license = "allapattah, florida"
+=== Gold SQL ===
+SELECT frequency_mhz FROM table_name_28 WHERE city_of_license = "allapattah, florida"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What class does the w298ak sign belong to?
+=== Pred SQL ===
+SELECT class FROM table_name_10 WHERE call_sign = "w298ak"
+=== Gold SQL ===
+SELECT class FROM table_name_10 WHERE call_sign = "w298ak"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What class is ERP W of 800?
+=== Pred SQL ===
+SELECT class FROM table_name_9 WHERE erp_w = "800"
+=== Gold SQL ===
+SELECT class FROM table_name_9 WHERE erp_w = 800
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the total of Goals Conceded that has Points smaller than 21 and a Lost thats smaller than 8?
+=== Pred SQL ===
+SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8
+=== Gold SQL ===
+SELECT SUM(goals_conceded) FROM table_name_10 WHERE points < 21 AND lost < 8
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What's the total of Lost that's got Points larger than 28, Draw of 5, and Place that's smaller than 1?
+=== Pred SQL ===
+SELECT SUM(lost) FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1
+=== Gold SQL ===
+SELECT SUM(lost) FROM table_name_69 WHERE points > 28 AND draw = 5 AND place < 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What's the total of Goals Scored with Points that's smaller than 27, and a Team of C.D. Atlético Balboa?
+=== Pred SQL ===
+SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = "c.d. atlético balboa"
+=== Gold SQL ===
+SELECT SUM(goals_scored) FROM table_name_40 WHERE points < 27 AND team = "c.d. atlético balboa"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is listed as the Highest Played and that has a Place that is larger than 10?
+=== Pred SQL ===
+SELECT MAX(played) FROM table_name_9 WHERE place > 10
+=== Gold SQL ===
+SELECT MAX(played) FROM table_name_9 WHERE place > 10
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is listed as the Highest Played, has Points of 17, and Draw that is smaller than 5?
+=== Pred SQL ===
+SELECT MAX(played) FROM table_name_19 WHERE points = "17" AND draw < 5
+=== Gold SQL ===
+SELECT MAX(played) FROM table_name_19 WHERE points = 17 AND draw < 5
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+When was the game that ended with a score of 6-4?
+=== Pred SQL ===
+SELECT date FROM table_name_38 WHERE score = "6-4"
+=== Gold SQL ===
+SELECT date FROM table_name_38 WHERE score = "6-4"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the score on April 8?
+=== Pred SQL ===
+SELECT score FROM table_name_39 WHERE date = "april 8"
+=== Gold SQL ===
+SELECT score FROM table_name_39 WHERE date = "april 8"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the decision in Minnesota?
+=== Pred SQL ===
+SELECT decision FROM table_name_12 WHERE home = "minnesota"
+=== Gold SQL ===
+SELECT decision FROM table_name_12 WHERE home = "minnesota"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which score has a record of 58–15–8?
+=== Pred SQL ===
+SELECT score FROM table_name_80 WHERE record = "58–15–8"
+=== Gold SQL ===
+SELECT score FROM table_name_80 WHERE record = "58–15–8"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which section has a level of Tier 3, is in the 6th position, and is in the 1937-38 season?
+=== Pred SQL ===
+SELECT section FROM table_name_74 WHERE level = "tier 3" AND position = "6" AND season = "1937-38"
+=== Gold SQL ===
+SELECT section FROM table_name_74 WHERE level = "tier 3" AND position = "6th" AND season = "1937-38"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which section is in the 6th position?
+=== Pred SQL ===
+SELECT section FROM table_name_8 WHERE position = "6th"
+=== Gold SQL ===
+SELECT section FROM table_name_8 WHERE position = "6th"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Name the attendance with date of june 11
+=== Pred SQL ===
+SELECT attendance FROM table_name_92 WHERE date = "june 11"
+=== Gold SQL ===
+SELECT attendance FROM table_name_92 WHERE date = "june 11"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which partnership has a run number of 27?
+=== Pred SQL ===
+SELECT partnerships FROM table_name_70 WHERE runs = "27"
+=== Gold SQL ===
+SELECT partnerships FROM table_name_70 WHERE runs = "27"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What venue did the parntership of shoaib malik / misbah-ul-haq occur?
+=== Pred SQL ===
+SELECT venue FROM table_name_79 WHERE partnerships = "shoaib malik / misbah-ul-haq"
+=== Gold SQL ===
+SELECT venue FROM table_name_79 WHERE partnerships = "shoaib malik / misbah-ul-haq"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What venue did the partnership of herschelle gibbs / justin kemp happen?
+=== Pred SQL ===
+SELECT venue FROM table_name_74 WHERE partnerships = "herschelle gibbs / justin kemp"
+=== Gold SQL ===
+SELECT venue FROM table_name_74 WHERE partnerships = "herschelle gibbs / justin kemp"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the number Played that has 310 Points for?
+=== Pred SQL ===
+SELECT played FROM table_name_77 WHERE points_for = "310"
+=== Gold SQL ===
+SELECT played FROM table_name_77 WHERE points_for = "310"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Losing bonus has a Points against of 588?
+=== Pred SQL ===
+SELECT losing_bonus FROM table_name_62 WHERE points_against = "588"
+=== Gold SQL ===
+SELECT losing_bonus FROM table_name_62 WHERE points_against = "588"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Tries against has a Losing bonus of 7?
+=== Pred SQL ===
+SELECT tries_against FROM table_name_43 WHERE losing_bonus = "7"
+=== Gold SQL ===
+SELECT tries_against FROM table_name_43 WHERE losing_bonus = "7"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Try bonus has a Points against of 488?
+=== Pred SQL ===
+SELECT try_bonus FROM table_name_61 WHERE points_against = "488"
+=== Gold SQL ===
+SELECT try_bonus FROM table_name_61 WHERE points_against = "488"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Points for has a Try bonus of 140?
+=== Pred SQL ===
+SELECT points_for FROM table_name_26 WHERE try_bonus = "140"
+=== Gold SQL ===
+SELECT points_for FROM table_name_26 WHERE try_bonus = "140"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What Drawn has a Tries against of 0?
+=== Pred SQL ===
+SELECT drawn FROM table_name_90 WHERE tries_against = "0"
+=== Gold SQL ===
+SELECT drawn FROM table_name_90 WHERE tries_against = "0"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the days held the champion with a reign larger than 3 and 1 defense has?
+=== Pred SQL ===
+SELECT days_held FROM table_name_48 WHERE reign > 3 AND defenses = 1
+=== Gold SQL ===
+SELECT days_held FROM table_name_48 WHERE reign > 3 AND defenses = 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the days held the champion with a reign larger than 3 and less than 1 defense has?
+=== Pred SQL ===
+SELECT days_held FROM table_name_1 WHERE reign > 3 AND defenses < 1
+=== Gold SQL ===
+SELECT days_held FROM table_name_1 WHERE reign > 3 AND defenses < 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the average defenses a champion with 404 days held and a reign larger than 1 has?
+=== Pred SQL ===
+SELECT AVG(defenses) FROM table_name_57 WHERE days_held = "404" AND reign > 1
+=== Gold SQL ===
+SELECT AVG(defenses) FROM table_name_57 WHERE days_held = "404" AND reign > 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the lowest defense a champion with 345 days held has?
+=== Pred SQL ===
+SELECT MIN(defenses) FROM table_name_46 WHERE days_held = "345"
+=== Gold SQL ===
+SELECT MIN(defenses) FROM table_name_46 WHERE days_held = "345"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+On what date was there a record of 76-72?
+=== Pred SQL ===
+SELECT date FROM table_name_6 WHERE record = "76-72"
+=== Gold SQL ===
+SELECT date FROM table_name_6 WHERE record = "76-72"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the attendance that had a loss of Ponson (1-5)?
+=== Pred SQL ===
+SELECT attendance FROM table_name_58 WHERE loss = "ponson (1-5)"
+=== Gold SQL ===
+SELECT attendance FROM table_name_58 WHERE loss = "ponson (1-5)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+On which day was there a record of 36-39?
+=== Pred SQL ===
+SELECT date FROM table_name_70 WHERE record = "36-39"
+=== Gold SQL ===
+SELECT date FROM table_name_70 WHERE record = "36-39"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+On what day was the record 30-31?
+=== Pred SQL ===
+SELECT date FROM table_name_88 WHERE record = "30-31"
+=== Gold SQL ===
+SELECT date FROM table_name_88 WHERE record = "30-31"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who was the opponent at the game that had a loss of Leonard (7–8)?
+=== Pred SQL ===
+SELECT opponent FROM table_name_82 WHERE loss = "leonard (7–8)"
+=== Gold SQL ===
+SELECT opponent FROM table_name_82 WHERE loss = "leonard (7–8)"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 18–43?
+=== Pred SQL ===
+SELECT score FROM table_name_3 WHERE record = "18–43"
+=== Gold SQL ===
+SELECT score FROM table_name_3 WHERE record = "18–43"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game against the Royals when the record was 24–52?
+=== Pred SQL ===
+SELECT score FROM table_name_75 WHERE opponent = "royals" AND record = "24–52"
+=== Gold SQL ===
+SELECT score FROM table_name_75 WHERE opponent = "royals" AND record = "24–52"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What was the score of the game when the record was 22–46?
+=== Pred SQL ===
+SELECT score FROM table_name_36 WHERE record = "22–46"
+=== Gold SQL ===
+SELECT score FROM table_name_36 WHERE record = "22–46"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the real name of the person whose primary military specialty is shock paratrooper?
+=== Pred SQL ===
+SELECT real_name FROM table_name_51 WHERE primary_military_speciality = "shock paratrooper"
+=== Gold SQL ===
+SELECT real_name FROM table_name_51 WHERE primary_military_speciality = "shock paratrooper"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the birthplace of Pete Sanderson?
+=== Pred SQL ===
+SELECT birthplace FROM table_name_71 WHERE real_name = "pete sanderson"
+=== Gold SQL ===
+SELECT birthplace FROM table_name_71 WHERE real_name = "pete sanderson"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What role did Jean-Luc Bouvier serve?
+=== Pred SQL ===
+SELECT function__figure_ FROM table_name_30 WHERE real_name = "jean-luc bouvier"
+=== Gold SQL ===
+SELECT function__figure_ FROM table_name_30 WHERE real_name = "jean-luc bouvier"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the real name of the person who is a pilot of the silent attack kayak?
+=== Pred SQL ===
+SELECT real_name FROM table_name_28 WHERE function__figure_ = "pilot of the silent attack kayak"
+=== Gold SQL ===
+SELECT real_name FROM table_name_28 WHERE function__figure_ = "pilot of the silent attack kayak"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the code name of the person born in Liverpool?
+=== Pred SQL ===
+SELECT code_name FROM table_name_94 WHERE birthplace = "liverpool"
+=== Gold SQL ===
+SELECT code_name FROM table_name_94 WHERE birthplace = "liverpool"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the names for the medalist in the sport of canoeing?
+=== Pred SQL ===
+SELECT name FROM table_name_25 WHERE sport = "canoeing"
+=== Gold SQL ===
+SELECT name FROM table_name_25 WHERE sport = "canoeing"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What games had the women's half middleweight event?
+=== Pred SQL ===
+SELECT games FROM table_name_90 WHERE event = "women's half middleweight"
+=== Gold SQL ===
+SELECT games FROM table_name_90 WHERE event = "women's half middleweight"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Who received the bronze medal in the 2000 Sydney games?
+=== Pred SQL ===
+SELECT name FROM table_name_95 WHERE medal = "bronze" AND games = "2000 sydney"
+=== Gold SQL ===
+SELECT name FROM table_name_95 WHERE medal = "bronze" AND games = "2000 sydney"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many people attended when opponent was twins?
+=== Pred SQL ===
+SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = "twins"
+=== Gold SQL ===
+SELECT COUNT(attendance) FROM table_name_80 WHERE opponent = "twins"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which date has a Record of 41-46?
+=== Pred SQL ===
+SELECT date FROM table_name_55 WHERE record = "41-46"
+=== Gold SQL ===
+SELECT date FROM table_name_55 WHERE record = "41-46"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which score has a Record of 48-55?
+=== Pred SQL ===
+SELECT score FROM table_name_66 WHERE record = "48-55"
+=== Gold SQL ===
+SELECT score FROM table_name_66 WHERE record = "48-55"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which score has a Record of 44-49?
+=== Pred SQL ===
+SELECT score FROM table_name_96 WHERE record = "44-49"
+=== Gold SQL ===
+SELECT score FROM table_name_96 WHERE record = "44-49"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which score has an Opponent of white sox, and a Record of 2-0?
+=== Pred SQL ===
+SELECT score FROM table_name_92 WHERE opponent = "white sox" AND record = "2-0"
+=== Gold SQL ===
+SELECT score FROM table_name_92 WHERE opponent = "white sox" AND record = "2-0"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many votes did candice sjostrom receive?
+=== Pred SQL ===
+SELECT SUM(popular_votes) FROM table_name_94 WHERE candidate = "candice sjostrom"
+=== Gold SQL ===
+SELECT AVG(popular_votes) FROM table_name_94 WHERE candidate = "candice sjostrom"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What percentage did chris wright receive?
+=== Pred SQL ===
+SELECT percentage FROM table_name_23 WHERE candidate = "chris wright"
+=== Gold SQL ===
+SELECT percentage FROM table_name_23 WHERE candidate = "chris wright"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many votes for the candidate after 1992, 1.59% of the vote, and the office of us representative 4?
+=== Pred SQL ===
+SELECT SUM(popular_votes) FROM table_name_2 WHERE year > 1992 AND percentage = "1.59%" AND office = "us representative 4"
+=== Gold SQL ===
+SELECT AVG(popular_votes) FROM table_name_2 WHERE office = "us representative 4" AND percentage = "1.59%" AND year > 1992
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What years did J. Smith Young serve as a Representative?
+=== Pred SQL ===
+SELECT years FROM table_name_36 WHERE representative = "j. smith young"
+=== Gold SQL ===
+SELECT years FROM table_name_36 WHERE representative = "j. smith young"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+Which party did Thomas L. Young belong to?
+=== Pred SQL ===
+SELECT party FROM table_name_58 WHERE representative = "thomas l. young"
+=== Gold SQL ===
+SELECT party FROM table_name_58 WHERE representative = "thomas l. young"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the lowest total amount of medals from countries with 0 gold medals, more than 2 bronze medals, and more than 1 silver medal?
+=== Pred SQL ===
+SELECT MIN(total) FROM table_name_57 WHERE gold < 0 AND bronze > 2 AND silver > 1
+=== Gold SQL ===
+SELECT MIN(total) FROM table_name_57 WHERE gold = 0 AND bronze > 2 AND silver > 1
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+What is the total number of silver medals for countries of rank 14, with less than 1 total medals?
+=== Pred SQL ===
+SELECT SUM(silver) FROM table_name_66 WHERE rank = "14" AND total < 1
+=== Gold SQL ===
+SELECT SUM(silver) FROM table_name_66 WHERE rank = "14" AND total < 1
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many tackles for the player with over 0 fumble recovries and 0 forced fumbles?
+=== Pred SQL ===
+SELECT COUNT(total) FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0
+=== Gold SQL ===
+SELECT COUNT(total) FROM table_name_96 WHERE fumble_rec > 0 AND fumble_force = 0
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many forced fumbles for jim laney with under 2 solo tackles?
+=== Pred SQL ===
+SELECT COUNT(fumble_force) FROM table_name_20 WHERE solo < 2 AND player = "jim laney"
+=== Gold SQL ===
+SELECT COUNT(fumble_force) FROM table_name_20 WHERE solo < 2 AND player = "jim laney"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the high total for players with over 15 solo tackles?
+=== Pred SQL ===
+SELECT MAX(total) FROM table_name_31 WHERE solo > 15
+=== Gold SQL ===
+SELECT MAX(total) FROM table_name_31 WHERE solo > 15
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+How many fumble recoveries for scott gajos with 0 forced fubmles, 0 sacks, and under 2 solo tackles?
+=== Pred SQL ===
+SELECT SUM(fumble_rec) FROM table_name_65 WHERE player = "scott gajos" AND fumble_force < 2 AND sacks = 0
+=== Gold SQL ===
+SELECT SUM(fumble_rec) FROM table_name_65 WHERE sacks = "0" AND fumble_force = "0" AND player = "scott gajos" AND solo < 2
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Who is the Opponent playing at 20:00 GMT at Camp Nou?
+=== Pred SQL ===
+SELECT opponent FROM table_name_64 WHERE time = "20:00 gmt" AND ground = "camp nou"
+=== Gold SQL ===
+SELECT opponent FROM table_name_64 WHERE time = "20:00 gmt" AND ground = "camp nou"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What time was the match played with a score of 3-2?
+=== Pred SQL ===
+SELECT time FROM table_name_35 WHERE score = "3-2"
+=== Gold SQL ===
+SELECT time FROM table_name_35 WHERE score = "3-2"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+On which ground did the team play Aston Villa?
+=== Pred SQL ===
+SELECT ground FROM table_name_83 WHERE opponent = "aston villa"
+=== Gold SQL ===
+SELECT ground FROM table_name_83 WHERE opponent = "aston villa"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What kind of competition was it at San Siro at 18:30 GMT?
+=== Pred SQL ===
+SELECT competition FROM table_name_60 WHERE ground = "san siro" AND time = "18:30 gmt"
+=== Gold SQL ===
+SELECT competition FROM table_name_60 WHERE ground = "san siro" AND time = "18:30 gmt"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Question ===
+What is the total number of decile for the redwood school locality?
+=== Pred SQL ===
+SELECT COUNT(decile) FROM table_name_34 WHERE name = "redwood school locality"
+=== Gold SQL ===
+SELECT COUNT(decile) FROM table_name_34 WHERE name = "redwood school"
+=== Exact Match === False
+=== Execution Match === True
+
+=== Question ===
+Which report includes a Circuit of Tripoli?
+=== Pred SQL ===
+SELECT report FROM table_name_71 WHERE circuit = "tripoli"
+=== Gold SQL ===
+SELECT report FROM table_name_71 WHERE circuit = "tripoli"
+=== Exact Match === True
+=== Execution Match === True
+
+=== Summary ===
+{
+  "model_name_or_path": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter_path": "outputs/sft-qwen2.5-3b-instruct-sql",
+  "dataset_name": "b-mc2/sql-create-context",
+  "num_samples": 200,
+  "exact_match": 0.83,
+  "execution_match": 1.0,
+  "execution_coverage": 1.0
+}
+Saved report to: outputs/eval_finetuned_3b_held_server.json
+2026-03-22 19:05:54 Fine-tuned eval done
+2026-03-22 19:05:54 === All experiments complete ===
