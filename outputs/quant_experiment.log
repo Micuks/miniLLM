@@ -1,0 +1,80 @@
+/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/awq/__init__.py:21: DeprecationWarning: 
+I have left this message as the final dev message to help you transition.
+
+Important Notice:
+- AutoAWQ is officially deprecated and will no longer be maintained.
+- The last tested configuration used Torch 2.6.0 and Transformers 4.51.3.
+- If future versions of Transformers break AutoAWQ compatibility, please report the issue to the Transformers project.
+
+Alternative:
+- AutoAWQ has been adopted by the vLLM Project: https://github.com/vllm-project/llm-compressor
+
+For further inquiries, feel free to reach out:
+- X: https://x.com/casper_hansen_
+- LinkedIn: https://www.linkedin.com/in/casper-hansen-804005170/
+
+  warnings.warn(_FINAL_DEV_MESSAGE, category=DeprecationWarning, stacklevel=1)
+===== AWQ 4-bit Quantization =====
+Loading model for AWQ...
+Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Fetching 12 files: 100%|██████████| 12/12 [00:00<00:00, 86184.33it/s]
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 16.32it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 16.29it/s]
+Traceback (most recent call last):
+  File "<string>", line 67, in <module>
+    awq_model.quantize(tokenizer, quant_config=awq_config, calib_data=calib_texts)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/awq/models/base.py", line 224, in quantize
+    self.quantizer = quantizer_cls(
+                     ~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<17 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/awq/quantize/quantizer.py", line 70, in __init__
+    self.modules, self.module_kwargs, self.inps = self.init_quant(
+                                                  ~~~~~~~~~~~~~~~^
+        n_samples=self.max_calib_samples, max_seq_len=self.max_calib_seq_len
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/awq/quantize/quantizer.py", line 599, in init_quant
+    self.model(samples.to(next(self.model.parameters()).device))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/transformers/utils/generic.py", line 940, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/transformers/models/qwen2/modeling_qwen2.py", line 449, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ~~~~~~~~~~^
+        input_ids=input_ids,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/transformers/utils/generic.py", line 1064, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/transformers/models/qwen2/modeling_qwen2.py", line 386, in forward
+    attention_mask=causal_mask_mapping[decoder_layer.attention_type],
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data1/wuql/dev/miniLLM/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1962, in __getattr__
+    raise AttributeError(
+        f"'{type(self).__name__}' object has no attribute '{name}'"
+    )
+AttributeError: 'Catcher' object has no attribute 'attention_type'
+Quantizing with 128 calibration samples...
