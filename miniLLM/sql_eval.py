@@ -35,6 +35,9 @@ def normalize_sql(sql: str) -> str:
     """
     s = extract_sql(sql)
     s = s.rstrip(";")
+    # Normalize quotes: SQL standard uses single quotes for strings,
+    # but many datasets use double quotes interchangeably
+    s = s.replace('"', "'")
     s = _WHITESPACE.sub(" ", s).strip()
     return s.lower()
 
