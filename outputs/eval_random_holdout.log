@@ -1,0 +1,31 @@
+Eval: 100 random samples from [0:500] (seed=42)
+
+=== Baseline ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.78s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.64s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.81s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+  [25/100]
+  [50/100]
+  [75/100]
+  [100/100]
+Baseline: EM=34.0%, EX=98.9%
+
+=== SFT ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.51s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.48s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]
+  [25/100]
+  [50/100]
+  [75/100]
+  [100/100]
+SFT: EM=57.0%, EX=98.9%
+
+=== KD ===
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.54s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.56s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.71s/it]
+  [25/100]
+  [50/100]
+  [75/100]
+  [100/100]
+KD: EM=57.0%, EX=100.0%
+
+=== FINAL (100 random from [0:500], seed=42) ===
+Baseline  : EM=34.0%, EX=98.9%
+SFT       : EM=57.0%, EX=99.0%
+KD        : EM=57.0%, EX=100.0%
