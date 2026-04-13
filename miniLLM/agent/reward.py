@@ -17,6 +17,7 @@ from ..sql_eval import normalize_sql
 
 
 _SQL_TOKEN_RE = re.compile(r"[a-z_][a-z0-9_]*|!=|<=|>=|=|<|>|[(),.*]", re.IGNORECASE)
+_WHOLE_QUERY_QUOTED_RE = re.compile(r'^\s*["\'`]+\s*(select|with)\b', re.IGNORECASE)
 _CLAUSE_PATTERNS = {
     "select": re.compile(r"\bselect\b", re.IGNORECASE),
     "from": re.compile(r"\bfrom\b", re.IGNORECASE),
@@ -49,6 +50,7 @@ class RewardBreakdown:
     structure_score: float
     execution_score: float
     correctness_score: float
+    error_penalty: float
     total: float
 
     def as_dict(self) -> dict[str, float]:
@@ -182,6 +184,28 @@ def sql_validity_reward(
     if executed_successfully:
         return 1.0
     return min(score, 0.75)
+
+
+def execution_error_penalty(sql: str | None, error: str | None) -> float:
+    """Extra negative reward for common EX=? failure modes."""
+    if not error:
+        return 0.0
+
+    lowered = error.lower()
+    penalty = 0.0
+    if "empty sql" in lowered:
+        penalty -= 0.20
+    if "syntax error" in lowered:
+        penalty -= 0.35
+    if "no such column" in lowered:
+        penalty -= 0.35
+    if "no such table" in lowered:
+        penalty -= 0.30
+    if "ambiguous column name" in lowered:
+        penalty -= 0.20
+    if sql and _WHOLE_QUERY_QUOTED_RE.match(sql):
+        penalty -= 0.10
+    return max(penalty, -0.60)
 
 
 def sql_structure_reward(completion: str, gold_sql: str) -> float:
@@ -327,12 +351,14 @@ def reward_breakdown(
     pred_result = None
     gold_result = None
     executed_successfully = False
+    pred_error = None
     if sql:
         try:
             with _make_env(schema_ddl, db_path) as env:
                 pred_result = env.execute(sql)
                 gold_result = env.execute(gold_sql)
             executed_successfully = bool(pred_result.success)
+            pred_error = pred_result.error
         except Exception:  # noqa: BLE001
             pred_result = None
             gold_result = None
@@ -353,6 +379,7 @@ def reward_breakdown(
     else:
         r_exec = 0.0
         r_correct = 0.0
+    r_err = execution_error_penalty(sql, pred_error)
 
     total = (
         weights.format * r_fmt
@@ -360,6 +387,7 @@ def reward_breakdown(
         + weights.structure * r_struct
         + weights.execution * r_exec
         + weights.correctness * r_correct
+        + r_err
     )
     return RewardBreakdown(
         format_score=r_fmt,
@@ -367,5 +395,6 @@ def reward_breakdown(
         structure_score=r_struct,
         execution_score=r_exec,
         correctness_score=r_correct,
+        error_penalty=r_err,
         total=total,
     )

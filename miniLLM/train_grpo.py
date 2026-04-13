@@ -390,6 +390,7 @@ def main() -> None:
         "structure_score": 0.0,
         "execution_score": 0.0,
         "correctness_score": 0.0,
+        "error_penalty": 0.0,
     }
     skipped_groups = 0
 
@@ -529,7 +530,7 @@ def main() -> None:
                 for name, value in running_reward_components.items()
             }
             log.info(
-                "step=%d/%d loss=%.4f reward=%.3f fmt=%.2f val=%.2f struct=%.2f exec=%.2f corr=%.2f temp=%.2f lr=%.2e skipped=%d rewards=%s",
+                "step=%d/%d loss=%.4f reward=%.3f fmt=%.2f val=%.2f struct=%.2f exec=%.2f corr=%.2f err=%.2f temp=%.2f lr=%.2e skipped=%d rewards=%s",
                 global_step,
                 args.max_steps,
                 avg_loss,
@@ -539,6 +540,7 @@ def main() -> None:
                 avg_components["structure_score"],
                 avg_components["execution_score"],
                 avg_components["correctness_score"],
+                avg_components["error_penalty"],
                 current_temperature,
                 new_lr,
                 skipped_groups,

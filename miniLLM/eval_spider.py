@@ -93,7 +93,16 @@ def main() -> None:
         model.eval()
 
     # Metrics accumulators
-    by_difficulty: dict[str, dict[str, int]] = defaultdict(lambda: {"total": 0, "em": 0, "ex": 0, "ex_attempted": 0})
+    by_difficulty: dict[str, dict[str, int]] = defaultdict(
+        lambda: {
+            "total": 0,
+            "em": 0,
+            "ex": 0,
+            "ex_attempted": 0,
+            "ex_failed": 0,
+            "ex_unknown": 0,
+        }
+    )
     records: list[dict] = []
 
     for idx, ex in enumerate(examples):
@@ -122,6 +131,9 @@ def main() -> None:
         if ex_match is not None:
             by_difficulty[diff]["ex_attempted"] += 1
             by_difficulty[diff]["ex"] += int(ex_match)
+            by_difficulty[diff]["ex_failed"] += int(not ex_match)
+        else:
+            by_difficulty[diff]["ex_unknown"] += 1
 
         records.append({
             "index": idx,
@@ -143,6 +155,8 @@ def main() -> None:
     total_em = sum(1 for r in records if r["exact_match"])
     total_ex = sum(1 for r in records if r["execution_match"] is True)
     total_ex_attempted = sum(1 for r in records if r["execution_match"] is not None)
+    total_ex_failed = sum(1 for r in records if r["execution_match"] is False)
+    total_ex_unknown = sum(1 for r in records if r["execution_match"] is None)
 
     summary = {
         "model_name_or_path": args.model_name_or_path,
@@ -151,6 +165,13 @@ def main() -> None:
         "total_examples": total,
         "exact_match": total_em / max(total, 1),
         "execution_accuracy": total_ex / max(total_ex_attempted, 1) if total_ex_attempted else None,
+        "execution_accuracy_all": total_ex / max(total, 1),
+        "execution_counts": {
+            "match": total_ex,
+            "mismatch": total_ex_failed,
+            "unknown": total_ex_unknown,
+            "attempted": total_ex_attempted,
+        },
         "by_difficulty": {},
     }
 
@@ -162,6 +183,13 @@ def main() -> None:
                 counts["ex"] / max(counts["ex_attempted"], 1)
                 if counts["ex_attempted"] else None
             ),
+            "execution_accuracy_all": counts["ex"] / max(counts["total"], 1),
+            "execution_counts": {
+                "match": counts["ex"],
+                "mismatch": counts["ex_failed"],
+                "unknown": counts["ex_unknown"],
+                "attempted": counts["ex_attempted"],
+            },
         }
 
     # Output
@@ -173,10 +201,22 @@ def main() -> None:
     print(f"Total: {total}")
     print(f"Exact Match: {summary['exact_match']:.4f}")
     if summary["execution_accuracy"] is not None:
-        print(f"Execution Accuracy: {summary['execution_accuracy']:.4f}")
+        print(
+            "Execution Accuracy:"
+            f" attempted={summary['execution_accuracy']:.4f}"
+            f" all={summary['execution_accuracy_all']:.4f}"
+            f" attempted_count={total_ex_attempted}/{total}"
+        )
     print("\nBy Difficulty:")
     for diff, stats in summary["by_difficulty"].items():
-        ex_str = f", EX={stats['execution_accuracy']:.4f}" if stats["execution_accuracy"] is not None else ""
+        ex_str = (
+            ","
+            f" EX_attempted={stats['execution_accuracy']:.4f}"
+            f" EX_all={stats['execution_accuracy_all']:.4f}"
+            f" attempted={stats['execution_counts']['attempted']}/{stats['total']}"
+            if stats["execution_accuracy"] is not None
+            else f", EX_all={stats['execution_accuracy_all']:.4f} attempted=0/{stats['total']}"
+        )
         print(f"  {diff}: n={stats['total']}, EM={stats['exact_match']:.4f}{ex_str}")
     print(f"\nReport saved to: {out_path}")
 
