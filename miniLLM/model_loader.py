@@ -12,6 +12,7 @@ weights (which cannot be done losslessly).
 from __future__ import annotations
 
 import logging
+import os
 from typing import Literal
 
 import torch
@@ -34,20 +35,42 @@ def _bnb4_config():
     )
 
 
+def _default_device_map() -> dict:
+    """Pin the whole model to the local rank's GPU.
+
+    bitsandbytes quantizes weights during `from_pretrained`, so the target
+    device must be declared up-front — 4-bit tensors cannot be cleanly moved
+    CPU→GPU afterward. For DeepSpeed single-GPU-per-rank training this is
+    the correct placement; `device_map="auto"` would delegate to accelerate
+    and risk splitting layers or leaving shards on CPU.
+    """
+    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+    return {"": local_rank}
+
+
 def load_base_model(
     model_name_or_path: str,
     *,
     quant_mode: QuantMode = "none",
     trust_remote_code: bool = True,
+    device_map=None,
 ) -> AutoModelForCausalLM:
-    """Load the backbone in bf16 or bnb 4-bit NF4."""
+    """Load the backbone in bf16 or bnb 4-bit NF4.
+
+    `device_map` only applies to the bnb4 path. Pass an explicit mapping to
+    override; `None` routes the whole model to the local rank's GPU.
+    """
     kwargs: dict = {"trust_remote_code": trust_remote_code}
     if quant_mode == "bnb4":
         kwargs["quantization_config"] = _bnb4_config()
         kwargs["dtype"] = torch.bfloat16
+        kwargs["device_map"] = device_map if device_map is not None else _default_device_map()
     else:
         kwargs["dtype"] = torch.bfloat16
-    log.info("Loading base model %s (quant=%s)", model_name_or_path, quant_mode)
+    log.info(
+        "Loading base model %s (quant=%s, device_map=%s)",
+        model_name_or_path, quant_mode, kwargs.get("device_map"),
+    )
     return AutoModelForCausalLM.from_pretrained(model_name_or_path, **kwargs)
 
 
@@ -62,6 +85,28 @@ def _default_lora_cfg(r: int, alpha: int, dropout: float) -> LoraConfig:
         ],
         task_type="CAUSAL_LM",
     )
+
+
+def _finalize_training_graph(model, *, gradient_checkpointing: bool):
+    """Enable input-embedding grads on the PEFT-wrapped model.
+
+    Called *after* adapter attachment so we hook whichever embedding module
+    PeftModel exposes — if a future PEFT version swapped the embedding at
+    wrap time this would still target the right module. For bnb4 the
+    equivalent call already ran inside prepare_model_for_kbit_training, but
+    repeating it on the wrapped model is a cheap no-op when the hook is
+    already installed.
+    """
+    if gradient_checkpointing and hasattr(model, "gradient_checkpointing_enable"):
+        # Some PEFT versions expose this on the wrapper; if the base already
+        # had checkpointing on this is idempotent.
+        try:
+            model.gradient_checkpointing_enable()
+        except Exception:  # noqa: BLE001
+            pass
+    if hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()
+    return model
 
 
 def attach_fresh_lora(
@@ -81,13 +126,10 @@ def attach_fresh_lora(
         model = prepare_model_for_kbit_training(
             model, use_gradient_checkpointing=gradient_checkpointing
         )
-    else:
-        if gradient_checkpointing:
-            model.gradient_checkpointing_enable()
-        if hasattr(model, "enable_input_require_grads"):
-            model.enable_input_require_grads()
+    elif gradient_checkpointing:
+        model.gradient_checkpointing_enable()
     model = get_peft_model(model, _default_lora_cfg(lora_r, lora_alpha, lora_dropout))
-    return model
+    return _finalize_training_graph(model, gradient_checkpointing=gradient_checkpointing)
 
 
 def load_adapter_for_training(
@@ -107,14 +149,11 @@ def load_adapter_for_training(
         model = prepare_model_for_kbit_training(
             model, use_gradient_checkpointing=gradient_checkpointing
         )
-    else:
-        if gradient_checkpointing:
-            model.gradient_checkpointing_enable()
-        if hasattr(model, "enable_input_require_grads"):
-            model.enable_input_require_grads()
+    elif gradient_checkpointing:
+        model.gradient_checkpointing_enable()
     log.info("Attaching trainable adapter from %s", adapter_path)
     model = PeftModel.from_pretrained(model, adapter_path, is_trainable=True)
-    return model
+    return _finalize_training_graph(model, gradient_checkpointing=gradient_checkpointing)
 
 
 def load_adapter_frozen(
