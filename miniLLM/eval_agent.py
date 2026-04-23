@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument("--model-name-or-path", type=str, required=True)
     parser.add_argument("--adapter-path", type=str, default=None)
     parser.add_argument("--dataset", type=str, default="spider",
-                        choices=["spider", "sql-create-context"],
+                        choices=["spider", "bird", "sql-create-context"],
                         help="Evaluation dataset")
     parser.add_argument("--num-samples", type=int, default=None,
                         help="Limit samples (None = all for spider, 50 for sql-create-context)")
@@ -55,6 +55,12 @@ def parse_args():
                         help="Max ReAct turns in interactive mode")
     parser.add_argument("--load-in-4bit", action="store_true")
     parser.add_argument("--report-path", type=str, default=None)
+    parser.add_argument("--use-vllm", action="store_true", default=True,
+                        help="Use vLLM for batched rollout generation (default: True)")
+    parser.add_argument("--no-vllm", dest="use_vllm", action="store_false",
+                        help="Disable vLLM (use HF generate — slower)")
+    parser.add_argument("--vllm-gpu-util", type=float, default=0.6,
+                        help="vLLM GPU memory utilization")
     return parser.parse_args()
 
 
@@ -67,6 +73,16 @@ def _load_eval_samples(args) -> list[dict]:
             {"schema": ex.schema_ddl, "question": ex.question,
              "gold_sql": ex.gold_sql, "difficulty": ex.difficulty,
              "db_id": ex.db_id, "db_path": ex.db_path}
+            for ex in examples
+        ]
+    elif args.dataset == "bird":
+        from .data.bird import load_bird
+        examples = load_bird(split="dev", max_samples=args.num_samples)
+        return [
+            {"schema": ex.schema_ddl, "question": ex.question,
+             "gold_sql": ex.gold_sql, "difficulty": ex.difficulty,
+             "db_id": ex.db_id, "db_path": ex.db_path,
+             "evidence": ex.evidence}
             for ex in examples
         ]
     else:
@@ -141,6 +157,33 @@ def generate_interactive(
     return "\n".join(trajectory_parts)
 
 
+def _init_vllm_eval_engine(args, tokenizer):
+    """Prepare vLLM engine by merging adapter into a temp dir, then loading via vLLM."""
+    import tempfile
+    import os
+    from pathlib import Path
+    from .agent.vllm_rollout import VLLMRolloutEngine
+    load_kwargs = dict(device_map="auto", trust_remote_code=True, dtype=torch.bfloat16)
+    base = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, **load_kwargs)
+    if args.adapter_path:
+        base = PeftModel.from_pretrained(base, args.adapter_path)
+        base = base.merge_and_unload()
+    # Use output dir to avoid /tmp disk pressure
+    base_dir = Path(args.report_path).parent if args.report_path else Path("outputs")
+    merged_root = base_dir / "_vllm_eval_merged"
+    merged_root.mkdir(parents=True, exist_ok=True)
+    merged_dir = tempfile.mkdtemp(prefix="eval_merged_", dir=str(merged_root))
+    base.save_pretrained(merged_dir, safe_serialization=True)
+    tokenizer.save_pretrained(merged_dir)
+    del base
+    torch.cuda.empty_cache()
+    return VLLMRolloutEngine(
+        merged_dir,
+        gpu_memory_utilization=args.vllm_gpu_util,
+        max_model_len=2048,
+    )
+
+
 def main() -> None:
     args = parse_args()
 
@@ -148,18 +191,30 @@ def main() -> None:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    load_kwargs = dict(device_map="auto", trust_remote_code=True)
-    if args.load_in_4bit:
-        load_kwargs["quantization_config"] = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-        )
-    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, **load_kwargs)
-    if args.adapter_path:
-        model = PeftModel.from_pretrained(model, args.adapter_path)
-    model.eval()
+    # --- vLLM fast path ---
+    vllm_engine = None
+    model = None
+    if args.use_vllm:
+        try:
+            vllm_engine = _init_vllm_eval_engine(args, tokenizer)
+            print(f"Using vLLM for eval (gpu_util={args.vllm_gpu_util})")
+        except Exception as e:
+            print(f"vLLM init failed ({e}); falling back to HF generate")
+            vllm_engine = None
+
+    if vllm_engine is None:
+        load_kwargs = dict(device_map="auto", trust_remote_code=True)
+        if args.load_in_4bit:
+            load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
+            )
+        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, **load_kwargs)
+        if args.adapter_path:
+            model = PeftModel.from_pretrained(model, args.adapter_path)
+        model.eval()
 
     samples = _load_eval_samples(args)
     print(f"Loaded {len(samples)} evaluation samples ({args.dataset})")
@@ -186,11 +241,38 @@ def main() -> None:
 
         prompt = build_react_inference_prompt(schema, question, tokenizer)
 
-        if args.interactive:
+        if vllm_engine is not None:
+            try:
+                if args.interactive:
+                    # vLLM path: batched interactive rollout (n=1 for eval)
+                    db_path = sample.get("db_path")
+                    results = vllm_engine.sample_completions(
+                        prompt_text=prompt,
+                        schema=schema,
+                        db_path=db_path,
+                        num_generations=1,
+                        max_tokens_per_turn=512,
+                        max_turns=args.max_turns,
+                        temperature=0.01,  # near-greedy
+                        top_p=0.95,
+                    )
+                    trajectory = results[0].gen_text if results else ""
+                else:
+                    # Non-interactive: single-pass greedy — parity with
+                    # the HF generate_single_pass fallback. The interactive
+                    # engine with max_turns=1 would stop on "Observation:"
+                    # and systematically truncate before "Answer: <sql>".
+                    trajectory = vllm_engine.generate_single_pass(
+                        prompt_text=prompt,
+                        max_new_tokens=1024,
+                        temperature=0.0,
+                    )
+            except Exception:
+                trajectory = ""
+        elif args.interactive:
             try:
                 db_path = sample.get("db_path")
                 if db_path:
-                    # Use real Spider database for interactive execution
                     from .agent.env import SQLExecutionEnvFromDB
                     env = SQLExecutionEnvFromDB(db_path)
                 else:
