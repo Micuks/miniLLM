@@ -1,0 +1,424 @@
+OpenAI Codex v0.124.0 (research preview)
+--------
+workdir: /mnt/data1/wuql/dev/miniLLM
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /mnt/data1/wuql/.codex/memories]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019dd71e-70d4-7541-9a31-edbe9bfe6ccb
+--------
+user
+[Round 2 re-evaluation]
+
+I revised the proposal based on your feedback.
+First, check whether the original Problem Anchor is still preserved.
+Second, judge whether the method is now more concrete, more focused, and more current.
+
+Key changes:
+1. Deterministic classifier interface — explicit Python signature with named inputs, named flags, named bucket precedence rule. Buckets reduced from 4 → 3 (`protocol_gain`, `semantic_gain`, `no_change`). `observation_repair` demoted to a per-record flag inside `protocol_gain`. `format_fix` merged into `protocol_gain`.
+2. SKE analysis collapsed from M1-M4 grid to a SINGLE falsifiable mechanism prediction ("SKE fails because the bottleneck is at the protocol layer it cannot affect") with three required pieces of evidence E1+E2+E3. M1-M4 framework moved to appendix.
+3. Dense G=8 demoted from "centerpiece" to "confound check" — single row in the SKE table, not its own validation block.
+4. Conditional external-baseline probe added (§6.4) — gated on 1-day search of HES-SQL / MTIR-SQL / MARS-SQL public per-record artifacts; dropped if unavailable. No reproduction.
+
+=== REVISED PROPOSAL ===
+
+# Research Proposal: Protocol Beats Structure — A Diagnostic Study of Agentic GRPO for Text-to-SQL (R1 revision)
+
+## Problem Anchor
+- **Bottom-line problem**: Multi-turn ReAct GRPO on Text-to-SQL succeeds modestly at 7B (+2 pp Spider-dev EX_att/EX_all) but fails at 3B; SKE-RL fails to help and worsens with more rollouts. We do not know what the +2 pp actually changed inside the agent, and we cannot explain why a natural structural prior fails.
+- **Must-solve bottleneck**: Diagnostic gap. Literature reports aggregate EX gains without decomposing protocol-compliance vs SQL-reasoning contributions.
+- **Non-goals**: SOTA; new method that wins; scaling-law claim; toolkit-as-lead.
+- **Constraints**: 1× Quadro RTX 6000 24 GB, ~3 weeks GPU + 1 week writing.
+- **Success condition**: Reviewer says paper changes how they read agentic-SQL-RL leaderboards AND SKE negative result has a single, measured, convincing mechanism.
+
+## Technical Gap
+
+Recent agentic Text-to-SQL RL work (HES-SQL, MTIR-SQL, MARS-SQL, Graph-Reward-SQL) reports +N pp EX_all and treats those gains as evidence of improved SQL reasoning. **No paper in this line decomposes the gain into protocol-validity vs SQL-semantics.** The two are systematically conflated under EX_all. Consequences: existing structural-reward methods (HES-SQL) cannot say whether their gain is structural or coincidental protocol cleanup; negative results like SKE-RL are uninterpretable; naive scaling reports the same conflated metric.
+
+The smallest adequate intervention is a measurement protocol, not a new training method.
+
+## Method Thesis
+
+- **One-sentence thesis**: Agentic GRPO on multi-turn Text-to-SQL improves aggregate accuracy primarily by aligning tool-use protocols (valid action format, valid SQL, valid Answer extraction), not by improving SQL semantic reasoning — which explains why a structural-advantage prior (SKE-RL) cannot help: it operates on the layer below the actual bottleneck.
+- **Smallest adequate intervention**: Deterministic 2-bucket classifier (`protocol_gain` / `semantic_gain` / `no_change`) + lenient-vs-strict re-execution + single attribution ratio. NO new training for dominant contribution.
+- **Why timely**: Foundation-model-era agentic RL all reports aggregate task-success gains. Protocol-vs-semantic conflation is portable.
+
+## Contribution Focus
+- **Dominant**: Deterministic, portable diagnostic that decomposes any agentic Text-to-SQL RL gain into protocol-validity vs SQL-semantic components, with a single headline `attribution_ratio`. Applied to our 7B Dense GRPO, it shows the +2 pp gain is dominantly protocol.
+- **Optional supporting**: SKE-RL fails because bottleneck is protocol-layer; same diagnostic confirms via 3 evidence requirements (E1+E2+E3).
+- **Explicit non-contributions**: Mechanism grid M1-M4 (appendix only); new RL method; scaling law; SOTA; toolkit-as-lead.
+
+## Proposed Method
+
+### Complexity Budget
+- **Frozen / reused**: 4 existing 7B checkpoints; existing eval JSONs with full trajectories; sqlglot AST; SQLite execution env.
+- **New trainable**: 0 for dominant. 1 supporting (Dense G=8 confound, ~1.2 run-eq).
+- **Tempting additions intentionally not used**: Multi-seed, BIRD GRPO, 1.5B/14B sizes, v2 SKE, mechanism grid as main claim.
+
+### System Overview
+
+```
+Existing eval JSON  ──►  Step 1: Strict + Lenient extraction
+   (any agentic        │      strict_pred = current extract_final_sql()
+    SQL RL run)        │      lenient_pred = relaxed regex over Answer-region,
+                       │                    + last-action-fallback if no Answer,
+                       │                    must sqlglot-parse
+                       │      Re-execute both against db_path
+                       ▼
+                       Step 2: Per-record classifier (DETERMINISTIC)
+                       Inputs: see classifier interface below
+                       Outputs: bucket ∈ {protocol_gain, semantic_gain, no_change}
+                                + flags (boolean set)
+                       ▼
+                       Step 3: Aggregate diagnostic table
+                       For (RL vs SFT) pair:
+                         attribution = (ΔEX_strict − ΔEX_lenient) / max(ΔEX_strict, ε)
+                         bucket distribution over {SFT-wrong → RL-right} transitions
+                       ▼
+                       Step 4: SKE confirmation (supporting)
+                       Apply Step 2-3 to (SKE-G4 vs Dense), (SKE-G8 vs Dense)
+                       Predict: no semantic_gain; no lenient-EX lift; only adv-stats shift
+                       Confound: Dense G=8 row to rule out generic G effect
+```
+
+### Core Mechanism
+
+**Classifier interface** (deterministic):
+```python
+def classify(record) -> tuple[Bucket, Flags]:
+    """
+    Inputs (per-record dict):
+      strict_pred_sql, lenient_pred_sql, gold_sql, all_sql_actions,
+      execution_errors, final_answer_span, db_id
+
+    Computed flags:
+      strict_extract_ok    = strict_pred_sql is not None and parses
+      lenient_extract_ok   = lenient_pred_sql is not None and parses
+      first_sql_exec_ok    = execution_errors[0] == "" if all_sql_actions else False
+      final_sql_exec_ok    = re-execute(strict OR lenient) succeeds
+      final_correct_strict = exec_match(strict_pred_sql, gold_sql)
+      final_correct_lenient= exec_match(lenient_pred_sql, gold_sql)
+      sql_ast_changed      = canonical_ast(strict_pred) != canonical_ast(first_sql_action)
+      table_set_changed    = table_set(strict_pred) != table_set(first_sql_action)
+      condition_set_changed= where_clause_set(strict_pred) != where_clause_set(first_sql_action)
+      observation_repair_flag = (not first_sql_exec_ok) and final_sql_exec_ok and final_correct_strict
+      equivalence_class_change_flag = (canonical_ast(SFT_strict) != canonical_ast(RL_strict))
+
+    Bucket precedence (for {SFT vs RL} pair classification):
+      protocol_gain = (not SFT.strict_extract_ok or not SFT.final_sql_exec_ok)
+                       AND RL.final_correct_strict
+                       AND (RL.lenient_correct == SFT.lenient_correct)
+      semantic_gain = SFT.lenient_correct == False AND RL.lenient_correct == True
+      no_change     = otherwise
+    """
+```
+
+**Headline numbers (per RL-vs-SFT pair)**:
+- `attribution_ratio = (ΔEX_strict − ΔEX_lenient) / max(ΔEX_strict, ε)` ∈ [0, 1]
+- `bucket_share`: % of {SFT-wrong → RL-right} transitions in `protocol_gain` vs `semantic_gain`
+- `observation_repair_share`: of `protocol_gain` transitions, fraction with `observation_repair_flag = True`
+
+**Why main novelty**: No published agentic Text-to-SQL RL paper reports either `attribution_ratio` or `bucket_share`. Both are interpretive primitives and generalize to other tool-using agentic settings.
+
+### Optional Supporting Component (= SKE single mechanism)
+
+Apply same classifier to (SKE-G4 vs Dense) and (SKE-G8 vs Dense). Test single prediction:
+> SKE-RL fails because the bottleneck is at the protocol layer it cannot affect.
+
+Required evidence (all 3 must hold):
+- **E1**: `bucket_share[semantic_gain]` for (SKE vs Dense) ≤ that for (Dense vs SFT)
+- **E2**: `lenient_EX(SKE) ≤ lenient_EX(Dense)`
+- **E3**: SKE per-rollout class statistics show class baseline IS shifting advantages, but those shifts are uncorrelated with `bucket = semantic_gain` records
+
+**Confound check**: Dense G=8 (~1.2 run-eq) — single row, not a centerpiece. If Dense G=8 ≥ Dense G=4, SKE-G=8 collapse is structural to class-baseline math.
+
+**M1-M4 grid**: Appendix only, as a checklist for future negative-result analyses.
+
+### Modern Primitive Usage
+- Lenient re-execution = real SQLite as inference-time verifier — recovers what agent meant despite protocol noise.
+- AST-canonical equivalence (sqlglot) for `equivalence_class_change_flag`.
+- No new trained component for dominant contribution.
+
+### Integration
+Diagnostic attaches AFTER any agentic-RL pipeline. Reads eval JSONs only. Reference impl works on listed input fields.
+
+### Training Plan
+Dominant: NONE. Supporting: Dense G=8 confound (~1.2 run-eq).
+
+### Failure Modes
+
+| Failure | Detect | Fallback |
+|---|---|---|
+| `attribution_ratio` ≈ 0 | Lenient ΔEX ≈ Strict ΔEX | Story flips: gain IS semantic; SKE still fails (concentrated in queries SKE cannot reach). Diagnostic still novel. |
+| Dense G=8 also degrades | EX_att(Dense G=8) < EX_att(Dense G=4) by >1 pp | Generic G effect; reframe as rollout-budget tradeoff. |
+| Both gain buckets <5% | Most transitions in `no_change` | Effect-size CI; possibly Dense gain is noise. |
+| Lenient extractor pathological | Lenient EX < Strict EX on SFT | Tighten extractor; re-validate on 50 SFT records. |
+| External probe artifact unavailable | 1-day search returns no per-record trajectories | Drop §6.4; note as limitation. |
+
+### Novelty / Elegance
+
+Closest published: HES-SQL, Graph-Reward-SQL, MTIR-SQL, MARS-SQL, LearNAT — all sit inside EX_all conflation. Our differentiation: we do NOT propose a winning intervention. We propose a diagnostic that turns existing aggregate gains into mechanistic claims, and use SKE-RL as designed-to-fail control that makes the diagnostic visible in both directions.
+
+Focused: One classifier + one ratio + one bucket distribution + one supporting failure analysis (predicted by main thesis). No new training for dominant contribution.
+
+Elegant: One re-execution pass + one deterministic classifier + one ratio. Anyone with eval JSONs can apply tomorrow.
+
+## Claim-Driven Validation Sketch
+
+### Claim 1 (dominant): Dense agentic GRPO gain on Text-to-SQL is dominantly protocol/tool-use alignment
+
+- **Min experiment**: Lenient-extraction re-execution of SFT vs Dense75 on full Spider-dev (1034). Compute `attribution_ratio` and bucket distribution.
+- **Cost**: ~6 GPU-h (SQLite-bound); 0 for classifier.
+- **Baseline**: SFT vs Dense75; sanity: lenient-EX(SFT) ≥ strict-EX(SFT).
+- **Metric**: `attribution_ratio`; bucket share over transitions.
+- **Expected**: `attribution_ratio` ≥ 0.5; `bucket_share[protocol_gain] > bucket_share[semantic_gain]`.
+
+### Claim 2 (supporting): SKE-RL fails because the bottleneck is at the protocol layer it cannot affect
+
+- **Min experiment**: Apply diagnostic to (SKE-G4 vs Dense) and (SKE-G8 vs Dense). Test E1+E2+E3. Plus Dense G=8 confound (~1.2 run-eq).
+- **Baseline**: 2×2 {Dense, SKE} × {G=4, G=8}.
+- **Metric**: bucket_share[semantic_gain]; lenient_EX comparison; correlation between SKE class-baseline shifts and `bucket=semantic_gain` records.
+- **Expected**: E1, E2, E3 all hold; Dense G=8 ≥ Dense G=4.
+
+## Experiment Handoff
+- **Must-prove**: C1 (protocol attribution); C2 (SKE single mechanism)
+- **Must-run**: Dense G=8 confound; lenient sanity on SFT
+- **Critical metrics**: `attribution_ratio`, `bucket_share`, lenient_EX
+- **Highest-risk assumptions**: (R1) lenient extractor recovers SQL from format-failed SFT (50-record sanity); (R2) `semantic_gain` ≥ 10 transitions in Dense vs SFT (else C2 has no contrast); (R3) Dense G=8 ≥ Dense G=4 within 1 pp.
+
+## Compute & Timeline
+
+| Block | GPU-h | Wall | Note |
+|---|---:|---|---|
+| Lenient re-execution: SFT + Dense75 | ~6 | <1d | Existing logs |
+| Classifier + transition table | ~0 | <1d | Pure CPU |
+| SKE diagnostic (G4+G8 vs Dense) | ~6 | <1d | Existing eval JSONs |
+| Dense G=8 confound | ~28 (1.2 run-eq) | ~1.5d | |
+| (Opt) External probe | ~2 if avail | <1d | 1-day gate |
+| (Opt) 3B Dense same launcher | ~12 | ~1d | 3B cliff anchor |
+| Writing + figures | n/a | ~1 week | |
+
+**Mandatory: ~40 GPU-h (1.7 run-eq) + 3 days CPU + 1 week writing.**
+
+=== END REVISED PROPOSAL ===
+
+Please:
+- Re-score the same 7 dimensions and overall
+- State whether the Problem Anchor is preserved or drifted
+- State whether the dominant contribution is now sharper or still too broad
+- State whether the method is simpler or still overbuilt
+- State whether the frontier leverage is now appropriate or still old-school / forced
+- Focus new critiques on missing mechanism, weak training signal, weak integration point, pseudo-novelty, or unnecessary complexity
+- Use the same verdict rule: READY only if overall score ≥ 9 and no blocking issue remains
+
+Same output format: 7 scores, overall, verdict, drift warning, simplification opportunities, modernization opportunities, remaining action items.
+
+codex
+**Scores**
+
+| Dimension | Score |
+|---|---:|
+| Problem Fidelity | 9 |
+| Method Specificity | 8 |
+| Contribution Quality | 9 |
+| Frontier Leverage | 8 |
+| Feasibility | 8 |
+| Validation Focus | 8 |
+| Venue Readiness | 7 |
+
+**Overall Score:** **8.35 / 10**
+
+**Verdict:** **REVISE**
+
+Not READY because the overall score is below 9 and one blocking methodological detail remains: the lenient extractor and bucket classifier must be made leakage-safe and pairwise-consistent.
+
+**Drift Warning**
+
+NONE. The anchor is preserved. The revised version still directly attacks the diagnostic gap: what did GRPO improve, protocol compliance or SQL semantics, and why does SKE fail?
+
+**Dominant Contribution**
+
+Sharper. The paper now has one dominant contribution: a deterministic diagnostic decomposition. Collapsing the buckets to `protocol_gain / semantic_gain / no_change` helps. Demoting `observation_repair` to a flag is the right move.
+
+The SKE analysis now reads as supporting evidence rather than a parallel paper.
+
+**Method Simplicity**
+
+Simpler, but not fully clean yet. The method is no longer overbuilt, but the classifier still has one fragile edge: `protocol_gain` depends on strict/lenient correctness in a way that could misclassify records unless lenient candidate selection is fully deterministic and independent of gold execution.
+
+**Frontier Leverage**
+
+Appropriate. This is not old-school. The natural modern primitive here is verifier-style re-execution over agent traces, plus AST canonicalization. No need to add an LLM judge or train another model.
+
+**Remaining Critiques**
+
+1. **Lenient extraction leakage risk**
+   - Weakness: “Recover what the agent meant” can become pseudo-oracle evaluation if multiple SQL candidates are extracted and the correct one is selected using execution match.
+   - Fix: Define `lenient_pred_sql` as a single candidate selected without gold:
+     `final Answer-region SQL if parseable; else last parseable SQL action; else None`.
+     Do not choose among candidates by execution correctness.
+   - Priority: **CRITICAL**
+
+2. **Classifier condition still underspecified**
+   - Weakness: Current `protocol_gain` rule is awkward:
+     `RL.lenient_correct == SFT.lenient_correct` does not directly encode “SFT had a recoverable correct SQL but failed strict protocol.”
+   - Fix: Use explicit pairwise rules:
+     ```python
+     protocol_gain = (
+         not SFT.final_correct_strict
+         and SFT.final_correct_lenient
+         and RL.final_correct_strict
+     )
+
+     semantic_gain = (
+         not SFT.final_correct_lenient
+         and RL.final_correct_lenient
+     )
+
+     no_change = otherwise
+     ```
+     Then apply precedence: `protocol_gain > semantic_gain > no_change`.
+   - Priority: **CRITICAL**
+
+3. **E3 integration point is weak**
+   - Weakness: “SKE class-baseline shifts uncorrelated with semantic_gain records” requires a clear join between training rollout statistics and eval records. Otherwise E3 becomes hand-wavy.
+   - Fix: Define the join key now:
+     - preferred: exact train/eval record id if same examples;
+     - otherwise: query skeleton class / difficulty class / database id;
+     - if no reliable join exists, weaken E3 to an aggregate statement about advantage mass by skeleton class.
+   - Priority: **IMPORTANT**
+
+4. **Venue readiness still depends on effect size**
+   - Weakness: If the +2 pp gain corresponds to very few records, bucket shares may look brittle.
+   - Fix: Report binomial confidence intervals or bootstrap CIs over Spider-dev records. This is not extra experimentation; it is required uncertainty accounting.
+   - Priority: **IMPORTANT**
+
+**Simplification Opportunities**
+
+1. Drop the optional 3B Dense run from the main proposal. The anchor mentions the 3B cliff, but the paper’s contribution does not need to solve it.
+
+2. Keep the external-baseline probe as a footnote or appendix-only “if artifacts exist” item. Do not let it appear in the main validation plan.
+
+3. Remove M1-M4 from the proposal body entirely. “Appendix only” is fine, but even mentioning it in the core proposal creates latent contribution sprawl.
+
+**Modernization Opportunities**
+
+NONE. The revised method uses the right level of foundation-model-era machinery. Adding an LLM judge would make the diagnostic less clean unless used only for a small human-audit comparison.
+
+**Remaining Action Items**
+
+1. Finalize leakage-safe `lenient_pred_sql` selection.
+
+2. Rewrite bucket rules using direct strict/lenient correctness conditions.
+
+3. Specify the SKE E3 join key or downgrade E3 to aggregate evidence.
+
+4. Add uncertainty intervals for `attribution_ratio` and bucket shares.
+
+5. Keep the main paper centered on C1; make C2 visibly supporting, not co-equal.
+tokens used
+19,978
+**Scores**
+
+| Dimension | Score |
+|---|---:|
+| Problem Fidelity | 9 |
+| Method Specificity | 8 |
+| Contribution Quality | 9 |
+| Frontier Leverage | 8 |
+| Feasibility | 8 |
+| Validation Focus | 8 |
+| Venue Readiness | 7 |
+
+**Overall Score:** **8.35 / 10**
+
+**Verdict:** **REVISE**
+
+Not READY because the overall score is below 9 and one blocking methodological detail remains: the lenient extractor and bucket classifier must be made leakage-safe and pairwise-consistent.
+
+**Drift Warning**
+
+NONE. The anchor is preserved. The revised version still directly attacks the diagnostic gap: what did GRPO improve, protocol compliance or SQL semantics, and why does SKE fail?
+
+**Dominant Contribution**
+
+Sharper. The paper now has one dominant contribution: a deterministic diagnostic decomposition. Collapsing the buckets to `protocol_gain / semantic_gain / no_change` helps. Demoting `observation_repair` to a flag is the right move.
+
+The SKE analysis now reads as supporting evidence rather than a parallel paper.
+
+**Method Simplicity**
+
+Simpler, but not fully clean yet. The method is no longer overbuilt, but the classifier still has one fragile edge: `protocol_gain` depends on strict/lenient correctness in a way that could misclassify records unless lenient candidate selection is fully deterministic and independent of gold execution.
+
+**Frontier Leverage**
+
+Appropriate. This is not old-school. The natural modern primitive here is verifier-style re-execution over agent traces, plus AST canonicalization. No need to add an LLM judge or train another model.
+
+**Remaining Critiques**
+
+1. **Lenient extraction leakage risk**
+   - Weakness: “Recover what the agent meant” can become pseudo-oracle evaluation if multiple SQL candidates are extracted and the correct one is selected using execution match.
+   - Fix: Define `lenient_pred_sql` as a single candidate selected without gold:
+     `final Answer-region SQL if parseable; else last parseable SQL action; else None`.
+     Do not choose among candidates by execution correctness.
+   - Priority: **CRITICAL**
+
+2. **Classifier condition still underspecified**
+   - Weakness: Current `protocol_gain` rule is awkward:
+     `RL.lenient_correct == SFT.lenient_correct` does not directly encode “SFT had a recoverable correct SQL but failed strict protocol.”
+   - Fix: Use explicit pairwise rules:
+     ```python
+     protocol_gain = (
+         not SFT.final_correct_strict
+         and SFT.final_correct_lenient
+         and RL.final_correct_strict
+     )
+
+     semantic_gain = (
+         not SFT.final_correct_lenient
+         and RL.final_correct_lenient
+     )
+
+     no_change = otherwise
+     ```
+     Then apply precedence: `protocol_gain > semantic_gain > no_change`.
+   - Priority: **CRITICAL**
+
+3. **E3 integration point is weak**
+   - Weakness: “SKE class-baseline shifts uncorrelated with semantic_gain records” requires a clear join between training rollout statistics and eval records. Otherwise E3 becomes hand-wavy.
+   - Fix: Define the join key now:
+     - preferred: exact train/eval record id if same examples;
+     - otherwise: query skeleton class / difficulty class / database id;
+     - if no reliable join exists, weaken E3 to an aggregate statement about advantage mass by skeleton class.
+   - Priority: **IMPORTANT**
+
+4. **Venue readiness still depends on effect size**
+   - Weakness: If the +2 pp gain corresponds to very few records, bucket shares may look brittle.
+   - Fix: Report binomial confidence intervals or bootstrap CIs over Spider-dev records. This is not extra experimentation; it is required uncertainty accounting.
+   - Priority: **IMPORTANT**
+
+**Simplification Opportunities**
+
+1. Drop the optional 3B Dense run from the main proposal. The anchor mentions the 3B cliff, but the paper’s contribution does not need to solve it.
+
+2. Keep the external-baseline probe as a footnote or appendix-only “if artifacts exist” item. Do not let it appear in the main validation plan.
+
+3. Remove M1-M4 from the proposal body entirely. “Appendix only” is fine, but even mentioning it in the core proposal creates latent contribution sprawl.
+
+**Modernization Opportunities**
+
+NONE. The revised method uses the right level of foundation-model-era machinery. Adding an LLM judge would make the diagnostic less clean unless used only for a small human-audit comparison.
+
+**Remaining Action Items**
+
+1. Finalize leakage-safe `lenient_pred_sql` selection.
+
+2. Rewrite bucket rules using direct strict/lenient correctness conditions.
+
+3. Specify the SKE E3 join key or downgrade E3 to aggregate evidence.
+
+4. Add uncertainty intervals for `attribution_ratio` and bucket shares.
+
+5. Keep the main paper centered on C1; make C2 visibly supporting, not co-equal.

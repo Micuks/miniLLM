@@ -1,0 +1,523 @@
+OpenAI Codex v0.124.0 (research preview)
+--------
+workdir: /mnt/data1/wuql/dev/miniLLM
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /mnt/data1/wuql/.codex/memories]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019dd6aa-5d15-7ed2-977a-6fdf5c9ac819
+--------
+user
+Solid Round 1. Push further on these.
+
+## R2 follow-ups
+
+### F1. Concretize the reframe to "Diagnostic Study of Multi-turn Text-to-SQL RL"
+
+Give me the actual paper structure if I take this route. What is the ONE-sentence headline? What is the new §1 thesis? Which of the existing experiments become the load-bearing evidence? Which become appendix? Does this framing survive without BIRD and without a third capacity point — or does it still need them?
+
+### F2. Minimum viable experiment package — explicit cost-benefit ranking
+
+Constraint: single 24GB Quadro RTX 6000, ~3 weeks remaining. One 7B run = ~24 GPU-h (75 step, G=8, full Spider train slice). One 7B eval (full Spider-dev) = ~5 GPU-h.
+
+For each of the following experiment additions, give:
+- estimated cost (in 7B-run-equivalents)
+- expected acceptance lift (none / small / large)
+- which Story (A / Diagnostic / Workshop only) it supports
+
+Then rank them.
+
+Candidate experiments:
+(a) 3B Dense GRPO same launcher (re-anchor C1)
+(b) 7B Dense + SKE multi-seed (3 seeds each, 4 conditions)
+(c) Dense G=8 control (was missing — to disambiguate "G effect" from "SKE effect")
+(d) Dense G=2 + SKE G=2 (extreme low-G)
+(e) 7B Dense BIRD-mini SFT + GRPO + eval
+(f) 14B Dense GRPO + SFT (third capacity point) — feasibility uncertain on 24GB
+(g) 1.5B Dense GRPO + SFT (third capacity point, smaller)
+(h) Per-class diagnostic tables (no new training, just analysis on existing eval JSONs)
+(i) KL / entropy / reward-variance / format-error trajectory plots (no new training)
+(j) Dense-vs-SKE held-out subset partitioned by "needs reasoning" vs "needs format compliance" — to address your "Dense improves formatting/tool-call compliance vs reasoning" risk
+
+I want the rank order I should execute, not the menu.
+
+### F3. The "formatting-not-reasoning" alternative explanation
+
+You flagged: "Dense GRPO improving formatting/tool-call compliance rather than reasoning". This is the most damaging alternative explanation if true.
+
+(a) What's the cheapest experiment that would distinguish the two?
+(b) If Dense GRPO IS mostly fixing format/tool-call compliance, does the paper become more or less interesting? (My instinct: more interesting, because it inverts the field's assumption that 7B+RL improves reasoning.)
+(c) Sketch the framing if (b) holds.
+
+### F4. Negative result as LEAD vs as supporting
+
+Be specific: can the SKE-RL negative result carry the paper as the main contribution, or only as supporting evidence in a broader story? If as lead, what would make it interesting beyond "we tried X and it didn't work" — i.e., what's the equivalent of "negative result with clear mechanism" vs "negative result without explanation"?
+
+### F5. Field-specific competition
+
+What recent published work (last 12 months) competes with this story? Specifically:
+- Anyone who has shown agentic Text-to-SQL RL working OR failing at scale
+- Anyone who has used skeleton/AST equivalence in RL credit assignment
+- Anyone who has done capacity ablations on multi-turn agentic RL
+
+If competitors exist, what do they say, and how does the current work differentiate?
+
+### F6. Three-month decision
+
+Suppose the author has 3 weeks of GPU + 1 week of writing. What is the highest-EV path?
+(i) Harden Story A and target ACL/EMNLP main → submit in 4 weeks
+(ii) Pivot to "Diagnostic Study" workshop → submit in 2 weeks
+(iii) Drop the publication and use the negative result + infrastructure as ground for a stronger v2 attempt → no submission this cycle
+(iv) Some combination
+
+Pick one. Justify in 3 sentences.
+
+Be terse and structured. Continue mock-review tone.
+
+codex
+I’ll answer directly, but I’m going to verify the competitor landscape first because “last 12 months” is time-sensitive and easy to misstate.
+web search: 
+web search: site:arxiv.org text-to-SQL reinforcement learning agent GRPO 2025 2026
+web search: 
+web search: "skeleton" "Text-to-SQL" reinforcement learning AST equivalence 2025
+web search: 
+web search: arxiv 2510.08896 HES-SQL Hybrid Reasoning Efficient Text-to-SQL Structural Skeleton Guidance
+web search: 
+web search: https://arxiv.org/abs/2601.17699
+web search: 
+web search: https://arxiv.org/abs/2510.08896
+web search: 
+web search: https://arxiv.org/abs/2504.02327
+web search: 
+web search: https://aclanthology.org/2025.findings-ijcnlp.91/
+web search: 
+web search: ReEx-SQL Text-to-SQL reinforcement learning 2025
+web search: 
+web search: https://arxiv.org/abs/2505.12768
+web search: 
+web search: "capacity" ablation "multi-turn" "GRPO" agentic reinforcement learning 2025
+codex
+## F1. Diagnostic Study Reframe
+
+**One-sentence headline**
+
+> Multi-turn Text-to-SQL RL gains are real but brittle: in our ReAct-GRPO pipeline, improvement appears only at 7B, structural advantage shaping fails to help, and the dominant bottleneck must be diagnosed through protocol, reward, and trajectory-level failure modes rather than assumed to be credit assignment.
+
+**New §1 thesis**
+
+The paper should not ask “Does SKE-RL solve credit assignment?” It should ask:
+
+> When ReAct-style GRPO helps or fails for Text-to-SQL, what observable bottleneck explains the outcome: model capacity, reward shape, tool/protocol compliance, rollout diversity, or structural credit assignment?
+
+**Structure**
+
+1. **Introduction**
+   - Claim: Multi-turn Text-to-SQL RL is not plug-and-play; naive reward and advantage intuitions fail.
+   - Contributions: controlled 3B/7B case study, negative SKE result, diagnostic toolkit, failure taxonomy.
+
+2. **Setup**
+   - ReAct loop, SQLite execution, SFT teacher traces, GRPO, EX_att / EX_all.
+   - Keep compact.
+
+3. **Finding 1: RL Helps at 7B but Not Reliably at 3B**
+   - Load-bearing: 3B archived + current rerun if possible; 7B Dense +2pp.
+   - Do not call this “capacity law.”
+
+4. **Finding 2: Reward Shaping Does Not Rescue the Weak Policy**
+   - 3B reward variants.
+   - If archived only, put caveat in main and detail in appendix.
+
+5. **Finding 3: Structural Credit Assignment Is Not the Missing Piece Here**
+   - SKE design, gates, G=4/G=8 result.
+   - Main point: plausible structural prior fails.
+
+6. **Finding 4: What Actually Changes After RL**
+   - This becomes the most important section.
+   - Format/tool-call errors, invalid SQL, execution errors, final-answer extraction failures, correction-after-observation rate, per-query-class wins/losses.
+
+7. **Discussion**
+   - Practical guidance: evaluate agentic RL with diagnostics, not only aggregate EX.
+   - “SKE is a useful negative control.”
+
+8. **Limitations**
+   - Single seed, Spider-heavy, only two sizes, SKE only advantage-side.
+
+**Appendix**
+
+- Full SKE extractor details.
+- 98 pytests / coverage.
+- All reward variant configs.
+- Kill switches and gates.
+- BIRD loader unless actual BIRD results exist.
+- Full per-class tables.
+
+**Survives without BIRD / third capacity point?**
+
+- Workshop: yes.
+- ACL/EMNLP main: weak but possible only if diagnostics are strong.
+- NeurIPS/ICML: no.
+- Without BIRD and third size, do not sell a scaling/capacity thesis. Sell a diagnostic case study.
+
+## F2. Ranked Experiment Plan
+
+Assumption: `1.0 run-eq = 24 GPU-h`, 7B G=8 train. One 7B eval = `0.21 run-eq`.
+
+**Execute in this order**
+
+| Rank | Exp | Cost | Lift | Supports | Verdict |
+|---:|---|---:|---|---|---|
+| 1 | (h) Per-class diagnostic tables | ~0 | large | Diagnostic / Workshop | Do first. Highest value per hour. |
+| 2 | (i) KL / entropy / reward variance / format-error curves | ~0 | large | Diagnostic | Essential. Turns anecdotes into mechanism. |
+| 3 | (j) Reasoning vs format-compliance partition | ~0-0.4 | large | Diagnostic | Directly attacks biggest alternative explanation. |
+| 4 | (c) Dense G=8 control | ~1.21 | large | A / Diagnostic | Needed to interpret SKE G=8 collapse. |
+| 5 | (a) 3B Dense same launcher | ~0.4-0.6 | medium | A / Diagnostic | Re-anchors the 3B cliff. Cheap enough. |
+| 6 | (g) 1.5B Dense + SFT | ~0.25-0.4 | small-medium | A | Adds capacity point, but mostly confirms low-end failure. |
+| 7 | (e) 7B Dense BIRD-mini SFT + GRPO + eval | ~1.5-2.5 | medium-large | Diagnostic / ACL | Useful, but mini-BIRD may be attacked as cherry-picked. |
+| 8 | (d) Dense G=2 + SKE G=2 | ~0.7-0.9 | small | SKE lead | Nice curve, not essential. |
+| 9 | (b) 7B Dense + SKE 3 seeds, 4 conditions | ~7-10 | large | Main-track | Too expensive for 3 weeks on one card. |
+| 10 | (f) 14B Dense + SFT | ~3-5 plus OOM risk | large if works | A | Do not attempt unless already proven feasible. |
+
+Highest-EV package under 3 weeks:
+- h, i, j immediately.
+- c next.
+- a next.
+- g only if time remains.
+- e only if BIRD-mini setup is already stable.
+
+## F3. Formatting vs Reasoning
+
+**Cheapest distinguishing experiment**
+
+Use existing eval JSONs.
+
+Build a win/loss transition table:
+
+- `format failure`: no valid final SQL/action/final answer.
+- `tool failure`: malformed action, failed execution syntax, exceeded turns.
+- `SQL executable but wrong`.
+- `SQL non-executable`.
+- `observation repair`: first attempted SQL wrong/error, later final SQL correct.
+- `semantic repair`: final SQL changes skeleton/tables/conditions after observation.
+- `no-repair correct`: model gets final SQL right without meaningful tool use.
+
+Then compare SFT vs Dense on SFT-wrong/Dense-right examples.
+
+Also run lenient extraction:
+- Strict metric: current EX_all.
+- Lenient metric: extract any plausible final SQL from transcript and execute.
+- If Dense gain disappears under lenient extraction, it was mostly protocol/format.
+- If Dense gain remains on executable SQL and hard query classes, it is semantic.
+
+Cost: near-zero if logs exist; one eval pass per model if not.
+
+**If Dense mostly fixes format/tool compliance**
+
+More interesting for ACL/EMNLP, less interesting for NeurIPS.
+
+It becomes a better paper because the claim is sharper and less inflated:
+
+> Apparent reasoning gains from agentic RL may be largely interface-alignment gains: models learn when and how to call tools, finalize answers, and avoid invalid trajectories.
+
+**Framing if true**
+
+Title-level thesis:
+
+> Agentic GRPO Improves Text-to-SQL by Aligning Tool-Use Protocols More Than SQL Reasoning
+
+Core argument:
+- Dense GRPO improves EX_all mainly by reducing invalid trajectories.
+- EX_att or lenient SQL execution improves less.
+- SKE fails because it targets SQL structure after valid SQL exists, while the bottleneck is earlier: producing valid, executable, well-formed agent trajectories.
+- Larger model helps because it has enough base competence to exploit protocol rewards.
+
+That is clean and publishable as a diagnostic paper.
+
+## F4. Can SKE Negative Result Lead?
+
+Currently: no. It is supporting evidence.
+
+As lead, it needs mechanism. “We tried skeleton baselines and they lost” is not enough.
+
+To make it lead-worthy, show one of these:
+
+1. **Variance-reduction failure**
+   - SKE does not reduce advantage variance enough to matter.
+   - Or it reduces variance but also shrinks useful learning signal.
+
+2. **Class-fragmentation mechanism**
+   - Many classes are singleton/small even at G=8.
+   - Effective baseline size remains poor.
+   - More G increases low-quality off-policy-ish diversity rather than useful within-class comparison.
+
+3. **Wrong abstraction mechanism**
+   - Same skeleton often contains semantically different difficulty due to schema linking/literals.
+   - Cross-skeleton comparison is actually informative because correct/simple skeletons should beat wrong/complex skeletons.
+
+4. **Optimization mechanism**
+   - SKE changes advantage scale/sign distribution.
+   - More rollouts produce more negative/near-zero advantages for exploratory but useful trajectories.
+   - KL/entropy/reward curves show collapse or under-updating.
+
+Negative result with mechanism:
+> “Skeleton-conditioned baselines fail because SQL skeleton is not a sufficient control variate for Text-to-SQL reward: the main variance comes from schema grounding, literal selection, and protocol validity, not AST shape.”
+
+Negative result without mechanism:
+> “We tried an idea and it did not work.”
+
+Only the first can lead.
+
+## F5. Competition
+
+I checked current papers because this area moved fast in 2025-2026.
+
+**Direct competitors**
+
+- [ReEx-SQL](https://arxiv.org/abs/2505.12768): execution-aware RL with intermediate database feedback; reports 7B gains on Spider/BIRD. This directly competes with your “multi-turn execution feedback helps” angle. Your differentiation must be diagnostics/negative controls, not headline accuracy.
+
+- [MTIR-SQL](https://arxiv.org/abs/2510.25510): multi-turn tool-integrated RL, GRPO modifications, trajectory filtering, no KL; reports strong 4B Spider/BIRD numbers. This overlaps heavily with your ReAct-GRPO setup.
+
+- [MARS-SQL](https://arxiv.org/abs/2511.01008): multi-agent ReAct-style Think-Act-Observe generator trained with multi-turn RL plus validation agent; reports high BIRD/Spider. This makes a plain “we built multi-turn Text-to-SQL RL” paper noncompetitive.
+
+- [SQL-Trail](https://arxiv.org/abs/2601.17699): multi-turn RL with interleaved feedback, adaptive turn budget, 7B/14B claims. This is dangerous for Story A because it already occupies the “agentic multi-turn RL works at scale” lane.
+
+**Reward / structure competitors**
+
+- [Graph-Reward-SQL](https://aclanthology.org/2025.findings-emnlp.694/): graph-matching and stepwise reward for Text-to-SQL RL; explicitly targets reward quality and SQL equivalence. Your SKE must be positioned as advantage-side, not reward-side.
+
+- [HES-SQL](https://arxiv.org/abs/2510.08896): GRPO plus skeleton-completeness reward and latency reward. This directly competes with skeleton-based structural guidance. Your differentiation: skeleton as baseline/control variate fails, not skeleton reward helps.
+
+- [LearNAT](https://arxiv.org/abs/2504.02327): AST-guided decomposition and margin-aware RL/DPO. Adjacent structure-aware RL; not the same as equivalence-class advantage, but reviewers will cite it.
+
+**Other relevant RL Text-to-SQL**
+
+- [CSC-SQL](https://aclanthology.org/2025.findings-ijcnlp.91/): GRPO for self-consistency/self-correction; strong BIRD private numbers.
+- [ExeSQL](https://aclanthology.org/2025.findings-emnlp.1320/): execution-driven bootstrapping and preference training for SQL dialects.
+- [Sparks of Tabular Reasoning](https://aclanthology.org/2025.trl-1.20/): GRPO over Text-to-SQL as table reasoning; adjacent, workshop-level.
+
+**Implication**
+
+You cannot win on SOTA. You can win only on:
+- reproducible diagnostics,
+- negative result with mechanism,
+- showing aggregate EX hides protocol-vs-reasoning effects,
+- tested infrastructure.
+
+## F6. Three-Month Decision
+
+Pick **(iv): submit a diagnostic workshop paper now, while building a stronger v2 for main later**.
+
+In 3 weeks on one 24GB card, you cannot produce the seeds/BIRD/third-scale evidence needed for a credible ACL/EMNLP main submission. The highest-EV move is to run the zero/low-cost diagnostics, add Dense G=8 and 3B Dense same-launcher, write the honest diagnostic paper, and release the toolkit. Use the workshop submission to establish priority and reviewer feedback, then decide whether v2 deserves BIRD + seeds + larger-scale compute.
+tokens used
+77,971
+## F1. Diagnostic Study Reframe
+
+**One-sentence headline**
+
+> Multi-turn Text-to-SQL RL gains are real but brittle: in our ReAct-GRPO pipeline, improvement appears only at 7B, structural advantage shaping fails to help, and the dominant bottleneck must be diagnosed through protocol, reward, and trajectory-level failure modes rather than assumed to be credit assignment.
+
+**New §1 thesis**
+
+The paper should not ask “Does SKE-RL solve credit assignment?” It should ask:
+
+> When ReAct-style GRPO helps or fails for Text-to-SQL, what observable bottleneck explains the outcome: model capacity, reward shape, tool/protocol compliance, rollout diversity, or structural credit assignment?
+
+**Structure**
+
+1. **Introduction**
+   - Claim: Multi-turn Text-to-SQL RL is not plug-and-play; naive reward and advantage intuitions fail.
+   - Contributions: controlled 3B/7B case study, negative SKE result, diagnostic toolkit, failure taxonomy.
+
+2. **Setup**
+   - ReAct loop, SQLite execution, SFT teacher traces, GRPO, EX_att / EX_all.
+   - Keep compact.
+
+3. **Finding 1: RL Helps at 7B but Not Reliably at 3B**
+   - Load-bearing: 3B archived + current rerun if possible; 7B Dense +2pp.
+   - Do not call this “capacity law.”
+
+4. **Finding 2: Reward Shaping Does Not Rescue the Weak Policy**
+   - 3B reward variants.
+   - If archived only, put caveat in main and detail in appendix.
+
+5. **Finding 3: Structural Credit Assignment Is Not the Missing Piece Here**
+   - SKE design, gates, G=4/G=8 result.
+   - Main point: plausible structural prior fails.
+
+6. **Finding 4: What Actually Changes After RL**
+   - This becomes the most important section.
+   - Format/tool-call errors, invalid SQL, execution errors, final-answer extraction failures, correction-after-observation rate, per-query-class wins/losses.
+
+7. **Discussion**
+   - Practical guidance: evaluate agentic RL with diagnostics, not only aggregate EX.
+   - “SKE is a useful negative control.”
+
+8. **Limitations**
+   - Single seed, Spider-heavy, only two sizes, SKE only advantage-side.
+
+**Appendix**
+
+- Full SKE extractor details.
+- 98 pytests / coverage.
+- All reward variant configs.
+- Kill switches and gates.
+- BIRD loader unless actual BIRD results exist.
+- Full per-class tables.
+
+**Survives without BIRD / third capacity point?**
+
+- Workshop: yes.
+- ACL/EMNLP main: weak but possible only if diagnostics are strong.
+- NeurIPS/ICML: no.
+- Without BIRD and third size, do not sell a scaling/capacity thesis. Sell a diagnostic case study.
+
+## F2. Ranked Experiment Plan
+
+Assumption: `1.0 run-eq = 24 GPU-h`, 7B G=8 train. One 7B eval = `0.21 run-eq`.
+
+**Execute in this order**
+
+| Rank | Exp | Cost | Lift | Supports | Verdict |
+|---:|---|---:|---|---|---|
+| 1 | (h) Per-class diagnostic tables | ~0 | large | Diagnostic / Workshop | Do first. Highest value per hour. |
+| 2 | (i) KL / entropy / reward variance / format-error curves | ~0 | large | Diagnostic | Essential. Turns anecdotes into mechanism. |
+| 3 | (j) Reasoning vs format-compliance partition | ~0-0.4 | large | Diagnostic | Directly attacks biggest alternative explanation. |
+| 4 | (c) Dense G=8 control | ~1.21 | large | A / Diagnostic | Needed to interpret SKE G=8 collapse. |
+| 5 | (a) 3B Dense same launcher | ~0.4-0.6 | medium | A / Diagnostic | Re-anchors the 3B cliff. Cheap enough. |
+| 6 | (g) 1.5B Dense + SFT | ~0.25-0.4 | small-medium | A | Adds capacity point, but mostly confirms low-end failure. |
+| 7 | (e) 7B Dense BIRD-mini SFT + GRPO + eval | ~1.5-2.5 | medium-large | Diagnostic / ACL | Useful, but mini-BIRD may be attacked as cherry-picked. |
+| 8 | (d) Dense G=2 + SKE G=2 | ~0.7-0.9 | small | SKE lead | Nice curve, not essential. |
+| 9 | (b) 7B Dense + SKE 3 seeds, 4 conditions | ~7-10 | large | Main-track | Too expensive for 3 weeks on one card. |
+| 10 | (f) 14B Dense + SFT | ~3-5 plus OOM risk | large if works | A | Do not attempt unless already proven feasible. |
+
+Highest-EV package under 3 weeks:
+- h, i, j immediately.
+- c next.
+- a next.
+- g only if time remains.
+- e only if BIRD-mini setup is already stable.
+
+## F3. Formatting vs Reasoning
+
+**Cheapest distinguishing experiment**
+
+Use existing eval JSONs.
+
+Build a win/loss transition table:
+
+- `format failure`: no valid final SQL/action/final answer.
+- `tool failure`: malformed action, failed execution syntax, exceeded turns.
+- `SQL executable but wrong`.
+- `SQL non-executable`.
+- `observation repair`: first attempted SQL wrong/error, later final SQL correct.
+- `semantic repair`: final SQL changes skeleton/tables/conditions after observation.
+- `no-repair correct`: model gets final SQL right without meaningful tool use.
+
+Then compare SFT vs Dense on SFT-wrong/Dense-right examples.
+
+Also run lenient extraction:
+- Strict metric: current EX_all.
+- Lenient metric: extract any plausible final SQL from transcript and execute.
+- If Dense gain disappears under lenient extraction, it was mostly protocol/format.
+- If Dense gain remains on executable SQL and hard query classes, it is semantic.
+
+Cost: near-zero if logs exist; one eval pass per model if not.
+
+**If Dense mostly fixes format/tool compliance**
+
+More interesting for ACL/EMNLP, less interesting for NeurIPS.
+
+It becomes a better paper because the claim is sharper and less inflated:
+
+> Apparent reasoning gains from agentic RL may be largely interface-alignment gains: models learn when and how to call tools, finalize answers, and avoid invalid trajectories.
+
+**Framing if true**
+
+Title-level thesis:
+
+> Agentic GRPO Improves Text-to-SQL by Aligning Tool-Use Protocols More Than SQL Reasoning
+
+Core argument:
+- Dense GRPO improves EX_all mainly by reducing invalid trajectories.
+- EX_att or lenient SQL execution improves less.
+- SKE fails because it targets SQL structure after valid SQL exists, while the bottleneck is earlier: producing valid, executable, well-formed agent trajectories.
+- Larger model helps because it has enough base competence to exploit protocol rewards.
+
+That is clean and publishable as a diagnostic paper.
+
+## F4. Can SKE Negative Result Lead?
+
+Currently: no. It is supporting evidence.
+
+As lead, it needs mechanism. “We tried skeleton baselines and they lost” is not enough.
+
+To make it lead-worthy, show one of these:
+
+1. **Variance-reduction failure**
+   - SKE does not reduce advantage variance enough to matter.
+   - Or it reduces variance but also shrinks useful learning signal.
+
+2. **Class-fragmentation mechanism**
+   - Many classes are singleton/small even at G=8.
+   - Effective baseline size remains poor.
+   - More G increases low-quality off-policy-ish diversity rather than useful within-class comparison.
+
+3. **Wrong abstraction mechanism**
+   - Same skeleton often contains semantically different difficulty due to schema linking/literals.
+   - Cross-skeleton comparison is actually informative because correct/simple skeletons should beat wrong/complex skeletons.
+
+4. **Optimization mechanism**
+   - SKE changes advantage scale/sign distribution.
+   - More rollouts produce more negative/near-zero advantages for exploratory but useful trajectories.
+   - KL/entropy/reward curves show collapse or under-updating.
+
+Negative result with mechanism:
+> “Skeleton-conditioned baselines fail because SQL skeleton is not a sufficient control variate for Text-to-SQL reward: the main variance comes from schema grounding, literal selection, and protocol validity, not AST shape.”
+
+Negative result without mechanism:
+> “We tried an idea and it did not work.”
+
+Only the first can lead.
+
+## F5. Competition
+
+I checked current papers because this area moved fast in 2025-2026.
+
+**Direct competitors**
+
+- [ReEx-SQL](https://arxiv.org/abs/2505.12768): execution-aware RL with intermediate database feedback; reports 7B gains on Spider/BIRD. This directly competes with your “multi-turn execution feedback helps” angle. Your differentiation must be diagnostics/negative controls, not headline accuracy.
+
+- [MTIR-SQL](https://arxiv.org/abs/2510.25510): multi-turn tool-integrated RL, GRPO modifications, trajectory filtering, no KL; reports strong 4B Spider/BIRD numbers. This overlaps heavily with your ReAct-GRPO setup.
+
+- [MARS-SQL](https://arxiv.org/abs/2511.01008): multi-agent ReAct-style Think-Act-Observe generator trained with multi-turn RL plus validation agent; reports high BIRD/Spider. This makes a plain “we built multi-turn Text-to-SQL RL” paper noncompetitive.
+
+- [SQL-Trail](https://arxiv.org/abs/2601.17699): multi-turn RL with interleaved feedback, adaptive turn budget, 7B/14B claims. This is dangerous for Story A because it already occupies the “agentic multi-turn RL works at scale” lane.
+
+**Reward / structure competitors**
+
+- [Graph-Reward-SQL](https://aclanthology.org/2025.findings-emnlp.694/): graph-matching and stepwise reward for Text-to-SQL RL; explicitly targets reward quality and SQL equivalence. Your SKE must be positioned as advantage-side, not reward-side.
+
+- [HES-SQL](https://arxiv.org/abs/2510.08896): GRPO plus skeleton-completeness reward and latency reward. This directly competes with skeleton-based structural guidance. Your differentiation: skeleton as baseline/control variate fails, not skeleton reward helps.
+
+- [LearNAT](https://arxiv.org/abs/2504.02327): AST-guided decomposition and margin-aware RL/DPO. Adjacent structure-aware RL; not the same as equivalence-class advantage, but reviewers will cite it.
+
+**Other relevant RL Text-to-SQL**
+
+- [CSC-SQL](https://aclanthology.org/2025.findings-ijcnlp.91/): GRPO for self-consistency/self-correction; strong BIRD private numbers.
+- [ExeSQL](https://aclanthology.org/2025.findings-emnlp.1320/): execution-driven bootstrapping and preference training for SQL dialects.
+- [Sparks of Tabular Reasoning](https://aclanthology.org/2025.trl-1.20/): GRPO over Text-to-SQL as table reasoning; adjacent, workshop-level.
+
+**Implication**
+
+You cannot win on SOTA. You can win only on:
+- reproducible diagnostics,
+- negative result with mechanism,
+- showing aggregate EX hides protocol-vs-reasoning effects,
+- tested infrastructure.
+
+## F6. Three-Month Decision
+
+Pick **(iv): submit a diagnostic workshop paper now, while building a stronger v2 for main later**.
+
+In 3 weeks on one 24GB card, you cannot produce the seeds/BIRD/third-scale evidence needed for a credible ACL/EMNLP main submission. The highest-EV move is to run the zero/low-cost diagnostics, add Dense G=8 and 3B Dense same-launcher, write the honest diagnostic paper, and release the toolkit. Use the workshop submission to establish priority and reviewer feedback, then decide whether v2 deserves BIRD + seeds + larger-scale compute.

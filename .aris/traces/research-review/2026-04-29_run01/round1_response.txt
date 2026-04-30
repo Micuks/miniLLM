@@ -1,0 +1,111 @@
+**Bottom Line**
+
+This is no longer a “protocol beats structure” paper. That story died cleanly. What you have now is a negative-result-plus-diagnostic paper: RL changes *when* the agent commits more clearly than it changes *how well* it writes SQL. That is a legitimate workshop contribution if you frame it honestly. It is not a confirmatory paper yet, and it is not a main-conference paper as currently scoped.
+
+The current evidence supports a cautious descriptive claim. It does **not** yet support a strong causal/mechanistic claim.
+
+**Scores**
+
+| Dimension | Score |
+|---|---:|
+| Logical soundness of v3 pivot and decomposition | 6/10 |
+| Empirical strength on existing data | 5/10 |
+| Workshop venue readiness | 6/10 |
+| Main-conference plausibility with reasonable additions | 4/10 |
+| Overall | 6/10 |
+
+**Q1. Principled pivot or rationalization?**
+
+Principled **if and only if** you present it as an exploratory pivot after a falsified preregistered hypothesis.
+
+Not principled if you write v3 as though it was the intended thesis all along, or if you borrow the credibility of the v2 preregistration to imply v3 is confirmatory. A careful reviewer will see through that immediately.
+
+The SKE-G8 negative `per_turn_gain_term` CI is **not** pre-data signal. It is a post-hoc finding on the same data that motivated the new story. Its survival under bootstrap is useful, but it does not remove the HARK concern. B4 would help because it creates a new, prospective test.
+
+**Q2. Is the decomposition valid?**
+
+Mathematically: yes. Methodologically: only as an **accounting decomposition**, not as clean causal attribution.
+
+The main problems are:
+
+- The split is **reference-dependent**. You chose one Oaxaca/Blinder-style ordering. Another ordering gives different magnitudes. Your “39% / 80% / 100% of gain” language is too strong unless you show robustness or use a Shapley-style symmetrization.
+- The `per_turn` term is not pure “SQL quality.” Once RL changes which examples land in `turn=1` vs `turn>=2`, the within-turn buckets have different case mix. That term blends quality change with composition change.
+- “Commitment-policy shift” is a plausible operational label, but it is still downstream behavior, not an identified mechanism.
+
+So: the arithmetic is solid; the interpretation needs to be softened to “diagnostic attribution under a chosen reference decomposition.”
+
+**Q3. Is this sufficient for the workshop?**
+
+Yes, **barely**, if scoped tightly.
+
+For a 4-page workshop paper, a compact negative result plus a clean diagnostic can work. Your strongest sell is:
+
+- preregistered v2 failed;
+- exact extractor-based story is dead;
+- a new decomposition reveals that most observed gains are associated with earlier commitment rather than better conditional SQL correctness;
+- SKE-G8 appears to overshoot that tradeoff.
+
+That is enough for TRL / RL-for-LLMs **if** the claims are modest and the paper is written like an empirical note, not a grand theory paper.
+
+Without stronger robustness, it will look slight for anything beyond workshop.
+
+**Q4. B4: launch or not?**
+
+Launch it.
+
+Reason: reviewers will immediately ask whether SKE-G8’s negative `per_turn` term is just a generic large-`G` effect. B4 is the cheapest targeted way to answer the most obvious alternative explanation. At ~28 GPU-hours, this is good insurance.
+
+Best move: run B4 **while drafting**.
+
+**Q5. One additional GPU-week: what is the highest-leverage use?**
+
+After B4, spend it on **training-seed replication**, not BIRD, 14B, or more 3B archaeology.
+
+If you can afford only one serious extension, replicate `Dense G=4`, `Dense G=8`, and `SKE G=8` across additional seeds. Your current weakness is internal validity, not breadth. A single-seed +2.32pp story is fragile.
+
+If ckpt25/50/75 already exist, evaluate them now anyway. That is near-free and high value.
+
+**Q6. Main-conference plausibility?**
+
+As-is: no.
+
+It becomes plausible only if you turn this from “one benchmark diagnostic” into either:
+
+- a **general phenomenon** across multiple datasets/models/seeds, or
+- a **useful intervention** derived from the decomposition.
+
+Main-conference path:
+
+- 2+ datasets, at least Spider and BIRD
+- 2+ model settings or families
+- multi-seed training replication
+- decomposition robustness to alternative reference schemes
+- ideally an intervention that reduces over-commitment while preserving gains
+
+Without that, this is structurally workshop-scale.
+
+**Q7. Most damaging objection**
+
+The strongest objection is:
+
+“You have an exact but non-unique accounting identity, applied post hoc on one seed, one model, one dataset, and one selected checkpoint. That is not enough to claim a mechanism.”
+
+That is the real vulnerability. Single-seed variance is more damaging here than the deterministic SQL evaluator.
+
+**Logical gaps / unjustified claims to fix**
+
+- Do **not** claim v3 is confirmatory.
+- Do **not** claim exact percentages of gain attribution without decomposition-sensitivity analysis.
+- Do **not** equate `per_turn_gain_term` with pure SQL quality.
+- Do **not** say “SKE provides no signal that improves per-turn quality.” Say “under this decomposition, we observe no net per-turn improvement.”
+- If `ckpt75` was selected after looking at dev, say so or show the checkpoint sweep.
+
+**Top 3 actionable recommendations**
+
+1. Add zero-GPU robustness now: report the alternative decomposition ordering or Shapley average, and formalize baseline-turn-conditioned paired analyses. This directly addresses the biggest methodological attack.
+2. Run B4 now and pre-register its prediction before training. This closes the obvious “maybe G=8 alone causes it” loophole.
+3. If more compute remains, spend it on extra training seeds for `Dense G=4` and `SKE G=8`, not on 3B, 14B, or broader but underpowered excursions.
+
+Verdict: WORKSHOP-WITH-FIXES
+
+Recommended decision: option 2

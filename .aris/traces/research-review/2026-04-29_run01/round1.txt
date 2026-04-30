@@ -1,0 +1,534 @@
+OpenAI Codex v0.124.0 (research preview)
+--------
+workdir: /mnt/data1/wuql/dev/miniLLM
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /mnt/data1/wuql/.codex/memories]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019dd6aa-5d15-7ed2-977a-6fdf5c9ac819
+--------
+user
+# Research Review Briefing — Multi-turn Text-to-SQL RL: Capacity vs Credit-Assignment
+
+You are a senior ML reviewer (NeurIPS / ICML / ICLR level). Be brutally honest. The author has invested ~3 weeks of GPU time and is deciding whether to write up the work and where to submit. They want a hard, calibrated review now, not encouragement.
+
+## 1. Project history (one paragraph)
+
+Built ReAct-format multi-turn agent for Text-to-SQL on Spider/BIRD using Qwen2.5 (3B, 7B). Pipeline: SFT on teacher-generated ReAct trajectories → GRPO with G rollouts per prompt, multi-turn (Action: execute_sql["..."] → real SQLite execution → Observation injected → continue). Tried 4 reward variants on 3B (dense, sparse, exec_only, CGFR with correctness-gated format scaling) — all flat or negative vs 3B SFT. Reviewer-driven idea search (4 rounds) landed on **SKE-RL**: skeleton-equivalence-class advantage estimation. Hypothesis: the GRPO group baseline is noisy because rollouts with structurally different SQL (different skeleton) shouldn't share advantage; classifying rollouts into canonical AST equivalence classes (`σ_strict` typed slots, `σ_loose` collapsed numerics) and using a size-weighted class baseline should improve credit assignment. Implemented v1 (advantage-side only), with full reviewer iteration (R1-R7) addressing pseudo-class gates, kill-switch ordering, raw-reward RVDS, BIRD layout, etc.
+
+## 2. Final empirical results (full Spider-dev, 1034 examples, single-pass eval at temperature 0)
+
+| Model | Method | Steps | EX_att | EX_all | Δ vs same-size SFT |
+|---|---|---|---:|---:|---:|
+| Qwen2.5-3B | SFT | — | x | x | — |
+| Qwen2.5-3B | GRPO (dense / sparse / exec_only / cgfr) | 100 | ≤ SFT (4 variants) | ≤ SFT | flat or negative |
+| Qwen2.5-7B | SFT | — | 70.67 | 64.31 | — |
+| **Qwen2.5-7B** | **GRPO (Dense)** | 75 | **72.68** | **66.63** | **+2.01 / +2.32** |
+| Qwen2.5-7B | SKE-RL G=4 | 75 | 71.64 | 65.96 | +0.97 / +1.65 |
+| Qwen2.5-7B | SKE-RL G=8 | 75 | 70.87 | 64.70 | +0.20 / +0.39 |
+
+Key observations:
+- 7B Dense GRPO beats 7B SFT consistently (+2pp EX_att, +2.3pp EX_all).
+- SKE-RL G=4 underperforms Dense by -1.04pp.
+- **SKE-RL G=8 is WORSE than G=4** (-0.77pp), reversing the assumed "more rollouts → more reliable class statistics" benefit.
+- SKE-RL G=8 ≈ 7B SFT (within noise).
+
+Pre-training gates passed: skeleton extractor 100% coverage on Spider train/dev (947/481 distinct strict classes), within-class variance ≤0.15 median, skeleton diversity ≥40% groups have ≥2 distinct classes.
+
+Auxiliary infrastructure built (all functional, all tested): canonical AST extractor (290 LOC + 98 pytests), class-aware advantage with min-classes / max-extractor-failure-rate / kill-switch gates, skeleton-reward baseline (similarity bonus + standard advantage), DAPO asymmetric clipping, BIRD loader with nested-layout resolver and evidence-aware prompt threading, query-class tagger, checkpoint aggregator with verdict gates, dynamic-padding helper. ~10K LOC, 137 pytests green.
+
+## 3. Proposed Story A (Capacity-bounded RL with SKE as negative control)
+
+**Headline thesis (one sentence)**: Multi-turn ReAct GRPO on Text-to-SQL is bottlenecked by policy capacity, not credit assignment; the same recipe at 3B fails across 4 reward variants but at 7B yields +2pp Dense over SFT, and adding advantage-side structural priors (SKE-RL) does not help — and gets WORSE with more rollouts per group, ruling out credit assignment as the bottleneck.
+
+**Core claims**:
+- C1: 3B GRPO fails to improve over 3B SFT regardless of reward shape (4 variants).
+- C2: Same recipe at 7B improves +2pp EX_att / +2.3pp EX_all on full Spider-dev.
+- C3: Skeleton-class-aware advantage at 7B does not improve over Dense; underperforms by -1pp at G=4.
+- C4: Increasing G from 4 to 8 monotonically degrades SKE-RL — the key falsification of the credit-assignment hypothesis.
+- C5 (TBD): BIRD transfer of the 7B Dense gain (currently missing).
+- C6 (TBD): Multi-seed reproduction of the +2pp delta (currently single-seed).
+
+**Section structure**:
+- §1 Intro: GRPO works on math/code; why does it fail on multi-turn agentic Text-to-SQL?
+- §2 Setup: Spider/BIRD, ReAct multi-turn, GRPO + tool calls, EX_att vs EX_all
+- §3 The 3B Cliff: 4 reward variants, all fail
+- §4 Capacity Hypothesis: 3B → 7B, +2pp Dense
+- §5 Ruling Out Advantage-Side Structural Priors: SKE-RL design + reviewer iteration + result + G-monotonic-degradation
+- §6 Mechanism Diagnostics: per-skeleton-class breakdown, within-class variance, skeleton diversity
+- §7 Discussion: capacity-aware RL evaluation
+- §8 Limitations: single capacity step, Spider-only headline (BIRD pending)
+
+**Headline figure**: grouped bar, x = {3B, 7B}, y = EX_att, bars = {SFT, Dense GRPO, SKE-G4, SKE-G8}.
+
+## 4. Specific questions for you
+
+Please address each explicitly:
+
+(Q1) Is the Story A thesis defensible given the data? Where does it overreach?
+
+(Q2) Is "capacity, not credit" a publishable framing, or does the single capacity step (3B↔7B) make it too thin? What's the minimum to harden it?
+
+(Q3) The SKE-RL negative result is the keystone of the credit-assignment falsification. Is the G=4 → G=8 monotonic degradation strong enough evidence on its own, or do we need additional G values / seeds / gates?
+
+(Q4) The 4-reward-variant 3B failure is from an earlier archive (different launcher generation). How aggressively must we re-run with the current launcher to make the 3B cliff defensible? Or can we cite archived numbers?
+
+(Q5) Venue calibration: NeurIPS / ICML main track, ACL / EMNLP main, or workshop only? What concretely moves it up a tier?
+
+(Q6) Mock review: write a NeurIPS-style review (Summary, Strengths, Weaknesses, Questions, Soundness/Presentation/Contribution scores 1-4, Confidence 1-5, Recommendation borderline-reject / borderline-accept / weak-accept).
+
+(Q7) Claims-vs-evidence matrix: which of C1-C6 are currently defensible at venue X, and which require additional experiments? Be specific about additional experiments and GPU cost estimates.
+
+(Q8) Alternative story framings I haven't considered. Is there a different angle (e.g., "diagnostic taxonomy of multi-turn agentic RL failures", "where reward shaping helps and where it doesn't", "case study of negative-result methodology") that fits the data better?
+
+(Q9) The auxiliary infrastructure (skeleton extractor, class-aware advantage framework, BIRD evidence-aware prompts, query-class tagger, checkpoint aggregator with verdict gates, dynamic-padding helper) is ~10K LOC, all tested. Is this releaseable as standalone artifacts (separate paper / open-source toolkit)? Or does it only have value bundled with the empirical paper?
+
+(Q10) The biggest risk to this paper that I haven't articulated.
+
+Be terse, structured, and concrete. No motivational filler. If a claim is overreached, say what would unreach it. If an experiment is missing, name it specifically with cost estimate.
+
+codex
+**Bottom Line**
+
+Story A is not defensible as “capacity, not credit assignment” yet. It is defensible as:
+
+> In this setup, vanilla dense GRPO helps at 7B but not 3B, while one plausible structural credit-assignment intervention, SKE-RL, fails to improve and may hurt.
+
+That is much narrower. The current evidence supports an empirical negative result and a capacity sensitivity observation, not a causal claim that credit assignment is not the bottleneck.
+
+## Q1. Is Story A Defensible?
+
+Partly.
+
+Defensible:
+- 7B Dense GRPO improves over 7B SFT on Spider-dev by about +2pp.
+- SKE-RL does not improve over Dense GRPO.
+- G=8 SKE-RL underperforms G=4, contradicting your original SKE hypothesis.
+- 3B appears unable to benefit from your tested GRPO variants.
+
+Overreach:
+- “Capacity, not credit assignment” is too strong. You tested one credit-assignment prior, not credit assignment generally.
+- “Ruling out credit assignment” is overclaimed. You only rule out this skeleton-class advantage estimator under these gates/hyperparameters.
+- “Capacity-bounded RL” is under-supported with only 3B and 7B.
+- G=8 worsening does not prove class statistics are harmful; it could be optimization, KL, entropy collapse, rollout-quality drift, reward sparsity, or baseline variance.
+
+Unreach it by saying:
+> “Our results suggest that, in this ReAct Text-to-SQL setting, increasing model scale from 3B to 7B matters more than adding skeleton-class baselines, and SKE-RL does not resolve the observed RL failure mode.”
+
+## Q2. Is “Capacity, Not Credit” Publishable?
+
+As written: too thin for NeurIPS/ICML main.
+
+Minimum to harden:
+1. Add at least one more capacity point: 1.5B or 14B.
+   - Best: 1.5B / 3B / 7B / 14B with same SFT and Dense GRPO.
+   - Minimum: 14B Dense GRPO only, to show scaling trend continues or saturates.
+
+2. Multi-seed the key 7B results.
+   - At least 3 seeds for 7B SFT, Dense, SKE-G4, SKE-G8.
+   - If too expensive, 3 seeds for Dense vs SFT and 2 seeds for SKE variants.
+
+3. Add BIRD.
+   - Without BIRD, this is a Spider-specific story on a benchmark with known saturation and possible pretraining contamination concerns.
+
+4. Add mechanism diagnostics.
+   - KL, entropy, response length, invalid SQL rate, execution-error rate, tool-call rate, format-error rate, reward variance, advantage variance by class.
+
+Without those, “capacity-sensitive GRPO case study” is fair. “Capacity, not credit” is not.
+
+## Q3. Is G=4 → G=8 Degradation Enough?
+
+No.
+
+It is good falsification evidence against your original intuition, but not enough as a keystone.
+
+Needed:
+- Seeds for G=4 and G=8.
+- Add G=2 if affordable.
+- Report training curves, not only final checkpoint.
+- Compare Dense G=4 vs Dense G=8. Otherwise the degradation may be “larger G changes optimization” rather than “SKE class statistics hurt.”
+- Track number of skeleton classes per group and effective baseline sample size.
+
+Minimum:
+- 7B SKE G=4 and G=8 with 3 seeds.
+- 7B Dense G=4 and G=8 with at least 2 seeds.
+- Cost: roughly `3x` to `5x` your current 7B run budget, depending whether G=8 is twice as expensive in your launcher.
+
+## Q4. Archived 3B Failure: Re-run?
+
+For a paper, you should re-run enough to make it clean.
+
+You do not need to re-run all 4 reward variants at full expense if the archive is credible, but you need a current-launcher anchor.
+
+Minimum:
+- Re-run 3B SFT eval with current eval stack.
+- Re-run 3B Dense GRPO current launcher.
+- Re-run the best-looking archived 3B reward variant current launcher.
+- Include archived variants in appendix clearly labeled as earlier-generation runs.
+
+For main-text C1, do not rely only on archived launcher numbers. Reviewers will attack this.
+
+Cost:
+- 3B runs should be much cheaper than 7B. Estimate `0.3x-0.5x` of a 7B run each.
+- Minimum current rerun package: about `1x-1.5x` one 7B Dense run equivalent.
+
+## Q5. Venue Calibration
+
+Current state:
+- NeurIPS / ICML main: likely reject.
+- ICLR main: likely reject unless diagnostics are unusually strong.
+- ACL / EMNLP main: possible but still shaky without BIRD and seeds.
+- Workshop: solid, especially negative-results / agents / text-to-SQL / RL workshop.
+
+What moves it up:
+- 3-seed key results.
+- BIRD transfer.
+- Dense G=4/G=8 control.
+- One more model size.
+- Strong error taxonomy showing why 3B fails and 7B improves.
+- Releaseable code with tested skeleton extractor and reproducible scripts.
+- A more modest thesis: “Empirical study of GRPO failure modes for multi-turn Text-to-SQL agents.”
+
+## Q6. Mock NeurIPS Review
+
+**Summary**
+
+The paper studies multi-turn ReAct-style Text-to-SQL agents trained with SFT followed by GRPO. It reports that GRPO fails to improve a 3B Qwen2.5 model across several reward variants, while a 7B model obtains about +2pp execution accuracy on Spider-dev. The paper proposes SKE-RL, a skeleton-equivalence-class advantage estimator intended to improve credit assignment, but finds that it underperforms dense GRPO and worsens when increasing rollouts from G=4 to G=8.
+
+**Strengths**
+
+- Important practical problem: RL for tool-using Text-to-SQL agents.
+- Full Spider-dev evaluation rather than small sampled evals.
+- Negative result is potentially useful.
+- SKE-RL is a reasonable, well-motivated intervention.
+- Engineering appears careful, with tested parsing and gating infrastructure.
+
+**Weaknesses**
+
+- Main causal claim is overstrong: only two model sizes and one credit-assignment method.
+- Single-seed results make +2pp gains difficult to trust.
+- No BIRD result, limiting evidence of generality.
+- G=8 degradation is ambiguous without Dense G=8 and seed controls.
+- The 3B comparison depends partly on archived runs from a different launcher.
+- Contribution is mostly empirical; current framing makes broader claims than the evidence supports.
+
+**Questions**
+
+- Does Dense GRPO also degrade from G=4 to G=8?
+- Are gains concentrated in specific SQL/query classes?
+- Are improvements from fewer execution errors, better repair after observations, or better final SQL generation?
+- How sensitive are results to KL, rollout temperature, and checkpoint selection?
+- Are Spider train/dev contamination risks discussed for Qwen2.5?
+
+Scores:
+- Soundness: 2/4
+- Presentation: 3/4
+- Contribution: 2/4
+- Confidence: 4/5
+- Recommendation: borderline reject
+
+With BIRD + seeds + better framing: borderline accept / weak accept at ACL/EMNLP, still borderline for NeurIPS unless mechanism is strong.
+
+## Q7. Claims vs Evidence Matrix
+
+| Claim | Current Status | Needed |
+|---|---|---|
+| C1: 3B GRPO fails across rewards | Plausible, not clean | Current-launcher rerun of 3B Dense + best archived variant; archive others in appendix |
+| C2: 7B Dense improves +2pp | Promising, not publication-stable | 3 seeds, confidence intervals, fixed checkpoint protocol |
+| C3: SKE-G4 underperforms Dense | Defensible as single-run observation | 2-3 seeds; same G control for Dense |
+| C4: G=8 worsens SKE | Interesting, not causal | Seeds; add G=2 or Dense G=8; report variance and class counts |
+| C5: BIRD transfer | Unsupported | Run 7B SFT, Dense, maybe SKE-G4 on BIRD dev/validation |
+| C6: Multi-seed reproduction | Missing | 3 seeds for headline conditions |
+
+Cost in run-equivalents:
+- 3B current rerun package: `~1-1.5x` one 7B run.
+- 7B 3-seed Dense/SFT/SKE package: `~6-9x`.
+- Dense G=8 control: `~2x` if rollout cost doubles.
+- BIRD SFT/Dense/SKE eval+RL: likely `~2-4x`, depending dataset subset and rollout length.
+- Minimal paper-hardening package: `~5-7x`.
+- Strong main-track package: `~10-15x`.
+
+## Q8. Better Alternative Framings
+
+Better than “capacity, not credit”:
+
+1. **Diagnostic Study of Multi-turn Text-to-SQL RL**
+   - Best fit.
+   - Lets you include 3B failures, 7B success, SKE negative result, and diagnostics without overclaiming.
+
+2. **When GRPO Helps Tool-Using Text-to-SQL Agents**
+   - Positive but narrower.
+   - Focus on the empirical boundary between SFT and RL.
+
+3. **A Negative Result on Structural Advantage Estimation**
+   - Honest if SKE is central.
+   - Could be workshop or Findings-style if well documented.
+
+4. **Capacity-Sensitive RL for Agentic Semantic Parsing**
+   - Acceptable if you add one more model size.
+
+5. **Reproducibility and Gating Methodology for Agentic RL**
+   - Useful artifact/workshop angle, especially with your kill switches and checkpoint verdict gates.
+
+## Q9. Auxiliary Infrastructure as Artifact?
+
+Yes, release it. Not as a standalone main-track paper.
+
+Standalone value:
+- Skeleton extractor with tests.
+- Class-aware advantage implementation.
+- BIRD nested-layout resolver.
+- Evidence-aware prompt threading.
+- Query-class tagger.
+- Checkpoint aggregator/verdict gates.
+
+But the artifact needs clear packaging:
+- `pip install` or simple module layout.
+- Minimal examples.
+- Reproduction scripts for Spider eval.
+- Documented input/output contracts.
+- Small fixtures, not just internal training glue.
+
+Best use:
+- Bundle as artifact for empirical paper.
+- Possibly separate workshop/demo/toolkit paper if polished.
+- Not enough for a main conference systems/toolkit paper unless adopted beyond your experiments.
+
+## Q10. Biggest Unarticulated Risk
+
+The biggest risk is that the +2pp 7B Dense gain is not robust.
+
+Possible failure modes:
+- Seed noise.
+- Checkpoint selection bias.
+- Eval brittleness from EX_att / EX_all definitions.
+- Spider-specific gain with no BIRD transfer.
+- Pretraining contamination or benchmark saturation.
+- Dense GRPO improving formatting/tool-call compliance rather than reasoning.
+- SKE underperforming because implementation/hyperparameters are mismatched, not because credit assignment is irrelevant.
+
+If the +2pp Dense result shrinks under seeds or fails on BIRD, the paper becomes a negative engineering report. Still useful, but workshop-level unless the diagnostic analysis is unusually good.
+tokens used
+12,378
+**Bottom Line**
+
+Story A is not defensible as “capacity, not credit assignment” yet. It is defensible as:
+
+> In this setup, vanilla dense GRPO helps at 7B but not 3B, while one plausible structural credit-assignment intervention, SKE-RL, fails to improve and may hurt.
+
+That is much narrower. The current evidence supports an empirical negative result and a capacity sensitivity observation, not a causal claim that credit assignment is not the bottleneck.
+
+## Q1. Is Story A Defensible?
+
+Partly.
+
+Defensible:
+- 7B Dense GRPO improves over 7B SFT on Spider-dev by about +2pp.
+- SKE-RL does not improve over Dense GRPO.
+- G=8 SKE-RL underperforms G=4, contradicting your original SKE hypothesis.
+- 3B appears unable to benefit from your tested GRPO variants.
+
+Overreach:
+- “Capacity, not credit assignment” is too strong. You tested one credit-assignment prior, not credit assignment generally.
+- “Ruling out credit assignment” is overclaimed. You only rule out this skeleton-class advantage estimator under these gates/hyperparameters.
+- “Capacity-bounded RL” is under-supported with only 3B and 7B.
+- G=8 worsening does not prove class statistics are harmful; it could be optimization, KL, entropy collapse, rollout-quality drift, reward sparsity, or baseline variance.
+
+Unreach it by saying:
+> “Our results suggest that, in this ReAct Text-to-SQL setting, increasing model scale from 3B to 7B matters more than adding skeleton-class baselines, and SKE-RL does not resolve the observed RL failure mode.”
+
+## Q2. Is “Capacity, Not Credit” Publishable?
+
+As written: too thin for NeurIPS/ICML main.
+
+Minimum to harden:
+1. Add at least one more capacity point: 1.5B or 14B.
+   - Best: 1.5B / 3B / 7B / 14B with same SFT and Dense GRPO.
+   - Minimum: 14B Dense GRPO only, to show scaling trend continues or saturates.
+
+2. Multi-seed the key 7B results.
+   - At least 3 seeds for 7B SFT, Dense, SKE-G4, SKE-G8.
+   - If too expensive, 3 seeds for Dense vs SFT and 2 seeds for SKE variants.
+
+3. Add BIRD.
+   - Without BIRD, this is a Spider-specific story on a benchmark with known saturation and possible pretraining contamination concerns.
+
+4. Add mechanism diagnostics.
+   - KL, entropy, response length, invalid SQL rate, execution-error rate, tool-call rate, format-error rate, reward variance, advantage variance by class.
+
+Without those, “capacity-sensitive GRPO case study” is fair. “Capacity, not credit” is not.
+
+## Q3. Is G=4 → G=8 Degradation Enough?
+
+No.
+
+It is good falsification evidence against your original intuition, but not enough as a keystone.
+
+Needed:
+- Seeds for G=4 and G=8.
+- Add G=2 if affordable.
+- Report training curves, not only final checkpoint.
+- Compare Dense G=4 vs Dense G=8. Otherwise the degradation may be “larger G changes optimization” rather than “SKE class statistics hurt.”
+- Track number of skeleton classes per group and effective baseline sample size.
+
+Minimum:
+- 7B SKE G=4 and G=8 with 3 seeds.
+- 7B Dense G=4 and G=8 with at least 2 seeds.
+- Cost: roughly `3x` to `5x` your current 7B run budget, depending whether G=8 is twice as expensive in your launcher.
+
+## Q4. Archived 3B Failure: Re-run?
+
+For a paper, you should re-run enough to make it clean.
+
+You do not need to re-run all 4 reward variants at full expense if the archive is credible, but you need a current-launcher anchor.
+
+Minimum:
+- Re-run 3B SFT eval with current eval stack.
+- Re-run 3B Dense GRPO current launcher.
+- Re-run the best-looking archived 3B reward variant current launcher.
+- Include archived variants in appendix clearly labeled as earlier-generation runs.
+
+For main-text C1, do not rely only on archived launcher numbers. Reviewers will attack this.
+
+Cost:
+- 3B runs should be much cheaper than 7B. Estimate `0.3x-0.5x` of a 7B run each.
+- Minimum current rerun package: about `1x-1.5x` one 7B Dense run equivalent.
+
+## Q5. Venue Calibration
+
+Current state:
+- NeurIPS / ICML main: likely reject.
+- ICLR main: likely reject unless diagnostics are unusually strong.
+- ACL / EMNLP main: possible but still shaky without BIRD and seeds.
+- Workshop: solid, especially negative-results / agents / text-to-SQL / RL workshop.
+
+What moves it up:
+- 3-seed key results.
+- BIRD transfer.
+- Dense G=4/G=8 control.
+- One more model size.
+- Strong error taxonomy showing why 3B fails and 7B improves.
+- Releaseable code with tested skeleton extractor and reproducible scripts.
+- A more modest thesis: “Empirical study of GRPO failure modes for multi-turn Text-to-SQL agents.”
+
+## Q6. Mock NeurIPS Review
+
+**Summary**
+
+The paper studies multi-turn ReAct-style Text-to-SQL agents trained with SFT followed by GRPO. It reports that GRPO fails to improve a 3B Qwen2.5 model across several reward variants, while a 7B model obtains about +2pp execution accuracy on Spider-dev. The paper proposes SKE-RL, a skeleton-equivalence-class advantage estimator intended to improve credit assignment, but finds that it underperforms dense GRPO and worsens when increasing rollouts from G=4 to G=8.
+
+**Strengths**
+
+- Important practical problem: RL for tool-using Text-to-SQL agents.
+- Full Spider-dev evaluation rather than small sampled evals.
+- Negative result is potentially useful.
+- SKE-RL is a reasonable, well-motivated intervention.
+- Engineering appears careful, with tested parsing and gating infrastructure.
+
+**Weaknesses**
+
+- Main causal claim is overstrong: only two model sizes and one credit-assignment method.
+- Single-seed results make +2pp gains difficult to trust.
+- No BIRD result, limiting evidence of generality.
+- G=8 degradation is ambiguous without Dense G=8 and seed controls.
+- The 3B comparison depends partly on archived runs from a different launcher.
+- Contribution is mostly empirical; current framing makes broader claims than the evidence supports.
+
+**Questions**
+
+- Does Dense GRPO also degrade from G=4 to G=8?
+- Are gains concentrated in specific SQL/query classes?
+- Are improvements from fewer execution errors, better repair after observations, or better final SQL generation?
+- How sensitive are results to KL, rollout temperature, and checkpoint selection?
+- Are Spider train/dev contamination risks discussed for Qwen2.5?
+
+Scores:
+- Soundness: 2/4
+- Presentation: 3/4
+- Contribution: 2/4
+- Confidence: 4/5
+- Recommendation: borderline reject
+
+With BIRD + seeds + better framing: borderline accept / weak accept at ACL/EMNLP, still borderline for NeurIPS unless mechanism is strong.
+
+## Q7. Claims vs Evidence Matrix
+
+| Claim | Current Status | Needed |
+|---|---|---|
+| C1: 3B GRPO fails across rewards | Plausible, not clean | Current-launcher rerun of 3B Dense + best archived variant; archive others in appendix |
+| C2: 7B Dense improves +2pp | Promising, not publication-stable | 3 seeds, confidence intervals, fixed checkpoint protocol |
+| C3: SKE-G4 underperforms Dense | Defensible as single-run observation | 2-3 seeds; same G control for Dense |
+| C4: G=8 worsens SKE | Interesting, not causal | Seeds; add G=2 or Dense G=8; report variance and class counts |
+| C5: BIRD transfer | Unsupported | Run 7B SFT, Dense, maybe SKE-G4 on BIRD dev/validation |
+| C6: Multi-seed reproduction | Missing | 3 seeds for headline conditions |
+
+Cost in run-equivalents:
+- 3B current rerun package: `~1-1.5x` one 7B run.
+- 7B 3-seed Dense/SFT/SKE package: `~6-9x`.
+- Dense G=8 control: `~2x` if rollout cost doubles.
+- BIRD SFT/Dense/SKE eval+RL: likely `~2-4x`, depending dataset subset and rollout length.
+- Minimal paper-hardening package: `~5-7x`.
+- Strong main-track package: `~10-15x`.
+
+## Q8. Better Alternative Framings
+
+Better than “capacity, not credit”:
+
+1. **Diagnostic Study of Multi-turn Text-to-SQL RL**
+   - Best fit.
+   - Lets you include 3B failures, 7B success, SKE negative result, and diagnostics without overclaiming.
+
+2. **When GRPO Helps Tool-Using Text-to-SQL Agents**
+   - Positive but narrower.
+   - Focus on the empirical boundary between SFT and RL.
+
+3. **A Negative Result on Structural Advantage Estimation**
+   - Honest if SKE is central.
+   - Could be workshop or Findings-style if well documented.
+
+4. **Capacity-Sensitive RL for Agentic Semantic Parsing**
+   - Acceptable if you add one more model size.
+
+5. **Reproducibility and Gating Methodology for Agentic RL**
+   - Useful artifact/workshop angle, especially with your kill switches and checkpoint verdict gates.
+
+## Q9. Auxiliary Infrastructure as Artifact?
+
+Yes, release it. Not as a standalone main-track paper.
+
+Standalone value:
+- Skeleton extractor with tests.
+- Class-aware advantage implementation.
+- BIRD nested-layout resolver.
+- Evidence-aware prompt threading.
+- Query-class tagger.
+- Checkpoint aggregator/verdict gates.
+
+But the artifact needs clear packaging:
+- `pip install` or simple module layout.
+- Minimal examples.
+- Reproduction scripts for Spider eval.
+- Documented input/output contracts.
+- Small fixtures, not just internal training glue.
+
+Best use:
+- Bundle as artifact for empirical paper.
+- Possibly separate workshop/demo/toolkit paper if polished.
+- Not enough for a main conference systems/toolkit paper unless adopted beyond your experiments.
+
+## Q10. Biggest Unarticulated Risk
+
+The biggest risk is that the +2pp 7B Dense gain is not robust.
+
+Possible failure modes:
+- Seed noise.
+- Checkpoint selection bias.
+- Eval brittleness from EX_att / EX_all definitions.
+- Spider-specific gain with no BIRD transfer.
+- Pretraining contamination or benchmark saturation.
+- Dense GRPO improving formatting/tool-call compliance rather than reasoning.
+- SKE underperforming because implementation/hyperparameters are mismatched, not because credit assignment is irrelevant.
+
+If the +2pp Dense result shrinks under seeds or fails on BIRD, the paper becomes a negative engineering report. Still useful, but workshop-level unless the diagnostic analysis is unusually good.

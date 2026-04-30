@@ -1,0 +1,186 @@
+现状如果现在就投主会：**不够**。  
+按主会标准，这仍然是一个 `1 model × 1 dataset × 1 train seed` 的诊断性结果，信息量更像 workshop note。要把它抬到主会，最省算力的路线不是继续堆 reward 变体，而是把论文升级成一句更大的话：
+
+**“在 tool-augmented Text-to-SQL 里，RL 先学会的是 stopping policy，而不是 conditional solver；这个偏置可被一个 stop-aware intervention 诊断并部分修复。”**
+
+**1. Minimum Credible Main-Conf Target**
+
+| 组件 | 最低可信配置 | 不建议 |
+|---|---|---|
+| 主数据集 | `Spider + BIRD` | `Spider` 单独一套 |
+| 廉价鲁棒性评测 | `Spider-Realistic` 只做 eval | 用 `Spider-Realistic` 代替第二主数据集 |
+| 模型设置 | `Qwen2.5-7B + 第二个 7B/8B family` | `3B + 7B + 14B` |
+| 训练 seeds | 每个主比较至少 `3 RL seeds` | `1` 或 `2` seeds |
+| 主条件 | `SFT`, `Dense G=8`, `SKE G=8`, `Intervention` | reward zoo 大杂烩 |
+| 附录条件 | `Dense G=4`, `SKE G=4` | 把 3B archive 当主结果 |
+
+我给的**最低可信 row count**是：
+
+- 有 intervention 的版本：`2 datasets × 2 model families × (1 SFT + 3 RL conditions × 3 seeds) = 40 rows`
+- 没 intervention 的纯诊断版本：`2 × 2 × (1 + 2×3) = 28 rows`
+
+结论很直接：
+
+- `Spider + BIRD` 够作为主数据集，不必再上 `EHRSQL`。
+- `Spider-Realistic` 值得加，但它是**便宜的 robustness eval**，不是第二主数据集的替代品。
+- 第二个模型设置优先选**第二个 family**，不是 `14B`，也不是只补 `3B`。
+- 纯诊断想过主会，需要非常宽的 empirical scope；在你的预算下，**加一个简单 intervention 的胜率更高**。
+
+**2. Strongest Main-Conf Story Within ~3 GPU-Weeks**
+
+**(a) 该不该继续打 “commitment-policy” 这条线？**  
+该，但名字要升级。主线不要写成 “commitment policy”，而要写成：
+
+- `stopping policy vs. conditional solver`
+- 或 `answer-timing shift vs. conditional SQL correctness`
+
+这比 “one-turn commitment” 更 general，也更像主会问题。
+
+**(b) 要不要加 intervention？**  
+要。没有 intervention，这篇更像高质量 workshop diagnosis。最小可行 intervention 我建议直接做一个 reward term：
+
+\[
+R_{\text{stop-cal}} = R_{\text{EX}} + \lambda \mathbf{1}[\text{turn}=1 \land EX=1] - \lambda \mathbf{1}[\text{turn}=1 \land EX=0]
+\]
+
+建议命名：`Stop-Calibrated GRPO` 或 `Commitment-Calibrated Reward`.
+
+实验上只做两件事：
+
+- `λ ∈ {0.05, 0.1}` 单 seed pilot
+- 选一个 λ 后做 `3 Spider seeds`
+
+你要的不是一个大方法，而是一个**最小、可解释、被诊断直接导出的 fix**。主张也只写到这里：
+
+- 它能保留正的 `share_shift`
+- 同时减轻 `Hard` 上负的 `per_turn_sym`
+
+再补一个零训练成本的 supporting ablation：
+
+- inference-time gate：`如果 turn=1 想直接 Answer，但之前没有任何 successful executed Action SQL，则强制再走一轮`
+
+如果这个 gate 对现有 `SKE-G8` 有帮助，它会大幅增强机制可信度。
+
+**(c) 要不要加 theory？**  
+只加**一页 formalization**，不要搞 theorem paper。够了：
+
+- 把 agent 视为带 `Answer/Continue` 终止动作的 episodic policy
+- 定义 stopping time `τ`
+- 写出 `V(π)=Σ_t P_π(τ=t)·q_π(t)`
+- 再给出 symmetric Shapley decomposition
+
+这会让你的分解从 “ad-hoc accounting trick” 升级成 “stopping-marginal × conditional-value factorization”。这很有用，但不该成为主卖点。
+
+**(d) 要不要做 scaling-law flavor？**  
+不要。  
+`3B` archive 可以放 appendix 作为 capacity boundary；`14B` 在 3090 上不值得。主会不会因为一个半残的 scaling plot 买账。
+
+**建议的 3-GPU-week 计划**
+
+| 模块 | 内容 | 估计 GPU-h | 解锁的主张 |
+|---|---|---:|---|
+| A | `B4 + Spider Dense G=8 / SKE G=8` 补到各 `3 seeds` | `140` | 现象不是单 seed 偶然 |
+| B | `Stop-calibrated` intervention：`1 pilot + 3 Spider seeds` | `112` | 诊断能导出可用 fix |
+| C | `BIRD` 上做 `SFT + Dense G=8 + SKE G=8 + intervention`，各 `2 seeds` | `180–200` | 不是 Spider-only |
+| D | `Spider-Realistic + R_same + difficulty×turn + paired-ΔEX + ckpt sensitivity` | `0–10` | robustness 完整 |
+
+总计大约：`432–462 GPU-h`。  
+这基本就是你预算内最强的一版。
+
+**3. Highest-EV Experiments, Ranked**
+
+| 排名 | 实验 | GPU-h | 降低的拒稿风险 | 解锁的 claim |
+|---|---|---:|---|---|
+| 1 | Spider 上把 `Dense G=8` 和 `SKE G=8` 补到 `3 seeds`，含 `B4` | `140` | 单 seed / HARK / variance | `share_shift` 和负 `per_turn_sym` 是稳定现象 |
+| 2 | Spider 上做 `stop-calibrated reward` | `112` | “只有分析，没有方法” | 机制可被干预，且 Hard 上可修复 |
+| 3 | Qwen-7B 迁到 `BIRD`，跑 `Dense G=8 / SKE G=8 / intervention` | `180–200` | Spider-specificity | 现象和 fix 可跨 benchmark |
+| 4 | `Spider-Realistic` + 全部零 GPU robustness | `0–10` | artifact / decomposition-order / composition contamination | 分解解释不是统计假象 |
+| 5 | 第二个 `7B/8B family` 的 Spider pilot | `100–200` | Qwen-only | 不是单一 backbone 现象 |
+
+**明确不值得优先做的：**
+
+- `14B` GRPO
+- 重新挖 `3B` 全套 reward 变体
+- 大规模 checkpoint grid 但不补 seeds
+- `EHRSQL` 先于 `BIRD`
+
+**4. Venue Routing**
+
+我的主选：**ICLR 2027 main**  
+我的 fallback：**NeurIPS 2026 workshop（TRL / RL-for-LLMs）**
+
+原因很简单：
+
+- `NeurIPS 2026 main` 官方 abstract/full deadline 是 **May 4 / May 6, 2026 AoE**，已经不现实。
+- `EMNLP 2026` ARR deadline 是 **May 25, 2026**，技术上还开着，但你的主线是 RL/post-training/stopping-policy，不是最优 fit，而且时间太赶。
+- `ACL 2026` 和 `COLM 2026` 都已经过了主会截止。
+- `ICLR 2027` 官方日期截至 **April 30, 2026** 还没发布；我这里只能基于 `ICLR 2026` 的 **Sep 19 / Sep 24, 2025** 截止做推断，计划窗口大概率是 **Sep 2026** 左右。这个时间最适合你把上面的 A/B/C/D 做完。
+
+如果 ICLR 来不及，第二主会备胎才是 **ICML 2027**，不是 EMNLP 2026。
+
+**5. Kill Switches**
+
+满足下面任一条，我会建议**放弃主会，写 workshop note**：
+
+1. Spider 多 seed 后，`SKE G=8` 的 `per_turn_sym` 不再稳定为负，或者均值 CI 明显跨 0。  
+这说明你的核心现象没有足够稳定性。
+
+2. `B4` 显示 `Dense G=8` 也有显著负的 `per_turn_sym`，且 `stop-calibrated` intervention 不能修复。  
+这时论文会退化成“generic large-G tradeoff”，诊断仍有价值，但主会张力明显下降。
+
+3. 到了 `BIRD` 后，`share_shift-dominant` 模式消失，或者 intervention 没有效果。  
+这时就没有跨数据集 generality，也没有 actionability。
+
+`B4` 本身不会杀死 paper；**杀死 main-conf attempt 的是：B4 负面 + 多 seed 不稳 + intervention 失败。**
+
+**6. Competitive Gap: 这篇到底补了什么洞**
+
+最直接的邻近工作不是 `CodeS`/`DTS-SQL`，而是 `SQL-R1`, `ReEx-SQL`, `MTIR-SQL`, `MARS-SQL`, `HES-SQL`。  
+你真正补的洞只有一个，而且要说得很硬：
+
+**现有 agentic/RL Text-to-SQL 论文几乎都只报告 end-to-end EX 提升，并把“interactive self-correction”当成整体能力；它们没有把收益拆成 stopping/commitment distribution 的变化与 fixed-turn conditional correctness 的变化，更没有做 paired turn-transition diagnosis。**
+
+可以直接这样对位：
+
+| 论文 | 他们做了什么 | 他们没做什么 | 你的 gap |
+|---|---|---|---|
+| `SQL-R1` | RL reward、cold start、Spider/BIRD aggregate gain | 不分析 interaction depth / turn distribution | 你分离“更早回答”与“答得更对” |
+| `ReEx-SQL` | execution-aware decoding、tree decoding、Spider/BIRD/Spider-Realistic gain | 不验证 gains 是否主要来自更 aggressive stopping | 你检验所谓 self-correction 是否真的提升 conditional SQL quality |
+| `MTIR-SQL` | multi-turn tool-integrated RL、trajectory filtering、去 KL | 不做 paired per-record stop/quality decomposition | 你给出 turn-conditioned mechanism diagnosis |
+| `MARS-SQL` | multi-agent + validation agent + SOTA aggregate EX | 不区分 solver 变强还是 trajectory selection / timing 变了 | 你把 agentic gain 从 monolithic score 拆开 |
+| `HES-SQL` | skeleton reward、latency reward、error-type breakdown | 不分析 stop-time / answer-timing policy | 你补的是 RL agent behavior 的 missing axis |
+
+如果你想要一句 reviewer 会买账的话，就是：
+
+**他们都在优化“最终答对率”，你在证明“RL 到底先学会了什么”。**
+
+**推荐计划执行后的评分**
+
+| 维度 | 评分 |
+|---|---:|
+| v3 逻辑与分解的健壮性 | 8/10 |
+| 现有加扩展后的经验强度 | 7/10 |
+| Workshop readiness | 9/10 |
+| Main-conf plausibility | 7/10 |
+| Overall | 7/10 |
+
+**最短结论**
+
+- 现有结果：**不够主会**
+- 最优升级路径：**多 seed + BIRD + 一个 stop-aware intervention**
+- 最不该做的事：**14B、3B 重开、没有 seeds 的横向大表**
+- 最佳主投：**ICLR 2027**
+- 最佳 fallback：**NeurIPS 2026 workshop**
+
+**Sources**
+
+- NeurIPS 2026 official dates: https://nips.cc/Conferences/2026/Dates
+- ACL 2026 official dates: https://2026.aclweb.org/
+- EMNLP 2026 official dates: https://2026.emnlp.org/calls/main_conference_papers/
+- COLM 2026 official dates: https://colmweb.org/cfp.html
+- ICLR 2026 official dates, used only to infer likely ICLR 2027 timing because 2027 dates were not yet posted: https://iclr.cc/Conferences/2026/Dates
+- ReEx-SQL: https://arxiv.org/abs/2505.12768
+- SQL-R1: https://arxiv.org/abs/2504.08600
+- MTIR-SQL: https://arxiv.org/abs/2510.25510
+- MARS-SQL: https://arxiv.org/abs/2511.01008
+- HES-SQL: https://arxiv.org/abs/2510.08896
