@@ -246,3 +246,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Research narrative — local-only, do not publish
+refine-logs/
+idea-stage/
+paper/
+.aris/
+review-stage/
+
+# Local backups, agent state
+*.tar.gz
+.codex
+.claude/
+MEMORY.md
+miniLLM_data1_git_backup_*.tar.gz
